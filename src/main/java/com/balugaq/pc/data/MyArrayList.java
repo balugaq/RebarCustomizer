@@ -5,7 +5,6 @@ import com.balugaq.pc.config.ConfigReader;
 import com.balugaq.pc.config.Deserializer;
 import com.balugaq.pc.config.GenericDeserializer;
 import com.balugaq.pc.config.StackFormatter;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
@@ -20,7 +19,6 @@ import java.util.List;
  *
  * @author balugaq
  */
-@EqualsAndHashCode(callSuper = true)
 @NullMarked
 public class MyArrayList<T> extends ArrayList<T> implements GenericDeserializer<MyArrayList<T>, T> {
     @Getter
