@@ -7,21 +7,21 @@ import com.balugaq.pc.exceptions.InvalidNamespacedKeyException;
 import com.balugaq.pc.exceptions.MissingArgumentException;
 import com.balugaq.pc.util.ReflectionUtil;
 import com.balugaq.pc.util.StringUtil;
-import io.github.pylonmc.pylon.core.config.Config;
-import io.github.pylonmc.pylon.core.config.ConfigSection;
-import io.github.pylonmc.pylon.core.recipe.ConfigurableRecipeType;
-import io.github.pylonmc.pylon.core.recipe.PylonRecipe;
-import io.github.pylonmc.pylon.core.recipe.RecipeType;
-import io.github.pylonmc.pylon.core.recipe.vanilla.BlastingRecipeWrapper;
-import io.github.pylonmc.pylon.core.recipe.vanilla.CampfireRecipeWrapper;
-import io.github.pylonmc.pylon.core.recipe.vanilla.FurnaceRecipeWrapper;
-import io.github.pylonmc.pylon.core.recipe.vanilla.ShapedRecipeWrapper;
-import io.github.pylonmc.pylon.core.recipe.vanilla.ShapelessRecipeWrapper;
-import io.github.pylonmc.pylon.core.recipe.vanilla.SmithingTransformRecipeWrapper;
-import io.github.pylonmc.pylon.core.recipe.vanilla.SmithingTrimRecipeWrapper;
-import io.github.pylonmc.pylon.core.recipe.vanilla.SmokingRecipeWrapper;
-import io.github.pylonmc.pylon.core.recipe.vanilla.TransmuteRecipeWrapper;
-import io.github.pylonmc.pylon.core.registry.PylonRegistry;
+import io.github.pylonmc.rebar.config.Config;
+import io.github.pylonmc.rebar.config.ConfigSection;
+import io.github.pylonmc.rebar.recipe.ConfigurableRecipeType;
+import io.github.pylonmc.rebar.recipe.RebarRecipe;
+import io.github.pylonmc.rebar.recipe.RecipeType;
+import io.github.pylonmc.rebar.recipe.vanilla.BlastingRecipeWrapper;
+import io.github.pylonmc.rebar.recipe.vanilla.CampfireRecipeWrapper;
+import io.github.pylonmc.rebar.recipe.vanilla.FurnaceRecipeWrapper;
+import io.github.pylonmc.rebar.recipe.vanilla.ShapedRecipeWrapper;
+import io.github.pylonmc.rebar.recipe.vanilla.ShapelessRecipeWrapper;
+import io.github.pylonmc.rebar.recipe.vanilla.SmithingTransformRecipeWrapper;
+import io.github.pylonmc.rebar.recipe.vanilla.SmithingTrimRecipeWrapper;
+import io.github.pylonmc.rebar.recipe.vanilla.SmokingRecipeWrapper;
+import io.github.pylonmc.rebar.recipe.vanilla.TransmuteRecipeWrapper;
+import io.github.pylonmc.rebar.registry.RebarRegistry;
 import kotlin.jvm.functions.Function5;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -76,7 +76,7 @@ public class Recipes {
                 try (var sk2 = StackTrace.record("Loading file: " + StringUtil.simplifyPath(cfg.getAbsolutePath()))) {
 
                 var key = new NamespacedKey(namespace, cfg.getName().substring(0, cfg.getName().length() - 4));
-                var type = PylonRegistry.RECIPE_TYPES.get(key);
+                var type = RebarRegistry.RECIPE_TYPES.get(key);
                 if (ADVANCED_RECIPE_TYPES.containsKey(key)) {
                     File old = new File(new File(Pack.getRecipesFolder(), namespace), cfg.getName());
                     if (old.exists()) old.delete();
@@ -168,7 +168,7 @@ public class Recipes {
         });
     }
 
-    private static final Map<NamespacedKey, BiFunction<NamespacedKey, ConfigurationSection, ? extends PylonRecipe>> ADVANCED_RECIPE_TYPES = new HashMap<>();
+    private static final Map<NamespacedKey, BiFunction<NamespacedKey, ConfigurationSection, ? extends RebarRecipe>> ADVANCED_RECIPE_TYPES = new HashMap<>();
 
     private static final int DEFAULT_COOKING_TIME = 100;
 
@@ -294,7 +294,7 @@ public class Recipes {
         return new SmokingRecipeWrapper(advancedVanillaCooking(key, config, SmokingRecipe::new));
     }
 
-    public static <T extends PylonRecipe> void loadAdvance(RecipeType<T> type, BiFunction<NamespacedKey, ConfigurationSection, T> function) {
+    public static <T extends RebarRecipe> void loadAdvance(RecipeType<T> type, BiFunction<NamespacedKey, ConfigurationSection, T> function) {
         if (type instanceof ConfigurableRecipeType<T>) ADVANCED_RECIPE_TYPES.put(type.getKey(), function);
     }
 }

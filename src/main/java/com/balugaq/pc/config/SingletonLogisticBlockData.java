@@ -1,7 +1,7 @@
 package com.balugaq.pc.config;
 
 import com.balugaq.pc.exceptions.MissingArgumentException;
-import io.github.pylonmc.pylon.core.logistics.LogisticGroupType;
+import io.github.pylonmc.rebar.logistics.LogisticGroupType;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jspecify.annotations.NullMarked;
 

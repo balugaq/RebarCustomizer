@@ -1,6 +1,6 @@
 package com.balugaq.pc.util;
 
-import com.balugaq.pc.PylonCustomizer;
+import com.balugaq.pc.RebarCustomizer;
 import org.jspecify.annotations.NullMarked;
 
 /**
@@ -9,7 +9,7 @@ import org.jspecify.annotations.NullMarked;
 @NullMarked
 public class StringUtil {
     public static String simplifyPath(String path) {
-        String pathToRemove = PylonCustomizer.getInstance().getDataFolder().getAbsolutePath();
+        String pathToRemove = RebarCustomizer.getInstance().getDataFolder().getAbsolutePath();
         return path.startsWith(pathToRemove) ? path.substring(pathToRemove.length()) : path;
     }
 }

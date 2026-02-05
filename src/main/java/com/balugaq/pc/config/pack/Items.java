@@ -16,7 +16,7 @@ import com.balugaq.pc.exceptions.IncompatibleMaterialException;
 import com.balugaq.pc.exceptions.MissingArgumentException;
 import com.balugaq.pc.util.MaterialUtil;
 import com.balugaq.pc.util.StringUtil;
-import io.github.pylonmc.pylon.core.item.builder.ItemStackBuilder;
+import io.github.pylonmc.rebar.item.builder.ItemStackBuilder;
 import lombok.Data;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -88,7 +88,7 @@ public class Items implements FileObject<Items> {
                     if (!dm.isItem() || dm.isAir()) throw new IncompatibleMaterialException("material must be items: " + item.getType());
 
                     var id = InternalObjectID.of(key).register(namespace);
-                    ItemStack icon = ItemStackBuilder.pylon(dm, id.key()).amount(item.getAmount()).build();
+                    ItemStack icon = ItemStackBuilder.rebar(dm, id.key()).amount(item.getAmount()).build();
 
                     ScriptDesc scriptdesc = Pack.readOrNull(section, ScriptDesc.class, "script");
                     namespace.registerScript(id, scriptdesc);

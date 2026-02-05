@@ -4,7 +4,7 @@ import com.balugaq.pc.config.PostLoadable;
 import com.balugaq.pc.config.RegisteredObjectID;
 import com.balugaq.pc.object.CustomRecipeType;
 import com.balugaq.pc.object.ItemStackProvider;
-import io.github.pylonmc.pylon.core.recipe.RecipeType;
+import io.github.pylonmc.rebar.recipe.RecipeType;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
 

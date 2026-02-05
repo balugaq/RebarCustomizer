@@ -2,7 +2,7 @@ package com.balugaq.pc.config.preloads;
 
 import com.balugaq.pc.config.PostLoadable;
 import com.balugaq.pc.config.RegisteredObjectID;
-import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
 
@@ -14,7 +14,7 @@ import java.util.List;
 @NullMarked
 public record PreparedResearch(
         RegisteredObjectID id,
-        Material material,
+        ItemStack icon,
         @Nullable String name,
         long cost,
         List<String> unlocks,

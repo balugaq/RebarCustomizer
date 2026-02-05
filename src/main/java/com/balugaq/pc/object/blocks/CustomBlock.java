@@ -11,55 +11,55 @@ import com.balugaq.pc.object.RuntimeObject;
 import com.balugaq.pc.object.Scriptable;
 import com.destroystokyo.paper.event.block.BeaconEffectEvent;
 import com.destroystokyo.paper.event.player.PlayerJumpEvent;
-import io.github.pylonmc.pylon.core.block.PylonBlock;
-import io.github.pylonmc.pylon.core.block.base.PylonBeacon;
-import io.github.pylonmc.pylon.core.block.base.PylonBell;
-import io.github.pylonmc.pylon.core.block.base.PylonBreakHandler;
-import io.github.pylonmc.pylon.core.block.base.PylonCampfire;
-import io.github.pylonmc.pylon.core.block.base.PylonCauldron;
-import io.github.pylonmc.pylon.core.block.base.PylonComposter;
-import io.github.pylonmc.pylon.core.block.base.PylonFlowerPot;
-import io.github.pylonmc.pylon.core.block.base.PylonFluidBlock;
-import io.github.pylonmc.pylon.core.block.base.PylonFluidBufferBlock;
-import io.github.pylonmc.pylon.core.block.base.PylonGrowable;
-import io.github.pylonmc.pylon.core.block.base.PylonGuiBlock;
-import io.github.pylonmc.pylon.core.block.base.PylonInteractBlock;
-import io.github.pylonmc.pylon.core.block.base.PylonJumpBlock;
-import io.github.pylonmc.pylon.core.block.base.PylonLeaf;
-import io.github.pylonmc.pylon.core.block.base.PylonLectern;
-import io.github.pylonmc.pylon.core.block.base.PylonLogisticBlock;
-import io.github.pylonmc.pylon.core.block.base.PylonNoVanillaContainerBlock;
-import io.github.pylonmc.pylon.core.block.base.PylonNoteBlock;
-import io.github.pylonmc.pylon.core.block.base.PylonPiston;
-import io.github.pylonmc.pylon.core.block.base.PylonRecipeProcessor;
-import io.github.pylonmc.pylon.core.block.base.PylonRedstoneBlock;
-import io.github.pylonmc.pylon.core.block.base.PylonShearable;
-import io.github.pylonmc.pylon.core.block.base.PylonSign;
-import io.github.pylonmc.pylon.core.block.base.PylonSneakableBlock;
-import io.github.pylonmc.pylon.core.block.base.PylonSponge;
-import io.github.pylonmc.pylon.core.block.base.PylonTNT;
-import io.github.pylonmc.pylon.core.block.base.PylonTargetBlock;
-import io.github.pylonmc.pylon.core.block.base.PylonTickingBlock;
-import io.github.pylonmc.pylon.core.block.base.PylonTrialVault;
-import io.github.pylonmc.pylon.core.block.base.PylonUnloadBlock;
-import io.github.pylonmc.pylon.core.block.context.BlockBreakContext;
-import io.github.pylonmc.pylon.core.block.context.BlockCreateContext;
-import io.github.pylonmc.pylon.core.config.adapter.ConfigAdapter;
-import io.github.pylonmc.pylon.core.event.PylonBlockUnloadEvent;
-import io.github.pylonmc.pylon.core.fluid.PylonFluid;
-import io.github.pylonmc.pylon.core.i18n.PylonArgument;
-import io.github.pylonmc.pylon.core.item.builder.ItemStackBuilder;
-import io.github.pylonmc.pylon.core.logistics.LogisticGroupType;
-import io.github.pylonmc.pylon.core.recipe.FluidOrItem;
-import io.github.pylonmc.pylon.core.recipe.PylonRecipe;
-import io.github.pylonmc.pylon.core.recipe.RecipeInput;
-import io.github.pylonmc.pylon.core.recipe.RecipeType;
-import io.github.pylonmc.pylon.core.registry.PylonRegistry;
-import io.github.pylonmc.pylon.core.util.MachineUpdateReason;
-import io.github.pylonmc.pylon.core.util.PylonUtils;
-import io.github.pylonmc.pylon.core.util.gui.GuiItems;
-import io.github.pylonmc.pylon.core.util.gui.ProgressItem;
-import io.github.pylonmc.pylon.core.waila.WailaDisplay;
+import io.github.pylonmc.rebar.block.RebarBlock;
+import io.github.pylonmc.rebar.block.base.RebarBeacon;
+import io.github.pylonmc.rebar.block.base.RebarBell;
+import io.github.pylonmc.rebar.block.base.RebarBreakHandler;
+import io.github.pylonmc.rebar.block.base.RebarCampfire;
+import io.github.pylonmc.rebar.block.base.RebarCauldron;
+import io.github.pylonmc.rebar.block.base.RebarComposter;
+import io.github.pylonmc.rebar.block.base.RebarFlowerPot;
+import io.github.pylonmc.rebar.block.base.RebarFluidBlock;
+import io.github.pylonmc.rebar.block.base.RebarFluidBufferBlock;
+import io.github.pylonmc.rebar.block.base.RebarGrowable;
+import io.github.pylonmc.rebar.block.base.RebarGuiBlock;
+import io.github.pylonmc.rebar.block.base.RebarInteractBlock;
+import io.github.pylonmc.rebar.block.base.RebarJumpBlock;
+import io.github.pylonmc.rebar.block.base.RebarLeaf;
+import io.github.pylonmc.rebar.block.base.RebarLectern;
+import io.github.pylonmc.rebar.block.base.RebarLogisticBlock;
+import io.github.pylonmc.rebar.block.base.RebarNoVanillaContainerBlock;
+import io.github.pylonmc.rebar.block.base.RebarNoteBlock;
+import io.github.pylonmc.rebar.block.base.RebarPiston;
+import io.github.pylonmc.rebar.block.base.RebarRecipeProcessor;
+import io.github.pylonmc.rebar.block.base.RebarRedstoneBlock;
+import io.github.pylonmc.rebar.block.base.RebarShearable;
+import io.github.pylonmc.rebar.block.base.RebarSign;
+import io.github.pylonmc.rebar.block.base.RebarSneakableBlock;
+import io.github.pylonmc.rebar.block.base.RebarSponge;
+import io.github.pylonmc.rebar.block.base.RebarTNT;
+import io.github.pylonmc.rebar.block.base.RebarTargetBlock;
+import io.github.pylonmc.rebar.block.base.RebarTickingBlock;
+import io.github.pylonmc.rebar.block.base.RebarTrialVault;
+import io.github.pylonmc.rebar.block.base.RebarUnloadBlock;
+import io.github.pylonmc.rebar.block.context.BlockBreakContext;
+import io.github.pylonmc.rebar.block.context.BlockCreateContext;
+import io.github.pylonmc.rebar.config.adapter.ConfigAdapter;
+import io.github.pylonmc.rebar.event.RebarBlockUnloadEvent;
+import io.github.pylonmc.rebar.fluid.RebarFluid;
+import io.github.pylonmc.rebar.i18n.RebarArgument;
+import io.github.pylonmc.rebar.item.builder.ItemStackBuilder;
+import io.github.pylonmc.rebar.logistics.LogisticGroupType;
+import io.github.pylonmc.rebar.recipe.FluidOrItem;
+import io.github.pylonmc.rebar.recipe.RebarRecipe;
+import io.github.pylonmc.rebar.recipe.RecipeInput;
+import io.github.pylonmc.rebar.recipe.RecipeType;
+import io.github.pylonmc.rebar.registry.RebarRegistry;
+import io.github.pylonmc.rebar.util.MachineUpdateReason;
+import io.github.pylonmc.rebar.util.RebarUtils;
+import io.github.pylonmc.rebar.util.gui.GuiItems;
+import io.github.pylonmc.rebar.util.gui.ProgressItem;
+import io.github.pylonmc.rebar.waila.WailaDisplay;
 import io.papermc.paper.event.block.BeaconActivatedEvent;
 import io.papermc.paper.event.block.BeaconDeactivatedEvent;
 import io.papermc.paper.event.block.CompostItemEvent;
@@ -104,9 +104,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
-import xyz.xenondevs.inventoryaccess.component.AdventureComponentWrapper;
 import xyz.xenondevs.invui.gui.Gui;
-import xyz.xenondevs.invui.inventory.Inventory;
 import xyz.xenondevs.invui.inventory.VirtualInventory;
 import xyz.xenondevs.invui.inventory.event.UpdateReason;
 import xyz.xenondevs.invui.window.Window;
@@ -114,7 +112,6 @@ import xyz.xenondevs.invui.window.Window;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * {@link Scriptable} proxy methods:
@@ -170,15 +167,15 @@ import java.util.stream.Collectors;
  * @author balugaq
  */
 @NullMarked
-public class CustomBlock extends PylonBlock implements PylonInteractBlock, PylonTickingBlock, PylonNoVanillaContainerBlock,
-                                                       PylonBeacon, PylonBell, PylonBreakHandler, PylonCampfire, PylonCauldron,
-                                                       PylonComposter, PylonFlowerPot, PylonFluidBlock, PylonFluidBufferBlock,
-                                                       PylonGrowable, PylonJumpBlock, PylonLeaf, PylonLectern, PylonNoteBlock,
-                                                       PylonPiston, PylonRedstoneBlock, PylonShearable, PylonSign, PylonSneakableBlock,
-                                                       PylonSponge, PylonTargetBlock, PylonTNT, PylonTrialVault, PylonUnloadBlock,
-                                                       PylonGuiBlock, PylonLogisticBlock, PylonRecipeProcessor<CustomRecipe>, RuntimeObject {
+public class CustomBlock extends RebarBlock implements RebarInteractBlock, RebarTickingBlock, RebarNoVanillaContainerBlock,
+                                                       RebarBeacon, RebarBell, RebarBreakHandler, RebarCampfire, RebarCauldron,
+                                                       RebarComposter, RebarFlowerPot, RebarFluidBlock, RebarFluidBufferBlock,
+                                                       RebarGrowable, RebarJumpBlock, RebarLeaf, RebarLectern, RebarNoteBlock,
+                                                       RebarPiston, RebarRedstoneBlock, RebarShearable, RebarSign, RebarSneakableBlock,
+                                                       RebarSponge, RebarTargetBlock, RebarTNT, RebarTrialVault, RebarUnloadBlock,
+                                                       RebarGuiBlock, RebarLogisticBlock, RebarRecipeProcessor<CustomRecipe>, RuntimeObject {
     private final Char2ObjectOpenHashMap<VirtualInventory> vs = new Char2ObjectOpenHashMap<>();
-    private final @Nullable RecipeType<?> loadRecipeType = PylonRegistry.RECIPE_TYPES.get(getKey());
+    private final @Nullable RecipeType<?> loadRecipeType = RebarRegistry.RECIPE_TYPES.get(getKey());
     private final @Nullable GuiData guiData = GlobalVars.getGuiData(getKey());
     private final @Nullable LogisticBlockData logisticBlockData = GlobalVars.getLogisticBlockData(getKey());
     private final @Nullable FluidBlockData fluidBlockData = GlobalVars.getFluidBlockData(getKey());
@@ -222,28 +219,15 @@ public class CustomBlock extends PylonBlock implements PylonInteractBlock, Pylon
         if (guiData != null) {
             event.setUseInteractedBlock(Event.Result.DENY);
             event.setUseItemInHand(Event.Result.DENY);
-            Window.single()
-                    .setGui(getGui())
-                    .setTitle(new AdventureComponentWrapper(getGuiTitle()))
+            Window.builder()
+                    .setUpperGui(createGui())
+                    .setTitle(getGuiTitle())
                     .setViewer(event.getPlayer())
                     .build()
                     .open();
         }
 
         callScriptA("onPostInteract", this, event);
-    }
-
-    @Override
-    public Map<String, Inventory> createInventoryMapping() {
-        if (logisticBlockData == null) return Map.of();
-        return logisticBlockData.data()
-                .stream()
-                .map(e -> Map.entry(e.name(), vs.get(e.invSlotChar())))
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        Map.Entry::getValue,
-                        (a, b) -> a)
-                );
     }
 
     @Override
@@ -293,8 +277,7 @@ public class CustomBlock extends PylonBlock implements PylonInteractBlock, Pylon
 
     @Override
     public void onBreak(final List<ItemStack> drops, final BlockBreakContext context) {
-        PylonFluidBufferBlock.super.onBreak(drops, context);
-        PylonGuiBlock.super.onBreak(drops, context);
+        RebarFluidBufferBlock.super.onBreak(drops, context);
         callScript(this, drops, context);
     }
 
@@ -395,8 +378,8 @@ public class CustomBlock extends PylonBlock implements PylonInteractBlock, Pylon
             }
         }
         var settings = getSettingsOrNull();
-        if (settings == null) return PylonTickingBlock.super.getTickInterval();
-        var v3 = settings.get("tick-interval", ConfigAdapter.INT, PylonTickingBlock.super.getTickInterval());
+        if (settings == null) return RebarTickingBlock.super.getTickInterval();
+        var v3 = settings.get("tick-interval", ConfigAdapter.INT, RebarTickingBlock.super.getTickInterval());
         setTickInterval(v3);
         return v3;
     }
@@ -411,15 +394,15 @@ public class CustomBlock extends PylonBlock implements PylonInteractBlock, Pylon
             }
         }
         var settings = getSettingsOrNull();
-        if (settings == null) return PylonTickingBlock.super.isAsync();
-        var v2 = settings.get("async", ConfigAdapter.BOOLEAN, PylonTickingBlock.super.isAsync());
+        if (settings == null) return RebarTickingBlock.super.isAsync();
+        var v2 = settings.get("async", ConfigAdapter.BOOLEAN, RebarTickingBlock.super.isAsync());
         setAsync(v2);
         return v2;
     }
 
     @Override
     public void onRecipeFinished(CustomRecipe recipe) {
-        getRecipeProgressItem().setItemStackBuilder(ItemStackBuilder.of(GuiItems.background()));
+        getRecipeProgressItem().setItem(GuiItems.background());
         // push item or fluid
         for (var e : recipe.getResults()) {
             if (e instanceof FluidOrItem.Item item) {
@@ -449,10 +432,10 @@ public class CustomBlock extends PylonBlock implements PylonInteractBlock, Pylon
             return;
         }
 
-        Collection<? extends PylonRecipe> recipes = loadRecipeType.getRecipes();
+        Collection<? extends RebarRecipe> recipes = loadRecipeType.getRecipes();
         @Nullable var vi = vs.get('i');
         @Nullable var vo = vs.get('o');
-        recipe: for (PylonRecipe recipe : recipes) {
+        recipe: for (RebarRecipe recipe : recipes) {
             for (var e : recipe.getInputs()) {
                 switch (e) {
                     case RecipeInput.Item item -> {
@@ -497,7 +480,7 @@ public class CustomBlock extends PylonBlock implements PylonInteractBlock, Pylon
             if (recipe instanceof CustomRecipe cr) {
                 int totalSeconds = (int) Math.round((double) cr.getTimeSeconds() / getSpeed());
                 startRecipe(cr, totalSeconds);
-                getRecipeProgressItem().setItemStackBuilder(getRepresentativeIcon(recipe));
+                getRecipeProgressItem().setItem(getRepresentativeIcon(recipe));
             }
 
             // consume items and fluids
@@ -582,7 +565,7 @@ public class CustomBlock extends PylonBlock implements PylonInteractBlock, Pylon
     }
 
     @Override
-    public void onUnload(final PylonBlockUnloadEvent event) {
+    public void onUnload(final RebarBlockUnloadEvent event) {
         callScript(this, event);
     }
 
@@ -651,7 +634,7 @@ public class CustomBlock extends PylonBlock implements PylonInteractBlock, Pylon
             vs.put(e.invSlotChar(), v);
             switch (e.slotType()) {
                 case INPUT -> {
-                    v.setPostUpdateHandler(event -> {
+                    v.addPostUpdateHandler(event -> {
                         if (!(event.getUpdateReason() instanceof MachineUpdateReason)) {
                             tryStartRecipe();
                         }
@@ -659,13 +642,13 @@ public class CustomBlock extends PylonBlock implements PylonInteractBlock, Pylon
                     createLogisticGroup(e.name(), LogisticGroupType.INPUT, v);
                 }
                 case OUTPUT -> {
-                    v.setPreUpdateHandler(PylonUtils.DISALLOW_PLAYERS_FROM_ADDING_ITEMS_HANDLER);
-                    v.setPostUpdateHandler(event -> tryStartRecipe());
+                    v.addPreUpdateHandler(RebarUtils.DISALLOW_PLAYERS_FROM_ADDING_ITEMS_HANDLER);
+                    v.addPostUpdateHandler(event -> tryStartRecipe());
                     createLogisticGroup(e.name(), LogisticGroupType.OUTPUT, v);
                 }
                 case BOTH -> {
-                    v.setPreUpdateHandler(PylonUtils.DISALLOW_PLAYERS_FROM_ADDING_ITEMS_HANDLER);
-                    v.setPostUpdateHandler(event -> {
+                    v.addPreUpdateHandler(RebarUtils.DISALLOW_PLAYERS_FROM_ADDING_ITEMS_HANDLER);
+                    v.addPostUpdateHandler(event -> {
                         if (!(event.getUpdateReason() instanceof MachineUpdateReason)) {
                             tryStartRecipe();
                         }
@@ -679,7 +662,7 @@ public class CustomBlock extends PylonBlock implements PylonInteractBlock, Pylon
         callScript("onPostInitialise", this);
     }
 
-    private boolean canOutputFluid(Map<PylonFluid, Double> results, FluidBufferBlockData fluidBufferBlockData) {
+    private boolean canOutputFluid(Map<RebarFluid, Double> results, FluidBufferBlockData fluidBufferBlockData) {
         for (var e : results.entrySet()) {
             if (!hasFluid(e.getKey())
             || !fluidBufferBlockData.outputFluids().contains(e.getKey())
@@ -698,12 +681,12 @@ public class CustomBlock extends PylonBlock implements PylonInteractBlock, Pylon
         return true;
     }
 
-    private static Object2DoubleOpenHashMap<PylonFluid> countOutputFluids(PylonRecipe recipe) {
+    private static Object2DoubleOpenHashMap<RebarFluid> countOutputFluids(RebarRecipe recipe) {
         if (recipe instanceof CustomRecipe cr && cr.getCountOutputFluids() != null) {
             return cr.getCountOutputFluids();
         }
 
-        var ret = new Object2DoubleOpenHashMap<PylonFluid>();
+        var ret = new Object2DoubleOpenHashMap<RebarFluid>();
         for (var e : recipe.getResults()) {
             if (e instanceof FluidOrItem.Fluid fluid) {
                 ret.addTo(fluid.fluid(), fluid.amountMillibuckets());
@@ -717,7 +700,7 @@ public class CustomBlock extends PylonBlock implements PylonInteractBlock, Pylon
         return ret;
     }
 
-    private static Object2IntLinkedOpenHashMap<ItemStack> countResults(PylonRecipe recipe) {
+    private static Object2IntLinkedOpenHashMap<ItemStack> countResults(RebarRecipe recipe) {
         if (recipe instanceof CustomRecipe cr && cr.getCountOutputItems() != null) {
             return cr.getCountOutputItems();
         }
@@ -737,7 +720,7 @@ public class CustomBlock extends PylonBlock implements PylonInteractBlock, Pylon
         return ret;
     }
 
-    private static ItemStackBuilder getRepresentativeIcon(PylonRecipe recipe) {
+    private static ItemStackBuilder getRepresentativeIcon(RebarRecipe recipe) {
         for (var r : recipe.getResults()) {
             if (r instanceof FluidOrItem.Item item) {
                 return ItemStackBuilder.of(item.item().asOne()).clearLore();
@@ -751,7 +734,7 @@ public class CustomBlock extends PylonBlock implements PylonInteractBlock, Pylon
     }
 
     @Override
-    public List<PylonArgument> getPlaceholders() {
+    public List<RebarArgument> getPlaceholders() {
         return RuntimeObject.super.getPlaceholders();
     }
 

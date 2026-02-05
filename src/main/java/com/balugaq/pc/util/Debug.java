@@ -1,7 +1,7 @@
 package com.balugaq.pc.util;
 
 import com.balugaq.pc.DebuggablePlugin;
-import com.balugaq.pc.PylonCustomizer;
+import com.balugaq.pc.RebarCustomizer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
@@ -31,12 +31,12 @@ public class Debug {
     }
 
     public static void severe(String message) {
-        PylonCustomizer.getInstance().getLogger().severe(message);
+        RebarCustomizer.getInstance().getLogger().severe(message);
     }
 
     public static DebuggablePlugin getPlugin() {
         if (plugin == null) {
-            plugin = PylonCustomizer.getInstance();
+            plugin = RebarCustomizer.getInstance();
         }
         return plugin;
     }
@@ -46,7 +46,7 @@ public class Debug {
         String fileName = "error-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss"))
                 + "-" + e.getClass().getSimpleName() + "-" + UUID.randomUUID() + ".txt";
 
-        File file = new File(PylonCustomizer.getErrorReportsFolder(), fileName);
+        File file = new File(RebarCustomizer.getErrorReportsFolder(), fileName);
         try {
             file.createNewFile();
             try (PrintStream stream = new PrintStream(file, StandardCharsets.UTF_8)) {
@@ -56,12 +56,12 @@ public class Debug {
                 stream.println("If you are sure that this is a " + getPlugin().getName() + " bug, please report to " + getPlugin().getIssueTrackerLink());
                 stream.println("An unexpected error occurred.");
                 stream.println(getPlugin().getName() + " version: "
-                                       + PylonCustomizer.getInstance().getDescription().getVersion());
+                                       + RebarCustomizer.getInstance().getDescription().getVersion());
                 stream.println("Java version: " + System.getProperty("java.version"));
                 stream.println("OS: " + System.getProperty("os.name") + " " + System.getProperty("os.version") + " "
                                        + System.getProperty("os.arch"));
                 stream.println("Minecraft version: " + Bukkit.getMinecraftVersion());
-                stream.println("PylonCore version: " + Bukkit.getPluginManager().getPlugin("PylonCore").getPluginMeta().getVersion());
+                stream.println("Rebar version: " + Bukkit.getPluginManager().getPlugin("Rebar").getPluginMeta().getVersion());
                 if (code != null) {
                     stream.println("Error code: " + code);
                 }
@@ -85,7 +85,7 @@ public class Debug {
     }
 
     public static void warning(String message) {
-        PylonCustomizer.getInstance().getLogger().warning(message);
+        RebarCustomizer.getInstance().getLogger().warning(message);
     }
 
     public static void severe(Object... objects) {
@@ -93,7 +93,7 @@ public class Debug {
     }
 
     public static void severe(Throwable e) {
-        PylonCustomizer.getInstance().getLogger().severe(e.getMessage());
+        RebarCustomizer.getInstance().getLogger().severe(e.getMessage());
         trace(e);
     }
 
@@ -142,13 +142,13 @@ public class Debug {
     }
 
     public static void debug(String message) {
-        if (PylonCustomizer.getConfigManager().isDebug()) {
+        if (RebarCustomizer.getConfigManager().isDebug()) {
             log(DEBUG_PREFIX + message);
         }
     }
 
     public static void log(String message) {
-        PylonCustomizer.getInstance().getLogger().info(message);
+        RebarCustomizer.getInstance().getLogger().info(message);
     }
 
     public static void debug(Throwable e) {

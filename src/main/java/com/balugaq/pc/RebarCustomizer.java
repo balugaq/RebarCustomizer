@@ -1,20 +1,20 @@
 package com.balugaq.pc;
 
-import com.balugaq.pc.command.PylonCustomizerCommand;
+import com.balugaq.pc.command.RebarCustomizerCommand;
 import com.balugaq.pc.config.StackTrace;
 import com.balugaq.pc.listener.ChatInputListener;
 import com.balugaq.pc.manager.ConfigManager;
 import com.balugaq.pc.manager.IntegrationManager;
 import com.balugaq.pc.manager.PackManager;
-import com.balugaq.pc.pylon.PylonCustomizerBlocks;
-import com.balugaq.pc.pylon.PylonCustomizerItems;
+import com.balugaq.pc.rebar.RebarCustomizerBlocks;
+import com.balugaq.pc.rebar.RebarCustomizerItems;
 import com.balugaq.pc.util.Debug;
 import com.balugaq.pc.util.OSUtil;
-import io.github.pylonmc.pylon.core.addon.PylonAddon;
-import io.github.pylonmc.pylon.core.content.guide.PylonGuide;
-import io.github.pylonmc.pylon.core.guide.button.PageButton;
-import io.github.pylonmc.pylon.core.guide.pages.base.SimpleStaticGuidePage;
-import io.github.pylonmc.pylon.core.registry.PylonRegistry;
+import io.github.pylonmc.rebar.addon.RebarAddon;
+import io.github.pylonmc.rebar.content.guide.RebarGuide;
+import io.github.pylonmc.rebar.guide.button.PageButton;
+import io.github.pylonmc.rebar.guide.pages.base.SimpleStaticGuidePage;
+import io.github.pylonmc.rebar.registry.RebarRegistry;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import lombok.Getter;
 import net.byteflux.libby.BukkitLibraryManager;
@@ -43,10 +43,10 @@ import java.util.stream.Collectors;
  * @author balugaq
  */
 @NullMarked
-public class PylonCustomizer extends JavaPlugin implements PylonAddon, DebuggablePlugin {
+public class RebarCustomizer extends JavaPlugin implements RebarAddon, DebuggablePlugin {
     @Getter
     @UnknownNullability
-    private static PylonCustomizer instance;
+    private static RebarCustomizer instance;
     private final Set<Locale> SUPPORTED_LANGUAGES = new HashSet<>();
     @UnknownNullability
     private ConfigManager configManager;
@@ -56,7 +56,7 @@ public class PylonCustomizer extends JavaPlugin implements PylonAddon, Debuggabl
     private PackManager packManager;
 
     public static Map<NamespacedKey, PageButton> getPageButtons() {
-        Map<NamespacedKey, PageButton> pages = new HashMap<>(PylonGuide.getRootPage().getButtons()
+        Map<NamespacedKey, PageButton> pages = new HashMap<>(RebarGuide.getRootPage().getButtons()
           .stream()
           .filter(button -> button instanceof PageButton)
           .map(button -> (PageButton) button)
@@ -83,13 +83,13 @@ public class PylonCustomizer extends JavaPlugin implements PylonAddon, Debuggabl
 
     public static Map<NamespacedKey, SimpleStaticGuidePage> getPages() {
         Map<NamespacedKey, SimpleStaticGuidePage> pages = new HashMap<>();
-        scanPages(pages, PylonGuide.getRootPage());
+        scanPages(pages, RebarGuide.getRootPage());
         for (var e : GlobalVars.getCustomPages().entrySet()) {
             if (e.getValue().getPage() instanceof SimpleStaticGuidePage p) {
                 pages.put(e.getKey(), p);
             }
         }
-        pages.put(PylonGuide.getRootPage().getKey(), PylonGuide.getRootPage());
+        pages.put(RebarGuide.getRootPage().getKey(), RebarGuide.getRootPage());
         return pages;
     }
 
@@ -140,8 +140,8 @@ public class PylonCustomizer extends JavaPlugin implements PylonAddon, Debuggabl
         addSupportedLanguages(Locale.ENGLISH);
         setupLibraries();
 
-        // registerWithPylon();
-        PylonRegistry.ADDONS.register(this);
+        // registerWithRebar();
+        RebarRegistry.ADDONS.register(this);
 
         saveDefaultConfig();
 
@@ -149,8 +149,8 @@ public class PylonCustomizer extends JavaPlugin implements PylonAddon, Debuggabl
         integrationManager = new IntegrationManager();
         packManager = new PackManager();
 
-        PylonCustomizerItems.initialize();
-        PylonCustomizerBlocks.initialize();
+        RebarCustomizerItems.initialize();
+        RebarCustomizerBlocks.initialize();
 
         runTaskLater(() -> {
             try (var ignored = StackTrace.record("Loading packs")) {
@@ -162,19 +162,19 @@ public class PylonCustomizer extends JavaPlugin implements PylonAddon, Debuggabl
 
         getLifecycleManager().registerEventHandler(
                 LifecycleEvents.COMMANDS, commands -> {
-                    commands.registrar().register(PylonCustomizerCommand.ROOT);
+                    commands.registrar().register(RebarCustomizerCommand.ROOT);
                 }
         );
 
         Bukkit.getServer().getPluginManager().registerEvents(new ChatInputListener(), this);
 
-        PylonRegistry.ADDONS.unregister(this);
-        registerWithPylon();
+        RebarRegistry.ADDONS.unregister(this);
+        registerWithRebar();
     }
 
     @Override
     public void onDisable() {
-        PylonCustomizer.getPackManager().destroy();
+        RebarCustomizer.getPackManager().destroy();
     }
 
     private void setupLibraries() {

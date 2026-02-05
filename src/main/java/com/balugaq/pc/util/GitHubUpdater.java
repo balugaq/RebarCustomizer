@@ -1,6 +1,6 @@
 package com.balugaq.pc.util;
 
-import com.balugaq.pc.PylonCustomizer;
+import com.balugaq.pc.RebarCustomizer;
 import com.balugaq.pc.config.Pack;
 import com.balugaq.pc.config.PackDesc;
 import com.balugaq.pc.config.pack.GitHubUpdateLink;
@@ -62,14 +62,14 @@ public class GitHubUpdater {
             }
 
             if (!Objects.equals(version.getVersion(), releaseName)) {
-                if (release.isPrerelease() && !PylonCustomizer.getConfigManager().isUpdatePreReleasePacks())
+                if (release.isPrerelease() && !RebarCustomizer.getConfigManager().isUpdatePreReleasePacks())
                     return false;
 
-                if (!PylonCustomizer.getPackUpdateDownloadFolder().exists()) {
-                    PylonCustomizer.getPackUpdateDownloadFolder().mkdirs();
+                if (!RebarCustomizer.getPackUpdateDownloadFolder().exists()) {
+                    RebarCustomizer.getPackUpdateDownloadFolder().mkdirs();
                 }
 
-                File zip = new File(PylonCustomizer.getPackUpdateDownloadFolder(), packId.getId() + "-" + releaseName + ".zip");
+                File zip = new File(RebarCustomizer.getPackUpdateDownloadFolder(), packId.getId() + "-" + releaseName + ".zip");
 
                 String zipUrl;
                 List<GitHubRelease.Asset> assets = release.getAssets();
@@ -106,13 +106,13 @@ public class GitHubUpdater {
                 }
 
                 if (zip.exists()) {
-                    File projectFolder = new File(PylonCustomizer.getPacksFolder(), pack.getDir().getName());
+                    File projectFolder = new File(RebarCustomizer.getPacksFolder(), pack.getDir().getName());
 
                     if (!projectFolder.exists()) {
                         mkdir(projectFolder);
                     }
 
-                    File tempFolder = new File(PylonCustomizer.getPackUpdateDownloadFolder(), "temp");
+                    File tempFolder = new File(RebarCustomizer.getPackUpdateDownloadFolder(), "temp");
                     if (!tempFolder.exists()) {
                         mkdir(tempFolder);
                     }

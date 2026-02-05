@@ -12,8 +12,8 @@ import com.caoccao.javet.exceptions.JavetException;
 import com.caoccao.javet.interop.V8Host;
 import com.caoccao.javet.interop.V8Runtime;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import io.github.pylonmc.pylon.core.block.base.PylonSimpleMultiblock;
-import io.github.pylonmc.pylon.core.guide.button.PageButton;
+import io.github.pylonmc.rebar.block.base.RebarSimpleMultiblock;
+import io.github.pylonmc.rebar.guide.button.PageButton;
 import lombok.Getter;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -39,13 +39,13 @@ public class GlobalVars {
     private static final @Getter KeyedMap<CustomPageButton> customPages = new KeyedMap<>();
     private static final @Getter KeyedMap<FluidBlockData> fluidBlockDatas = new KeyedMap<>();
     private static final @Getter KeyedMap<FluidBufferBlockData> fluidBufferBlockDatas = new KeyedMap<>();
-    private static final @Getter KeyedMap<Map<Vector3i, PylonSimpleMultiblock.MultiblockComponent>> multiBlockComponents = new KeyedMap<>();
+    private static final @Getter KeyedMap<Map<Vector3i, RebarSimpleMultiblock.MultiblockComponent>> multiBlockComponents = new KeyedMap<>();
     private static final @Getter KeyedMap<LogisticBlockData> logisticBlockDatas = new KeyedMap<>();
     private static final @Getter KeyedMap<Key> equipmentTypes = new KeyedMap<>();
     private static final @Getter V8Runtime scriptRuntime;
-    private static final File PACKS_FOLDER = new File(PylonCustomizer.getInstance().getDataFolder(), "packs");
-    private static final File ERROR_REPORTS_FOLDER = new File(PylonCustomizer.getInstance().getDataFolder(), "error-reports");
-    private static final File PACK_UPDATE_DOWNLOAD_FOLDER = new File(PylonCustomizer.getInstance().getDataFolder(), "pack-update-downloads");
+    private static final File PACKS_FOLDER = new File(RebarCustomizer.getInstance().getDataFolder(), "packs");
+    private static final File ERROR_REPORTS_FOLDER = new File(RebarCustomizer.getInstance().getDataFolder(), "error-reports");
+    private static final File PACK_UPDATE_DOWNLOAD_FOLDER = new File(RebarCustomizer.getInstance().getDataFolder(), "pack-update-downloads");
 
     static {
         try {
@@ -145,12 +145,12 @@ public class GlobalVars {
     }
 
     @CanIgnoreReturnValue
-    public static Map<Vector3i, PylonSimpleMultiblock.MultiblockComponent> putMultiBlockComponents(NamespacedKey key, Map<Vector3i, PylonSimpleMultiblock.MultiblockComponent> components) {
+    public static Map<Vector3i, RebarSimpleMultiblock.MultiblockComponent> putMultiBlockComponents(NamespacedKey key, Map<Vector3i, RebarSimpleMultiblock.MultiblockComponent> components) {
         multiBlockComponents.put(key, components);
         return components;
     }
 
-    public static Map<Vector3i, PylonSimpleMultiblock.MultiblockComponent> getMultiBlockComponents(NamespacedKey key) {
+    public static Map<Vector3i, RebarSimpleMultiblock.MultiblockComponent> getMultiBlockComponents(NamespacedKey key) {
         return multiBlockComponents.get(key);
     }
 

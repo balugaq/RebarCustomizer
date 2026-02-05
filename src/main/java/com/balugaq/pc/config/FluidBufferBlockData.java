@@ -1,6 +1,6 @@
 package com.balugaq.pc.config;
 
-import io.github.pylonmc.pylon.core.fluid.PylonFluid;
+import io.github.pylonmc.rebar.fluid.RebarFluid;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.NullMarked;
 
@@ -24,11 +24,11 @@ public record FluidBufferBlockData(
         return data.iterator();
     }
 
-    public Set<PylonFluid> inputFluids() {
+    public Set<RebarFluid> inputFluids() {
         return data.stream().filter(SingletonFluidBufferBlockData::input).map(SingletonFluidBufferBlockData::fluid).collect(Collectors.toSet());
     }
 
-    public Set<PylonFluid> outputFluids() {
+    public Set<RebarFluid> outputFluids() {
         return data.stream().filter(SingletonFluidBufferBlockData::output).map(SingletonFluidBufferBlockData::fluid).collect(Collectors.toSet());
     }
 }

@@ -1,6 +1,6 @@
 package com.balugaq.pc.util;
 
-import com.balugaq.pc.PylonCustomizer;
+import com.balugaq.pc.RebarCustomizer;
 import org.bukkit.NamespacedKey;
 import org.jspecify.annotations.NullMarked;
 
@@ -10,6 +10,6 @@ import org.jspecify.annotations.NullMarked;
 @NullMarked
 public class Keys {
     public static NamespacedKey create(String key) {
-        return new NamespacedKey(PylonCustomizer.getInstance(), key);
+        return new NamespacedKey(RebarCustomizer.getInstance(), key);
     }
 }

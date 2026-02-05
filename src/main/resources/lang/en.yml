@@ -1,4 +1,4 @@
-addon: "PylonCustomizer"
+addon: "RebarCustomizer"
 
 item:
   black_background:
@@ -10,4 +10,4 @@ item:
 
 guide:
   page:
-    main: "Pylon Customizer"
+    main: "Rebar Customizer"

@@ -3,7 +3,7 @@ package com.balugaq.pc.config.preloads;
 import com.balugaq.pc.config.PageDesc;
 import com.balugaq.pc.config.PostLoadable;
 import com.balugaq.pc.config.RegisteredObjectID;
-import io.github.pylonmc.pylon.core.fluid.tags.FluidTemperature;
+import io.github.pylonmc.rebar.fluid.tags.FluidTemperature;
 import org.bukkit.Material;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;

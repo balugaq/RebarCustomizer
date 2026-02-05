@@ -1,10 +1,10 @@
 package com.balugaq.pc.object;
 
-import io.github.pylonmc.pylon.core.fluid.PylonFluid;
-import io.github.pylonmc.pylon.core.guide.pages.base.GuidePage;
-import io.github.pylonmc.pylon.core.guide.pages.base.SimpleStaticGuidePage;
-import io.github.pylonmc.pylon.core.item.builder.ItemStackBuilder;
-import io.github.pylonmc.pylon.core.item.research.Research;
+import io.github.pylonmc.rebar.fluid.RebarFluid;
+import io.github.pylonmc.rebar.guide.pages.base.GuidePage;
+import io.github.pylonmc.rebar.guide.pages.base.SimpleStaticGuidePage;
+import io.github.pylonmc.rebar.item.builder.ItemStackBuilder;
+import io.github.pylonmc.rebar.item.research.Research;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -32,7 +32,7 @@ public class CustomGuidePage extends SimpleStaticGuidePage {
     }
 
     @Override
-    public boolean addFluid(PylonFluid fluid) {
+    public boolean addFluid(RebarFluid fluid) {
         return getButtons().add(new CustomFluidButton(getKey(), fluid));
     }
 

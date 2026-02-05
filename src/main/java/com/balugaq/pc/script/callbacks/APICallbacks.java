@@ -1,17 +1,17 @@
 package com.balugaq.pc.script.callbacks;
 
 import com.balugaq.pc.GlobalVars;
-import com.balugaq.pc.PylonCustomizer;
+import com.balugaq.pc.RebarCustomizer;
 import com.balugaq.pc.config.Pack;
 import com.balugaq.pc.config.PackDesc;
 import com.balugaq.pc.manager.PackManager;
 import com.caoccao.javet.annotations.V8Function;
-import io.github.pylonmc.pylon.core.addon.PylonAddon;
-import io.github.pylonmc.pylon.core.block.PylonBlockSchema;
-import io.github.pylonmc.pylon.core.entity.PylonEntitySchema;
-import io.github.pylonmc.pylon.core.fluid.PylonFluid;
-import io.github.pylonmc.pylon.core.item.PylonItemSchema;
-import io.github.pylonmc.pylon.core.registry.PylonRegistry;
+import io.github.pylonmc.rebar.addon.RebarAddon;
+import io.github.pylonmc.rebar.block.RebarBlockSchema;
+import io.github.pylonmc.rebar.entity.RebarEntitySchema;
+import io.github.pylonmc.rebar.fluid.RebarFluid;
+import io.github.pylonmc.rebar.item.RebarItemSchema;
+import io.github.pylonmc.rebar.registry.RebarRegistry;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -28,32 +28,32 @@ import java.util.logging.Logger;
 public class APICallbacks {
     @V8Function
     public Logger getLogger() {
-        return PylonCustomizer.getInstance().getLogger();
+        return RebarCustomizer.getInstance().getLogger();
     }
 
     @V8Function
-    public PylonRegistry<PylonItemSchema> getItemRegistry() {
-        return PylonRegistry.ITEMS;
+    public RebarRegistry<RebarItemSchema> getItemRegistry() {
+        return RebarRegistry.ITEMS;
     }
 
     @V8Function
-    public PylonRegistry<PylonBlockSchema> getBlockRegistry() {
-        return PylonRegistry.BLOCKS;
+    public RebarRegistry<RebarBlockSchema> getBlockRegistry() {
+        return RebarRegistry.BLOCKS;
     }
 
     @V8Function
-    public PylonRegistry<PylonEntitySchema> getEntityRegistry() {
-        return PylonRegistry.ENTITIES;
+    public RebarRegistry<RebarEntitySchema> getEntityRegistry() {
+        return RebarRegistry.ENTITIES;
     }
 
     @V8Function
-    public PylonRegistry<PylonFluid> getFluidRegistry() {
-        return PylonRegistry.FLUIDS;
+    public RebarRegistry<RebarFluid> getFluidRegistry() {
+        return RebarRegistry.FLUIDS;
     }
 
     @V8Function
-    public PylonRegistry<PylonAddon> getAddonRegistry() {
-        return PylonRegistry.ADDONS;
+    public RebarRegistry<RebarAddon> getAddonRegistry() {
+        return RebarRegistry.ADDONS;
     }
 
     @V8Function

@@ -23,7 +23,7 @@ public class Lang {
     unset_tag_3 = "Invalid tag",
     unset_tag_4 = "Removed tag {} from fluid {}",
     parse_tag_1 = "Not a valid fluid tag",
-    parse_tag_2 = "Not a PylonFluidTagHolder",
+    parse_tag_2 = "Not a RebarFluidTagHolder",
     placeable_1 = "Set placeable to {}",
     register_item_1 = "Not set item yet",
     register_item_2 = "Not set item yet",

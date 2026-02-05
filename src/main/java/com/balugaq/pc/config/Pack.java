@@ -1,7 +1,7 @@
 package com.balugaq.pc.config;
 
 import com.balugaq.pc.GlobalVars;
-import com.balugaq.pc.PylonCustomizer;
+import com.balugaq.pc.RebarCustomizer;
 import com.balugaq.pc.config.pack.Author;
 import com.balugaq.pc.config.pack.Blocks;
 import com.balugaq.pc.config.pack.Contributor;
@@ -39,17 +39,17 @@ import com.balugaq.pc.object.blocks.CustomMultiBlock;
 import com.balugaq.pc.object.items.CustomItem;
 import com.balugaq.pc.util.Debug;
 import com.balugaq.pc.util.MinecraftVersion;
-import io.github.pylonmc.pylon.core.config.PylonConfig;
-import io.github.pylonmc.pylon.core.content.guide.PylonGuide;
-import io.github.pylonmc.pylon.core.fluid.PylonFluid;
-import io.github.pylonmc.pylon.core.fluid.tags.FluidTemperature;
-import io.github.pylonmc.pylon.core.guide.button.FluidButton;
-import io.github.pylonmc.pylon.core.guide.button.ItemButton;
-import io.github.pylonmc.pylon.core.item.PylonItem;
-import io.github.pylonmc.pylon.core.item.research.Research;
-import io.github.pylonmc.pylon.core.recipe.FluidOrItem;
-import io.github.pylonmc.pylon.core.recipe.RecipeInput;
-import io.github.pylonmc.pylon.core.util.gui.GuiItems;
+import io.github.pylonmc.rebar.config.RebarConfig;
+import io.github.pylonmc.rebar.content.guide.RebarGuide;
+import io.github.pylonmc.rebar.fluid.RebarFluid;
+import io.github.pylonmc.rebar.fluid.tags.FluidTemperature;
+import io.github.pylonmc.rebar.guide.button.FluidButton;
+import io.github.pylonmc.rebar.guide.button.ItemButton;
+import io.github.pylonmc.rebar.item.RebarItem;
+import io.github.pylonmc.rebar.item.research.Research;
+import io.github.pylonmc.rebar.recipe.FluidOrItem;
+import io.github.pylonmc.rebar.recipe.RecipeInput;
+import io.github.pylonmc.rebar.util.gui.GuiItems;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -63,7 +63,6 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
 import xyz.xenondevs.invui.item.Item;
-import xyz.xenondevs.invui.item.impl.SimpleItem;
 
 import java.io.File;
 import java.io.IOException;
@@ -109,8 +108,8 @@ import java.util.Set;
 @NoArgsConstructor(force = true)
 @NullMarked
 public class Pack implements FileObject<Pack> {
-    public static final File PYLON_CORE = new File(PylonCustomizer.getInstance().getDataFolder().getParent(), "PylonCore");
-    public static final Item EMPTY = new SimpleItem(ItemStack.empty());
+    public static final File REBAR = new File(RebarCustomizer.getInstance().getDataFolder().getParent(), "Rebar");
+
     /**
      * deprecated, use virtual inventory instead.
      * a~z: input item  // "i"
@@ -125,7 +124,7 @@ public class Pack implements FileObject<Pack> {
             if ('a' <= c && c <= 'z' && c != 'i' && c != 'o') {
                 var i = r.getInputs();
                 var k = c - 'a';
-                if (k >= i.size()) return () -> EMPTY;
+                if (k >= i.size()) return () -> Item.EMPTY;
                 var s = i.get(k);
                 if (s instanceof RecipeInput.Item item) return () -> ItemButton.from(item);
                 else if (s instanceof RecipeInput.Fluid fluid) return () -> new FluidButton(fluid);
@@ -133,7 +132,7 @@ public class Pack implements FileObject<Pack> {
             if ('1' <= c && c <= '9') {
                 var o = r.getResults();
                 var k = c - '1';
-                if (k >= o.size()) return () -> EMPTY;
+                if (k >= o.size()) return () -> Item.EMPTY;
                 var s = o.get(k);
                 if (s instanceof FluidOrItem.Item item) return () -> ItemButton.from(item.item());
                 else if (s instanceof FluidOrItem.Fluid fluid)
@@ -143,7 +142,7 @@ public class Pack implements FileObject<Pack> {
         if (c == 'B') return GuiItems::background;
         if (c == 'I') return GuiItems::input;
         if (c == 'O') return GuiItems::output;
-        return () -> EMPTY;
+        return () -> Item.EMPTY;
     };
     private final File dir;
     private final PackID packID;
@@ -303,7 +302,7 @@ public class Pack implements FileObject<Pack> {
                 } else {
                     locales.add(Locale.ENGLISH);
                 }
-                PylonCustomizer.getInstance().addSupportedLanguages(locales);
+                RebarCustomizer.getInstance().addSupportedLanguages(locales);
                 Material material = Pack.readEnum(config, Material.class, "material", Deserializer.EnumDeserializer::forceUpperCase);
                 PackNamespace namespace = PackNamespace.warp(id, locales, material);
 
@@ -384,7 +383,7 @@ public class Pack implements FileObject<Pack> {
                 StackTrace.destroy();
 
                 Researches researches = null;
-                if (PylonConfig.RESEARCHES_ENABLED) {
+                if (RebarConfig.RESEARCHES_ENABLED) {
                     StackTrace.record("Reading researches");
                     var researchesFolder = findDir(files, "researches");
                     if (researchesFolder != null)
@@ -536,7 +535,7 @@ public class Pack implements FileObject<Pack> {
     }
 
     public File getSettingsFolder() {
-        return new File(new File(PYLON_CORE, "settings"), plugin().namespace());
+        return new File(new File(REBAR, "settings"), plugin().namespace());
     }
 
     private void registerPages() {
@@ -549,10 +548,10 @@ public class Pack implements FileObject<Pack> {
                     CustomGuidePage page = new CustomGuidePage(id.key());
                     CustomPageButton button = new CustomPageButton(id.key(), ItemStack.of(icon), page);
                     if (e.parents() == null) {
-                        PylonGuide.getRootPage().addButton(button);
+                        RebarGuide.getRootPage().addButton(button);
                     } else {
                         for (var parent : e.parents()) {
-                            PylonGuide.getRootPage().addButton(button);
+                            RebarGuide.getRootPage().addButton(button);
                         }
                     }
                     GlobalVars.putCustomPage(page.getKey(), button);
@@ -574,7 +573,7 @@ public class Pack implements FileObject<Pack> {
                     ItemStack icon = entry.icon();
 
                     // suppress pylon core warnings
-                    PylonItem.suppressNameWarnings(id.key());
+                    RebarItem.suppressNameWarnings(id.key());
                     if (blocks != null && blocks.getBlocks().containsKey(id)) {
                         CustomItem.register(CustomItem.class, icon, id.key());
                     } else {
@@ -614,7 +613,7 @@ public class Pack implements FileObject<Pack> {
                         }
 
                         for (var item : choice.getChoices()) {
-                            PylonItem pylon = PylonItem.fromStack(item);
+                            RebarItem pylon = RebarItem.fromStack(item);
                             if (pylon == null) {
                                 StackTrace.handle(new UnknownItemException(item.toString()));
                                 continue;
@@ -623,7 +622,7 @@ public class Pack implements FileObject<Pack> {
                             unlocks.add(pylon.getKey());
                         }
                     }
-                    new Research(id.key(), e.material(), Component.translatable(name), e.cost(), unlocks).register();
+                    new Research(id.key(), e.icon(), Component.translatable(name), e.cost(), unlocks).register();
                     Debug.debug("Registered Research: " + id.key());
                     researches.getLoadedResearches().incrementAndGet();
                 } catch (Exception ex) {
@@ -662,7 +661,7 @@ public class Pack implements FileObject<Pack> {
                 RegisteredObjectID id = e.id();
                 Material material = e.material();
                 FluidTemperature temperature = e.temperature();
-                PylonFluid fluid = new CustomFluid(id.key(), material).addTag(temperature);
+                RebarFluid fluid = new CustomFluid(id.key(), material).addTag(temperature);
                 fluid.register();
                 Debug.debug("Registered Fluid: " + id.key());
                 fluids.getLoadedFluids().incrementAndGet();
@@ -700,11 +699,11 @@ public class Pack implements FileObject<Pack> {
     }
 
     public static File getRecipesFolder() {
-        return new File(PYLON_CORE, "recipes");
+        return new File(REBAR, "recipes");
     }
 
     public File getLangFolder() {
-        return new File(new File(PYLON_CORE, "lang"), plugin().namespace());
+        return new File(new File(REBAR, "lang"), plugin().namespace());
     }
 
     public Pack unregister() {
@@ -713,7 +712,7 @@ public class Pack implements FileObject<Pack> {
     }
 
     public Pack register() {
-        plugin().registerWithPylon();
+        plugin().registerWithRebar();
         StackTrace.run("Loading lang", () -> loadLang(findDir(Arrays.asList(dir.listFiles()), "lang"), getLangFolder()));
         StackTrace.run("Loading settings", this::registerSettings);
         StackTrace.run("Loading pages", this::registerPages);

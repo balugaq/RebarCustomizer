@@ -1,6 +1,6 @@
 package com.balugaq.pc.config;
 
-import io.github.pylonmc.pylon.core.fluid.FluidPointType;
+import io.github.pylonmc.rebar.fluid.FluidPointType;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jspecify.annotations.NullMarked;

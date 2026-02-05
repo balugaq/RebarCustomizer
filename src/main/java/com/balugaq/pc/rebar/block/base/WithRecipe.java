@@ -1,4 +1,4 @@
-package com.balugaq.pc.pylon.block.base;
+package com.balugaq.pc.rebar.block.base;
 
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;

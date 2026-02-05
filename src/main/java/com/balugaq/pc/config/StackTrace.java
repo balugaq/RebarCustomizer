@@ -1,6 +1,6 @@
 package com.balugaq.pc.config;
 
-import com.balugaq.pc.PylonCustomizer;
+import com.balugaq.pc.RebarCustomizer;
 import com.balugaq.pc.util.Debug;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
@@ -34,11 +34,11 @@ public class StackTrace implements AutoCloseable {
         for (int i = 1; i <= backup.size(); i++)
             Debug.warning("  ".repeat(i - 1) + "\u2514When " + backup.get(i));
 
-        if (PylonCustomizer.getConfigManager().isDebug())
+        if (RebarCustomizer.getConfigManager().isDebug())
             e.printStackTrace();
 
         Debug.warning("-".repeat(40));
-        if (PylonCustomizer.getConfigManager().isDebug())
+        if (RebarCustomizer.getConfigManager().isDebug())
             Thread.dumpStack();
     }
 

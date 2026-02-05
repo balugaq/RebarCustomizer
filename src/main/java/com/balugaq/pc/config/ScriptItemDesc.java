@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;
 import xyz.xenondevs.invui.item.Item;
-import xyz.xenondevs.invui.item.impl.SimpleItem;
 
 import java.util.List;
 
@@ -33,8 +32,7 @@ public class ScriptItemDesc implements Examinable<ScriptItemDesc>, Deserializer<
     }
 
     public Item getInvUIItem() {
-        return new SimpleItem(item, c -> {
-
-        });
+        // todo
+        return null;
     }
 }

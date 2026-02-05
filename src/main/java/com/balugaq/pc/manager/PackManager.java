@@ -1,7 +1,7 @@
 package com.balugaq.pc.manager;
 
 import com.balugaq.pc.GlobalVars;
-import com.balugaq.pc.PylonCustomizer;
+import com.balugaq.pc.RebarCustomizer;
 import com.balugaq.pc.config.DependencyType;
 import com.balugaq.pc.config.FileObject;
 import com.balugaq.pc.config.Pack;
@@ -27,14 +27,14 @@ import com.balugaq.pc.util.Debug;
 import com.balugaq.pc.util.GitHubUpdater;
 import com.balugaq.pc.util.MinecraftVersion;
 import com.balugaq.pc.util.ReflectionUtil;
-import io.github.pylonmc.pylon.core.block.BlockStorage;
-import io.github.pylonmc.pylon.core.entity.EntityStorage;
-import io.github.pylonmc.pylon.core.guide.button.FluidButton;
-import io.github.pylonmc.pylon.core.guide.button.ItemButton;
-import io.github.pylonmc.pylon.core.guide.button.PageButton;
-import io.github.pylonmc.pylon.core.guide.button.ResearchButton;
-import io.github.pylonmc.pylon.core.item.PylonItem;
-import io.github.pylonmc.pylon.core.registry.PylonRegistry;
+import io.github.pylonmc.rebar.block.BlockStorage;
+import io.github.pylonmc.rebar.entity.EntityStorage;
+import io.github.pylonmc.rebar.guide.button.FluidButton;
+import io.github.pylonmc.rebar.guide.button.ItemButton;
+import io.github.pylonmc.rebar.guide.button.PageButton;
+import io.github.pylonmc.rebar.guide.button.ResearchButton;
+import io.github.pylonmc.rebar.item.RebarItem;
+import io.github.pylonmc.rebar.registry.RebarRegistry;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.Data;
 import lombok.SneakyThrows;
@@ -110,7 +110,7 @@ import java.util.function.Consumer;
  *                   <li>crafting_shapeless.yml</li>
  *                 </ul>
  *               </li>
- *               <li>pylonbase/
+ *               <li>pylon/
  *                 <ul>
  *                   <li>grindstone.yml</li>
  *                   <li>hammer.yml</li>
@@ -151,10 +151,10 @@ import java.util.function.Consumer;
  * | List<String> | *packDependencies | is the pack dependencies | `^[A-Za-z0-9_+-]$` | [mypack1, mypack2] |
  * | List<String> | *pluginDependencies | is the plugin dependencies | `^[A-Za-z0-9_+-]$` | [plugin1, plugin2] |
  * | String | *author | is the author of a pack | `.*` | balugaq |
- * | List<String> | *authors | is the authors of a pack | `.*` | [balugaq, balugaq2] |https://github.com/balugaq/PylonCustomizer/releases
+ * | List<String> | *authors | is the authors of a pack | `.*` | [balugaq, balugaq2] |https://github.com/balugaq/RebarCustomizer/releases
  * | List<String> | *contributors | is the contributors of a pack | `.*` | [balugaq, balugaq2] |
- * | String | *website | is the website of a pack | `^(https?|ftp)://[^\s/$.?#].[^\s]*$` | `https://github.com/balugaq/PylonCustomizer` |
- * | String | *githubUpdateLink | is the update link of a pack | `^https?://github\.com/[a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+/releases(/.*)?$` | `https://github.com/balugaq/PylonCustomizer/releases` |
+ * | String | *website | is the website of a pack | `^(https?|ftp)://[^\s/$.?#].[^\s]*$` | `https://github.com/balugaq/RebarCustomizer` |
+ * | String | *githubUpdateLink | is the update link of a pack | `^https?://github\.com/[a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+/releases(/.*)?$` | `https://github.com/balugaq/RebarCustomizer/releases` |
  * | List<String> | *languages | defines what languages are supported by this pack | `^[a-z]{2}(-[A-Z]{2})?$` | [en, zh-CN] |
  * | boolean | *suppressLanguageMissingWarning | whether suppress language missing warning or not | `boolean` | false |
  * Properties tagged with * are optional
@@ -164,7 +164,7 @@ import java.util.function.Consumer;
  * | ------- | ------- | ----------- | ------- | -------- |
  * | String | Pack ID | is the identifier of a pack | `A-Za-z0-9_+-` | Abc |
  * | String | Internal object ID | is the identifier of an object in your own pack | `a-z0-9_-./` | abc |
- * | NamespacedKey | Registered object ID | is the identifier of an object that registered in PylonCore | - | mypack:abc |
+ * | NamespacedKey | Registered object ID | is the identifier of an object that registered in RebarCore | - | mypack:abc |
  *
  * @author balugaq
  */
@@ -236,7 +236,7 @@ public @Data class PackManager {
     }
 
     public static List<Pack> getPacks() {
-        return PylonCustomizer.getPackManager().packs;
+        return RebarCustomizer.getPackManager().packs;
     }
 
     public void loadPack(File packFolder) {
@@ -275,8 +275,8 @@ public @Data class PackManager {
     }
 
     public void loadPacks() {
-        if (!PylonCustomizer.getPacksFolder().exists()) PylonCustomizer.getPacksFolder().mkdirs();
-        for (File packFolder : PylonCustomizer.getPacksFolder().listFiles()) {
+        if (!RebarCustomizer.getPacksFolder().exists()) RebarCustomizer.getPacksFolder().mkdirs();
+        for (File packFolder : RebarCustomizer.getPacksFolder().listFiles()) {
             if (!packFolder.isDirectory()) {
                 continue;
             }
@@ -301,7 +301,7 @@ public @Data class PackManager {
 
                 if (pack.getGithubUpdateLink() != null) {
                     Debug.log("Updating pack: " + pack.getPackID().getId());
-                    PylonCustomizer.runTaskAsync(() -> {
+                    RebarCustomizer.runTaskAsync(() -> {
                         try {
                             if (GitHubUpdater.tryUpdate(pack)) {
                                 loadPack(pack.getDir());
@@ -317,7 +317,7 @@ public @Data class PackManager {
             }
         }
 
-        PylonCustomizer.runTaskLater(() -> {
+        RebarCustomizer.runTaskLater(() -> {
             for (var postLoad : postLoads) {
                 postLoad.run();
             }
@@ -360,47 +360,47 @@ public @Data class PackManager {
         } catch (Exception e) {
             StackTrace.handle(e);
         }
-        PylonCustomizer.getPages().values().forEach(page -> {
+        RebarCustomizer.getPages().values().forEach(page -> {
             page.getButtons().removeIf(item -> {
                 return item instanceof PageButton pb && pb.getPage() instanceof CustomGuidePage;
             });
         });
 
-        PylonCustomizer.getPages().values().forEach(page -> {
+        RebarCustomizer.getPages().values().forEach(page -> {
             page.getButtons().removeIf(item -> {
                 if (!(item instanceof ItemButton ib)) {
                     return false;
                 }
 
-                var pylon = PylonItem.fromStack(ib.getCurrentStack());
+                var pylon = RebarItem.fromStack(ib.getCurrentStack());
                 return pylon != null && pylon.getAddon() == plugin;
             });
         });
 
 
-        PylonCustomizer.getPages().values().forEach(page -> {
+        RebarCustomizer.getPages().values().forEach(page -> {
             page.getButtons().removeIf(item -> {
                 return item instanceof FluidButton fb && fb.getCurrentFluid().getKey().getNamespace().equals(plugin.namespace());
             });
         });
 
-        PylonCustomizer.getPages().values().forEach(page -> {
+        RebarCustomizer.getPages().values().forEach(page -> {
             page.getButtons().removeIf(item -> {
                 return item instanceof ResearchButton rb && rb.getResearch().getKey().getNamespace().equals(plugin.namespace());
             });
         });
 
-        PylonRegistry.GAMETESTS.unregisterAllFromAddon(plugin);
-        PylonRegistry.ITEMS.unregisterAllFromAddon(plugin);
-        PylonRegistry.ITEM_TAGS.unregisterAllFromAddon(plugin);
-        PylonRegistry.FLUIDS.unregisterAllFromAddon(plugin);
-        PylonRegistry.BLOCKS.unregisterAllFromAddon(plugin);
-        PylonRegistry.ENTITIES.unregisterAllFromAddon(plugin);
-        PylonRegistry.RECIPE_TYPES.unregisterAllFromAddon(plugin);
-        PylonRegistry.RESEARCHES.unregisterAllFromAddon(plugin);
+        RebarRegistry.GAMETESTS.unregisterAllFromAddon(plugin);
+        RebarRegistry.ITEMS.unregisterAllFromAddon(plugin);
+        RebarRegistry.ITEM_TAGS.unregisterAllFromAddon(plugin);
+        RebarRegistry.FLUIDS.unregisterAllFromAddon(plugin);
+        RebarRegistry.BLOCKS.unregisterAllFromAddon(plugin);
+        RebarRegistry.ENTITIES.unregisterAllFromAddon(plugin);
+        RebarRegistry.RECIPE_TYPES.unregisterAllFromAddon(plugin);
+        RebarRegistry.RESEARCHES.unregisterAllFromAddon(plugin);
 
-        if (PylonRegistry.ADDONS.contains(plugin.getKey())) {
-            PylonRegistry.ADDONS.unregister(plugin);
+        if (RebarRegistry.ADDONS.contains(plugin.getKey())) {
+            RebarRegistry.ADDONS.unregister(plugin);
         }
     }
 }

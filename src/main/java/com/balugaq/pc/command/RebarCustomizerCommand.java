@@ -1,6 +1,6 @@
 package com.balugaq.pc.command;
 
-import com.balugaq.pc.PylonCustomizer;
+import com.balugaq.pc.RebarCustomizer;
 import com.balugaq.pc.config.Language;
 import com.balugaq.pc.config.Pack;
 import com.balugaq.pc.config.PackDesc;
@@ -19,7 +19,7 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.tree.LiteralCommandNode;
-import io.github.pylonmc.pylon.core.util.PylonUtils;
+import io.github.pylonmc.rebar.util.RebarUtils;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.datacomponent.DataComponentTypes;
@@ -49,52 +49,52 @@ import java.util.function.Function;
 @SuppressWarnings({"ConstantValue", "SameReturnValue", "ResultOfMethodCallIgnored", "UnstableApiUsage"})
 @UtilityClass
 @NullMarked
-public class PylonCustomizerCommand {
+public class RebarCustomizerCommand {
     public static final int MAX_SAVEDITEMS = 1 << 14;
     //@formatter:off
     public static final LiteralCommandNode<CommandSourceStack> ROOT = Commands.literal("pc")
         .then(Commands.literal("clearsettings")
-            .requires(source -> source.getSender().hasPermission("pyloncustomizer.command.clearsettings"))
-            .executes(PylonCustomizerCommand::clearSettings)
+            .requires(source -> source.getSender().hasPermission("RebarCustomizer.command.clearsettings"))
+            .executes(RebarCustomizerCommand::clearSettings)
         )
         .then(Commands.literal("clearlang")
-            .requires(source -> source.getSender().hasPermission("pyloncustomizer.command.clearlang"))
-            .executes(PylonCustomizerCommand::clearLang)
+            .requires(source -> source.getSender().hasPermission("RebarCustomizer.command.clearlang"))
+            .executes(RebarCustomizerCommand::clearLang)
         )
         .then(Commands.literal("clearall")
-            .requires(source -> source.getSender().hasPermission("pyloncustomizer.command.clearall"))
-            .executes(PylonCustomizerCommand::clearAll)
+            .requires(source -> source.getSender().hasPermission("RebarCustomizer.command.clearall"))
+            .executes(RebarCustomizerCommand::clearAll)
         )
         .then(Commands.literal("loadpacks")
-            .requires(source -> source.getSender().hasPermission("pyloncustomizer.command.loadpacks"))
-            .executes(PylonCustomizerCommand::loadPacks)
+            .requires(source -> source.getSender().hasPermission("RebarCustomizer.command.loadpacks"))
+            .executes(RebarCustomizerCommand::loadPacks)
         )
         .then(Commands.literal("unloadpacks")
-            .requires(source -> source.getSender().hasPermission("pyloncustomizer.command.unloadpacks"))
-            .executes(PylonCustomizerCommand::unloadPacks)
+            .requires(source -> source.getSender().hasPermission("RebarCustomizer.command.unloadpacks"))
+            .executes(RebarCustomizerCommand::unloadPacks)
         )
         .then(Commands.literal("reloadpacks")
-            .requires(source -> source.getSender().hasPermission("pyloncustomizer.command.reloadpacks"))
-            .executes(PylonCustomizerCommand::reloadPacks)
+            .requires(source -> source.getSender().hasPermission("RebarCustomizer.command.reloadpacks"))
+            .executes(RebarCustomizerCommand::reloadPacks)
         )
         .then(Commands.literal("reloadplugin")
-            .requires(source -> source.getSender().hasPermission("pyloncustomizer.command.reloadplugin"))
-            .executes(PylonCustomizerCommand::reloadPlugin)
+            .requires(source -> source.getSender().hasPermission("RebarCustomizer.command.reloadplugin"))
+            .executes(RebarCustomizerCommand::reloadPlugin)
         )
         .then(Commands.literal("help")
-            .requires(source -> source.getSender().hasPermission("pyloncustomizer.command.help"))
-            .executes(PylonCustomizerCommand::help)
+            .requires(source -> source.getSender().hasPermission("RebarCustomizer.command.help"))
+            .executes(RebarCustomizerCommand::help)
         )
         .then(Commands.literal("saveitem")
-            .requires(source -> source.getSender().hasPermission("pyloncustomizer.command.saveitem"))
-            .executes(PylonCustomizerCommand::saveItem)
+            .requires(source -> source.getSender().hasPermission("RebarCustomizer.command.saveitem"))
+            .executes(RebarCustomizerCommand::saveItem)
         )
         .then(Commands.literal("saveitem")
-            .requires(source -> source.getSender().hasPermission("pyloncustomizer.command.saveitem"))
-            .then(Commands.argument("filename", StringArgumentType.string()).executes(PylonCustomizerCommand::saveItem))
+            .requires(source -> source.getSender().hasPermission("RebarCustomizer.command.saveitem"))
+            .then(Commands.argument("filename", StringArgumentType.string()).executes(RebarCustomizerCommand::saveItem))
         )
         .then(Commands.literal("saveitem")
-            .requires(source -> source.getSender().hasPermission("pyloncustomizer.command.saveitem"))
+            .requires(source -> source.getSender().hasPermission("RebarCustomizer.command.saveitem"))
             .then(Commands.argument("packname", StringArgumentType.string())
                 .suggests((ctx, builder) -> {
                     for (Pack pack : PackManager.getPacks()) {
@@ -103,21 +103,21 @@ public class PylonCustomizerCommand {
                     return builder.buildFuture();
                 })
                 .then(Commands.argument("filename", StringArgumentType.string())
-                    .executes(PylonCustomizerCommand::saveItem)))
+                    .executes(RebarCustomizerCommand::saveItem)))
         )
         .then(Commands.literal("info")
-            .requires(source -> source.getSender().hasPermission("pyloncustomizer.command.info"))
+            .requires(source -> source.getSender().hasPermission("RebarCustomizer.command.info"))
             .then(Commands.argument("packname", StringArgumentType.string())
                 .suggests((ctx, builder) -> {
                     for (Pack pack : PackManager.getPacks()) {
                         builder.suggest(pack.getPackID().getId());
                     }
                     return builder.buildFuture();
-                }).executes(PylonCustomizerCommand::info))
+                }).executes(RebarCustomizerCommand::info))
         )
         .then(Commands.literal("info")
-            .requires(source -> source.getSender().hasPermission("pyloncustomizer.command.info"))
-            .executes(PylonCustomizerCommand::info)
+            .requires(source -> source.getSender().hasPermission("RebarCustomizer.command.info"))
+            .executes(RebarCustomizerCommand::info)
         )
         .build();
     //@formatter:on
@@ -150,7 +150,7 @@ public class PylonCustomizerCommand {
             showList(sender, Component.text("Registered "), registryInfo);
             sendMessage(sender, "=".repeat(20));
         } catch (Exception ignored) {
-            sendMessage(sender, "Version: ", PylonCustomizer.getInstance().getPluginMeta().getVersion());
+            sendMessage(sender, "Version: ", RebarCustomizer.getInstance().getPluginMeta().getVersion());
             showList(sender, Component.text("Packs: "), PackManager.getPacks(), pack -> pack.getPackID().getId(), 5);
         }
         return Command.SINGLE_SUCCESS;
@@ -230,9 +230,9 @@ public class PylonCustomizerCommand {
     }
 
     private int unloadPacks(CommandContext<CommandSourceStack> ctx) {
-        PylonCustomizer.getPackManager().destroy();
+        RebarCustomizer.getPackManager().destroy();
         try {
-            ReflectionUtil.getStaticValue(PylonUtils.class, "globalConfigCache", Map.class).clear();
+            ReflectionUtil.getStaticValue(RebarUtils.class, "globalConfigCache", Map.class).clear();
         } catch (NoSuchFieldException | IllegalAccessException e) {
             Debug.warning(e);
         }
@@ -240,16 +240,16 @@ public class PylonCustomizerCommand {
     }
 
     private int loadPacks(CommandContext<CommandSourceStack> ctx) {
-        PylonCustomizer.getPackManager().loadPacks();
+        RebarCustomizer.getPackManager().loadPacks();
         return Command.SINGLE_SUCCESS;
     }
 
     private int reloadPlugin(CommandContext<CommandSourceStack> ctx) {
         clearAll(ctx);
         unloadPacks(ctx);
-        new PluginDisableEvent(PylonCustomizer.getInstance()).callEvent();
-        PylonCustomizer.getInstance().registerWithPylon();
-        PylonCustomizer.getPackManager().loadPacks();
+        new PluginDisableEvent(RebarCustomizer.getInstance()).callEvent();
+        RebarCustomizer.getInstance().registerWithRebar();
+        RebarCustomizer.getPackManager().loadPacks();
         return Command.SINGLE_SUCCESS;
     }
 

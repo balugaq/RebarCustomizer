@@ -1,1 +1,1 @@
-rootProject.name = "PylonCustomizer"
+rootProject.name = "RebarCustomizer"

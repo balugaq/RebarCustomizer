@@ -1,25 +1,26 @@
 package com.balugaq.pc.gui;
 
-import com.balugaq.pc.PylonCustomizer;
-import com.balugaq.pc.exceptions.IgnorableException;
+import com.balugaq.pc.RebarCustomizer;
+import com.balugaq.pc.exceptions.JumpoutException;
 import com.balugaq.pc.exceptions.WrongStateException;
 import com.balugaq.pc.listener.ChatInputListener;
-import io.github.pylonmc.pylon.core.block.PylonBlock;
-import io.github.pylonmc.pylon.core.block.base.PylonGuiBlock;
+import io.github.pylonmc.rebar.block.RebarBlock;
+import io.github.pylonmc.rebar.block.base.RebarGuiBlock;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
 import org.slf4j.helpers.MessageFormatter;
+import xyz.xenondevs.invui.Click;
+import xyz.xenondevs.invui.item.AbstractItem;
 import xyz.xenondevs.invui.item.ItemProvider;
-import xyz.xenondevs.invui.item.impl.AbstractItem;
 
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -30,23 +31,23 @@ import static com.balugaq.pc.util.Lang.gui_err_1;
  */
 @Getter
 @NullMarked
-public class GuiItem<T extends PylonBlock & PylonGuiBlock> extends AbstractItem {
+public class GuiItem<T extends RebarBlock & RebarGuiBlock> extends AbstractItem {
     private final T data;
-    private Function<T, @Nullable ItemProvider> itemProvider;
+    private BiFunction<T, Player, @Nullable ItemProvider> itemProvider;
     private ClickHandler<T> clickHandler;
 
     public GuiItem(T data) {
         this.data = data;
-        this.itemProvider = block -> null;
+        this.itemProvider = (block, p) -> null;
         this.clickHandler = ButtonSet.deny();
     }
 
-    public static <T extends PylonBlock & PylonGuiBlock> GuiItem<T> create(@NotNull T data) {
+    public static <T extends RebarBlock & RebarGuiBlock> GuiItem<T> create(@NotNull T data) {
         return new GuiItem<>(data);
     }
 
     public static <T> T assertNotNull(@Nullable T o) {
-        if (o == null) throw new IgnorableException();
+        if (o == null) throw new JumpoutException();
         return o;
     }
 
@@ -71,7 +72,7 @@ public class GuiItem<T extends PylonBlock & PylonGuiBlock> extends AbstractItem 
         player.sendMessage(component.asComponent());
     }
 
-    public static <T extends PylonBlock & PylonGuiBlock, K> K assertBlock(T block, Class<K> expected) {
+    public static <T extends RebarBlock & RebarGuiBlock, K> K assertBlock(T block, Class<K> expected) {
         if (expected.isInstance(block)) {
             return expected.cast(block);
         } else {
@@ -81,7 +82,7 @@ public class GuiItem<T extends PylonBlock & PylonGuiBlock> extends AbstractItem 
 
     @Nullable
     public static NamespacedKey toNamespacedKey(String string) {
-        return NamespacedKey.fromString(string, PylonCustomizer.getInstance());
+        return NamespacedKey.fromString(string, RebarCustomizer.getInstance());
     }
 
     public static void waitInput(Player player, String literal, Consumer<String> callback) {
@@ -95,6 +96,11 @@ public class GuiItem<T extends PylonBlock & PylonGuiBlock> extends AbstractItem 
     }
 
     public GuiItem<T> item(Function<T, ItemProvider> itemProvider) {
+        this.itemProvider = (b, p) -> itemProvider.apply(b);
+        return this;
+    }
+
+    public GuiItem<T> item(BiFunction<T, Player, ItemProvider> itemProvider) {
         this.itemProvider = itemProvider;
         return this;
     }
@@ -105,17 +111,17 @@ public class GuiItem<T extends PylonBlock & PylonGuiBlock> extends AbstractItem 
     }
 
     @Override
-    public @Nullable ItemProvider getItemProvider() {
-        return itemProvider.apply(data);
+    public @Nullable ItemProvider getItemProvider(Player player) {
+        return itemProvider.apply(data, player);
     }
 
     @Override
-    public void handleClick(ClickType clickType, Player player, InventoryClickEvent event) {
+    public void handleClick(ClickType clickType, Player player, Click click) {
         try {
-            boolean updateWindow = clickHandler.handleClick(data, clickType, player, event);
+            boolean updateWindow = clickHandler.handleClick(data, clickType, player, click);
             if (updateWindow) notifyWindows();
         } catch (Exception e) {
-            if (e instanceof IgnorableException) {
+            if (e instanceof JumpoutException) {
                 return;
             }
             if (e instanceof WrongStateException) {

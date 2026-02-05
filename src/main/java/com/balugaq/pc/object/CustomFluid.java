@@ -1,7 +1,7 @@
 package com.balugaq.pc.object;
 
-import io.github.pylonmc.pylon.core.fluid.PylonFluid;
-import io.github.pylonmc.pylon.core.fluid.PylonFluidTag;
+import io.github.pylonmc.rebar.fluid.RebarFluid;
+import io.github.pylonmc.rebar.fluid.RebarFluidTag;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -13,12 +13,12 @@ import java.util.List;
  * @author balugaq
  */
 @NullMarked
-public class CustomFluid extends PylonFluid {
-    public CustomFluid(final NamespacedKey key, final Component name, final Material material, final List<PylonFluidTag> tags) {
+public class CustomFluid extends RebarFluid {
+    public CustomFluid(final NamespacedKey key, final Component name, final Material material, final List<RebarFluidTag> tags) {
         super(key, name, material, tags);
     }
 
-    public CustomFluid(final NamespacedKey key, final Material material, final PylonFluidTag... tags) {
+    public CustomFluid(final NamespacedKey key, final Material material, final RebarFluidTag... tags) {
         super(key, material, tags);
     }
 }

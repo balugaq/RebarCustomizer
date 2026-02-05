@@ -1,9 +1,9 @@
 package com.balugaq.pc.manager;
 
-import com.balugaq.pc.PylonCustomizer;
+import com.balugaq.pc.RebarCustomizer;
 import com.balugaq.pc.config.StackTrace;
 import com.balugaq.pc.integration.Integration;
-import com.balugaq.pc.integration.PylonBaseIntegration;
+import com.balugaq.pc.integration.PylonIntegration;
 import com.balugaq.pc.util.Debug;
 import com.balugaq.pc.util.ReflectionUtil;
 import lombok.Getter;
@@ -25,16 +25,16 @@ public class IntegrationManager {
     public IntegrationManager() {
         this.isEnabled = new IsEnabled();
         onServerDone(() -> {
-            ifEnabled("PylonBase", PylonBaseIntegration::new);
+            ifEnabled("Pylon", PylonIntegration::new);
         });
     }
 
     public void onServerDone(Runnable runnable) {
-        PylonCustomizer.runTaskLater(runnable, 1);
+        RebarCustomizer.runTaskLater(runnable, 1);
     }
 
     public static IntegrationManager instance() {
-        return PylonCustomizer.getIntegrationManager();
+        return RebarCustomizer.getIntegrationManager();
     }
 
     public void ifEnabled(String name, Supplier<Integration> supplier) {
@@ -60,6 +60,6 @@ public class IntegrationManager {
      */
     @NullMarked
     public static class IsEnabled {
-        public boolean PylonBase;
+        public boolean Pylon;
     }
 }

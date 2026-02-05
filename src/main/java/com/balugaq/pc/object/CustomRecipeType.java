@@ -13,15 +13,15 @@ import com.balugaq.pc.exceptions.InvalidEnumClassException;
 import com.balugaq.pc.exceptions.UnknownDeserializerException;
 import com.balugaq.pc.exceptions.WrongEnumDeserializerException;
 import com.balugaq.pc.util.ReflectionUtil;
-import io.github.pylonmc.pylon.core.config.ConfigSection;
-import io.github.pylonmc.pylon.core.config.adapter.ConfigAdapter;
-import io.github.pylonmc.pylon.core.fluid.PylonFluid;
-import io.github.pylonmc.pylon.core.item.ItemTypeWrapper;
-import io.github.pylonmc.pylon.core.recipe.ConfigurableRecipeType;
-import io.github.pylonmc.pylon.core.recipe.FluidOrItem;
-import io.github.pylonmc.pylon.core.recipe.PylonRecipe;
-import io.github.pylonmc.pylon.core.recipe.RecipeInput;
-import io.github.pylonmc.pylon.core.util.gui.ProgressItem;
+import io.github.pylonmc.rebar.config.ConfigSection;
+import io.github.pylonmc.rebar.config.adapter.ConfigAdapter;
+import io.github.pylonmc.rebar.fluid.RebarFluid;
+import io.github.pylonmc.rebar.item.ItemTypeWrapper;
+import io.github.pylonmc.rebar.recipe.ConfigurableRecipeType;
+import io.github.pylonmc.rebar.recipe.FluidOrItem;
+import io.github.pylonmc.rebar.recipe.RebarRecipe;
+import io.github.pylonmc.rebar.recipe.RecipeInput;
+import io.github.pylonmc.rebar.util.gui.ProgressItem;
 import it.unimi.dsi.fastutil.chars.CharOpenHashSet;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -42,7 +42,7 @@ import java.util.Set;
  * @author balugaq
  */
 @NullMarked
-public class CustomRecipeType extends ConfigurableRecipeType<PylonRecipe> {
+public class CustomRecipeType extends ConfigurableRecipeType<RebarRecipe> {
 
     public static final Map<String, Handler> DEFAULT_CONFIG_READER = Map.of(
             "inputs", new Handler(GenericDeserializer.newDeserializer(MyArrayList.class).setDeserializer(Deserializer.RECIPE_INPUT), new ArrayList<>()),
@@ -60,7 +60,7 @@ public class CustomRecipeType extends ConfigurableRecipeType<PylonRecipe> {
         this.configReader = configReader == null ? DEFAULT_CONFIG_READER : configReader;
     }
 
-    public Gui makeGui(Gui.Builder.Normal gui, @Nullable CustomRecipe recipe) {
+    public Gui makeGui(Gui.Builder<?, ?> gui, @Nullable CustomRecipe recipe) {
         return makeGui(structure, provider, gui, recipe);
     }
 
@@ -68,7 +68,7 @@ public class CustomRecipeType extends ConfigurableRecipeType<PylonRecipe> {
     @Contract("null, _, _ -> null; !null, _, _ -> !null")
     public static Gui makeGui(@Nullable GuiData data, @Nullable Map<Character, VirtualInventory> vs, @Nullable ProgressItem progressItem) {
         if (data == null) return null;
-        return makeGui(data.structure(), data.provider(), Gui.normal(), data.recipe(), vs, progressItem);
+        return makeGui(data.structure(), data.provider(), Gui.builder(), data.recipe(), vs, progressItem);
     }
 
     @Nullable
@@ -77,11 +77,11 @@ public class CustomRecipeType extends ConfigurableRecipeType<PylonRecipe> {
         return makeGui(data, null, null);
     }
 
-    public static Gui makeGui(List<String> structure, @Nullable ItemStackProvider provider, Gui.Builder.Normal gui, @Nullable CustomRecipe recipe) {
+    public static Gui makeGui(List<String> structure, @Nullable ItemStackProvider provider, Gui.Builder<?, ?> gui, @Nullable CustomRecipe recipe) {
         return makeGui(structure, provider, gui, recipe, null, null);
     }
 
-    public static Gui makeGui(List<String> structure, @Nullable ItemStackProvider provider, Gui.Builder.Normal gui, @Nullable CustomRecipe recipe, @Nullable Map<Character, VirtualInventory> vs, @Nullable ProgressItem progressItem) {
+    public static Gui makeGui(List<String> structure, @Nullable ItemStackProvider provider, Gui.Builder<?, ?> gui, @Nullable CustomRecipe recipe, @Nullable Map<Character, VirtualInventory> vs, @Nullable ProgressItem progressItem) {
         var s = structure.toArray(new String[0]);
         gui.setStructure(s);
         CharOpenHashSet set = new CharOpenHashSet();
@@ -132,7 +132,7 @@ public class CustomRecipeType extends ConfigurableRecipeType<PylonRecipe> {
                     s.add(FluidOrItem.of(wrapper.createItemStack()));
                 }
             } else if (r instanceof RecipeInput.Fluid fluid) {
-                for (PylonFluid f : fluid.fluids()) {
+                for (RebarFluid f : fluid.fluids()) {
                     s.add(FluidOrItem.of(f, fluid.amountMillibuckets()));
                 }
             }
@@ -147,7 +147,7 @@ public class CustomRecipeType extends ConfigurableRecipeType<PylonRecipe> {
             case ItemStack stack -> {
                 return List.of(RecipeInput.of(stack));
             }
-            case PylonFluid fluid -> {
+            case RebarFluid fluid -> {
                 return List.of(RecipeInput.of(fluid, 1));
             }
             case RecipeInput.Item item -> {

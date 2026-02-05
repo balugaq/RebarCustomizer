@@ -6,23 +6,23 @@ import com.balugaq.pc.config.pack.Recipes;
 import com.balugaq.pc.data.MyArrayList;
 import com.balugaq.pc.data.WeightedElement;
 import com.balugaq.pc.exceptions.MissingArgumentException;
-import io.github.pylonmc.pylon.base.recipes.BloomeryDisplayRecipe;
-import io.github.pylonmc.pylon.base.recipes.DrillingDisplayRecipe;
-import io.github.pylonmc.pylon.base.recipes.ForgingDisplayRecipe;
-import io.github.pylonmc.pylon.base.recipes.GrindstoneRecipe;
-import io.github.pylonmc.pylon.base.recipes.HammerRecipe;
-import io.github.pylonmc.pylon.base.recipes.MagicAltarRecipe;
-import io.github.pylonmc.pylon.base.recipes.MeltingRecipe;
-import io.github.pylonmc.pylon.base.recipes.MixingPotRecipe;
-import io.github.pylonmc.pylon.base.recipes.MoldingRecipe;
-import io.github.pylonmc.pylon.base.recipes.PipeBendingRecipe;
-import io.github.pylonmc.pylon.base.recipes.PitKilnRecipe;
-import io.github.pylonmc.pylon.base.recipes.PressRecipe;
-import io.github.pylonmc.pylon.base.recipes.SmelteryRecipe;
-import io.github.pylonmc.pylon.base.recipes.TableSawRecipe;
-import io.github.pylonmc.pylon.core.recipe.RecipeInput;
-import io.github.pylonmc.pylon.core.util.MiningLevel;
-import io.github.pylonmc.pylon.core.util.WeightedSet;
+import io.github.pylonmc.pylon.recipes.BloomeryDisplayRecipe;
+import io.github.pylonmc.pylon.recipes.DrillingDisplayRecipe;
+import io.github.pylonmc.pylon.recipes.ForgingDisplayRecipe;
+import io.github.pylonmc.pylon.recipes.GrindstoneRecipe;
+import io.github.pylonmc.pylon.recipes.HammerRecipe;
+import io.github.pylonmc.pylon.recipes.MeltingRecipe;
+import io.github.pylonmc.pylon.recipes.MixingPotRecipe;
+import io.github.pylonmc.pylon.recipes.MoldingRecipe;
+import io.github.pylonmc.pylon.recipes.PipeBendingRecipe;
+import io.github.pylonmc.pylon.recipes.PitKilnRecipe;
+import io.github.pylonmc.pylon.recipes.PressRecipe;
+import io.github.pylonmc.pylon.recipes.ShimmerAltarRecipe;
+import io.github.pylonmc.pylon.recipes.SmelteryRecipe;
+import io.github.pylonmc.pylon.recipes.TableSawRecipe;
+import io.github.pylonmc.rebar.recipe.RecipeInput;
+import io.github.pylonmc.rebar.util.MiningLevel;
+import io.github.pylonmc.rebar.util.WeightedSet;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
@@ -41,11 +41,11 @@ import java.util.Objects;
  * @author balugaq
  */
 @NullMarked
-public class PylonBaseIntegration implements Integration {
+public class PylonIntegration implements Integration {
     public static final Deserializer<MiningLevel> MINING_LEVEL = Deserializer.enumDeserializer(MiningLevel.class).forceUpperCase();
     private final Plugin plugin;
-    public PylonBaseIntegration() {
-        this.plugin = Objects.requireNonNull(Bukkit.getPluginManager().getPlugin("PylonBase"));
+    public PylonIntegration() {
+        this.plugin = Objects.requireNonNull(Bukkit.getPluginManager().getPlugin("Pylon"));
     }
 
     @Override
@@ -105,7 +105,7 @@ public class PylonBaseIntegration implements Integration {
         );
     }
 
-    public static MagicAltarRecipe advancedMagicAltar(NamespacedKey key, ConfigurationSection section) {
+    public static ShimmerAltarRecipe advancedShimmerAltar(NamespacedKey key, ConfigurationSection section) {
         var se = section.getConfigurationSection("key");
         if (se == null) throw new MissingArgumentException("key");
         Map<Character, RecipeInput.Item> itemMap = new HashMap<>();
@@ -134,7 +134,7 @@ public class PylonBaseIntegration implements Integration {
             throw new IllegalArgumentException("Catalyst (center item) cannot be empty");
         }
 
-        return new MagicAltarRecipe(
+        return new ShimmerAltarRecipe(
                 key,
                 inputs,
                 catalyst,
@@ -219,19 +219,19 @@ public class PylonBaseIntegration implements Integration {
 
     @Override
     public void apply() {
-        Recipes.loadAdvance(BloomeryDisplayRecipe.RECIPE_TYPE, PylonBaseIntegration::advancedBloomeryDisplay);
-        Recipes.loadAdvance(DrillingDisplayRecipe.RECIPE_TYPE, PylonBaseIntegration::advancedDrillingDisplay);
-        Recipes.loadAdvance(ForgingDisplayRecipe.RECIPE_TYPE, PylonBaseIntegration::advancedForgingDisplay);
-        Recipes.loadAdvance(GrindstoneRecipe.RECIPE_TYPE, PylonBaseIntegration::advancedGrindstone);
-        Recipes.loadAdvance(HammerRecipe.RECIPE_TYPE, PylonBaseIntegration::advancedHammer);
-        Recipes.loadAdvance(MagicAltarRecipe.RECIPE_TYPE, PylonBaseIntegration::advancedMagicAltar);
-        Recipes.loadAdvance(MeltingRecipe.RECIPE_TYPE, PylonBaseIntegration::advancedMelting);
-        Recipes.loadAdvance(MixingPotRecipe.RECIPE_TYPE, PylonBaseIntegration::advancedMixingPot);
-        Recipes.loadAdvance(MoldingRecipe.RECIPE_TYPE, PylonBaseIntegration::advancedMolding);
-        Recipes.loadAdvance(PipeBendingRecipe.RECIPE_TYPE, PylonBaseIntegration::advancedPipeBending);
-        Recipes.loadAdvance(PitKilnRecipe.RECIPE_TYPE, PylonBaseIntegration::advancedPitKiln);
-        Recipes.loadAdvance(PressRecipe.RECIPE_TYPE, PylonBaseIntegration::advancedPress);
-        Recipes.loadAdvance(SmelteryRecipe.RECIPE_TYPE, PylonBaseIntegration::advancedSmeltery);
-        Recipes.loadAdvance(TableSawRecipe.RECIPE_TYPE, PylonBaseIntegration::advancedTableSaw);
+        Recipes.loadAdvance(BloomeryDisplayRecipe.RECIPE_TYPE, PylonIntegration::advancedBloomeryDisplay);
+        Recipes.loadAdvance(DrillingDisplayRecipe.RECIPE_TYPE, PylonIntegration::advancedDrillingDisplay);
+        Recipes.loadAdvance(ForgingDisplayRecipe.RECIPE_TYPE, PylonIntegration::advancedForgingDisplay);
+        Recipes.loadAdvance(GrindstoneRecipe.RECIPE_TYPE, PylonIntegration::advancedGrindstone);
+        Recipes.loadAdvance(HammerRecipe.RECIPE_TYPE, PylonIntegration::advancedHammer);
+        Recipes.loadAdvance(ShimmerAltarRecipe.RECIPE_TYPE, PylonIntegration::advancedShimmerAltar);
+        Recipes.loadAdvance(MeltingRecipe.RECIPE_TYPE, PylonIntegration::advancedMelting);
+        Recipes.loadAdvance(MixingPotRecipe.RECIPE_TYPE, PylonIntegration::advancedMixingPot);
+        Recipes.loadAdvance(MoldingRecipe.RECIPE_TYPE, PylonIntegration::advancedMolding);
+        Recipes.loadAdvance(PipeBendingRecipe.RECIPE_TYPE, PylonIntegration::advancedPipeBending);
+        Recipes.loadAdvance(PitKilnRecipe.RECIPE_TYPE, PylonIntegration::advancedPitKiln);
+        Recipes.loadAdvance(PressRecipe.RECIPE_TYPE, PylonIntegration::advancedPress);
+        Recipes.loadAdvance(SmelteryRecipe.RECIPE_TYPE, PylonIntegration::advancedSmeltery);
+        Recipes.loadAdvance(TableSawRecipe.RECIPE_TYPE, PylonIntegration::advancedTableSaw);
     }
 }

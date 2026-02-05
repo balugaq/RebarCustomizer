@@ -1,9 +1,9 @@
 package com.balugaq.pc.object;
 
 import com.balugaq.pc.util.Debug;
-import io.github.pylonmc.pylon.core.guide.button.PageButton;
-import io.github.pylonmc.pylon.core.guide.pages.base.GuidePage;
-import io.github.pylonmc.pylon.core.guide.pages.base.SimpleStaticGuidePage;
+import io.github.pylonmc.rebar.guide.button.PageButton;
+import io.github.pylonmc.rebar.guide.pages.base.GuidePage;
+import io.github.pylonmc.rebar.guide.pages.base.SimpleStaticGuidePage;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;

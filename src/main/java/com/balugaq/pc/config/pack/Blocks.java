@@ -29,8 +29,8 @@ import com.balugaq.pc.exceptions.UnknownSymbolException;
 import com.balugaq.pc.object.CustomRecipeType;
 import com.balugaq.pc.util.MaterialUtil;
 import com.balugaq.pc.util.StringUtil;
-import io.github.pylonmc.pylon.core.block.base.PylonSimpleMultiblock;
-import io.github.pylonmc.pylon.core.config.ConfigSection;
+import io.github.pylonmc.rebar.block.base.RebarSimpleMultiblock;
+import io.github.pylonmc.rebar.config.ConfigSection;
 import it.unimi.dsi.fastutil.chars.CharArrayList;
 import lombok.Data;
 import org.bukkit.Material;
@@ -97,7 +97,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  *   *allow-vertical-faces: boolean # (true by default)
  * <p>
  * [SingletonFluidBufferBlockData]:
- *   fluid: [PylonFluid]
+ *   fluid: [RebarFluid]
  *   capacity: double
  *   input: boolean # (false by default)
  *   output: boolean # (false by default)
@@ -106,7 +106,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * [Cartesian BlockFace]: up | down | north | south | east | west
  * <p>
  * [Multiblock Component Desc]:
- * pylonbase:tin_block
+ * pylon:tin_block
  * minecraft:iron_block
  * minecraft:fire[lit=true] | minecraft:soul_fire[lit=true]
  * <p>
@@ -201,8 +201,8 @@ public class Blocks implements FileObject<Blocks> {
                     if (multiblock != null) {
                         try (var ignored2 = StackTrace.record("Reading multiblock section: " + key)) {
 
-                        Map<Vector3i, PylonSimpleMultiblock.MultiblockComponent> components = new HashMap<>();
-                        Map<String, PylonSimpleMultiblock.MultiblockComponent> symbols = new HashMap<>();
+                        Map<Vector3i, RebarSimpleMultiblock.MultiblockComponent> components = new HashMap<>();
+                        Map<String, RebarSimpleMultiblock.MultiblockComponent> symbols = new HashMap<>();
                         var blocks = multiblock.getConfigurationSection("blocks");
                         if (blocks != null) {
                             for (String k : blocks.getKeys(false)) {
@@ -255,7 +255,7 @@ public class Blocks implements FileObject<Blocks> {
                     // gui
                     var gui = GuiReader.read(section, namespace, scriptdesc);
                     if (gui != GuiReader.Result.EMPTY)
-                        GlobalVars.putGuiData(id.key(), new GuiData(id.key(), gui.structure(), gui.provider(), Gui.normal(), null, invSlotChars));
+                        GlobalVars.putGuiData(id.key(), new GuiData(id.key(), gui.structure(), gui.provider(), Gui.builder(), null, invSlotChars));
 
                     var recipes = section.getConfigurationSection("recipes");
                     if (recipes != null) {

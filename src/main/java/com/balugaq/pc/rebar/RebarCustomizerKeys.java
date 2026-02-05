@@ -1,4 +1,4 @@
-package com.balugaq.pc.pylon;
+package com.balugaq.pc.rebar;
 
 import org.bukkit.NamespacedKey;
 import org.jspecify.annotations.NullMarked;
@@ -9,7 +9,7 @@ import static com.balugaq.pc.util.Keys.create;
  * @author balugaq
  */
 @NullMarked
-public class PylonCustomizerKeys {
+public class RebarCustomizerKeys {
     // @formatter:off
     public static final NamespacedKey
 

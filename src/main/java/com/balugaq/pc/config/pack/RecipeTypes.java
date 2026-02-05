@@ -17,8 +17,8 @@ import com.balugaq.pc.exceptions.MissingArgumentException;
 import com.balugaq.pc.exceptions.UnknownRecipeTypeException;
 import com.balugaq.pc.object.CustomRecipeType;
 import com.balugaq.pc.util.StringUtil;
-import io.github.pylonmc.pylon.core.recipe.PylonRecipe;
-import io.github.pylonmc.pylon.core.recipe.RecipeType;
+import io.github.pylonmc.rebar.recipe.RebarRecipe;
+import io.github.pylonmc.rebar.recipe.RecipeType;
 import lombok.Data;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -110,7 +110,7 @@ public class RecipeTypes implements FileObject<RecipeTypes> {
 
                             // clone
                             RecipeTypeDesc desc = Pack.readOrNull(section, RecipeTypeDesc.class, "clone", t -> t.setPackNamespace(namespace));
-                            RecipeType<? extends PylonRecipe> cloneType = null;
+                            RecipeType<? extends RebarRecipe> cloneType = null;
                             if (desc != null) {
                                 cloneType = desc.findRecipeType();
                                 if (cloneType == null) throw new UnknownRecipeTypeException(desc.getKey().toString());

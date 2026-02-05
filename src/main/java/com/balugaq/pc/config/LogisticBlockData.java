@@ -1,6 +1,6 @@
 package com.balugaq.pc.config;
 
-import io.github.pylonmc.pylon.core.logistics.LogisticGroupType;
+import io.github.pylonmc.rebar.logistics.LogisticGroupType;
 import org.bukkit.NamespacedKey;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.NullMarked;

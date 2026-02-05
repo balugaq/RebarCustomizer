@@ -1,8 +1,8 @@
 package com.balugaq.pc.config;
 
 import com.balugaq.pc.config.pack.PackNamespace;
-import io.github.pylonmc.pylon.core.recipe.RecipeType;
-import io.github.pylonmc.pylon.core.registry.PylonRegistry;
+import io.github.pylonmc.rebar.recipe.RecipeType;
+import io.github.pylonmc.rebar.registry.RebarRegistry;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +39,7 @@ public class RecipeTypeDesc implements Deserializer<RecipeTypeDesc> {
                     String k;
                     if (s.contains(":")) {
                         NamespacedKey key = NamespacedKey.fromString(s);
-                        if (key != null && PylonRegistry.RECIPE_TYPES.get(key) != null) {
+                        if (key != null && RebarRegistry.RECIPE_TYPES.get(key) != null) {
                             return new RecipeTypeDesc(key);
                         }
                         namespace = Deserializer.PACK_DESC.deserialize(s.substring(0, s.indexOf(":"))).findPack().getPackNamespace();
@@ -57,6 +57,6 @@ public class RecipeTypeDesc implements Deserializer<RecipeTypeDesc> {
 
     @Nullable
     public RecipeType<?> findRecipeType() {
-        return PylonRegistry.RECIPE_TYPES.get(key);
+        return RebarRegistry.RECIPE_TYPES.get(key);
     }
 }

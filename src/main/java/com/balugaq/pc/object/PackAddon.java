@@ -1,7 +1,7 @@
 package com.balugaq.pc.object;
 
-import com.balugaq.pc.PylonCustomizer;
-import io.github.pylonmc.pylon.core.addon.PylonAddon;
+import com.balugaq.pc.RebarCustomizer;
+import io.github.pylonmc.rebar.addon.RebarAddon;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -14,14 +14,14 @@ import java.util.Set;
  * @author balugaq
  */
 @NullMarked
-public record PackAddon(String namespace, Set<Locale> languages, Material material) implements PylonAddon {
+public record PackAddon(String namespace, Set<Locale> languages, Material material) implements RebarAddon {
     public static PackAddon generate(String id, Set<Locale> languages, Material material) {
         return new PackAddon(id, languages, material);
     }
 
     @Override
     public JavaPlugin getJavaPlugin() {
-        return PylonCustomizer.getInstance();
+        return RebarCustomizer.getInstance();
     }
 
     @Override

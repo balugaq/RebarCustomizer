@@ -15,7 +15,7 @@ import com.balugaq.pc.exceptions.IncompatibleMaterialException;
 import com.balugaq.pc.exceptions.MissingArgumentException;
 import com.balugaq.pc.util.MaterialUtil;
 import com.balugaq.pc.util.StringUtil;
-import io.github.pylonmc.pylon.core.fluid.tags.FluidTemperature;
+import io.github.pylonmc.rebar.fluid.tags.FluidTemperature;
 import lombok.Data;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;

@@ -1,9 +1,9 @@
 package com.balugaq.pc.object;
 
-import io.github.pylonmc.pylon.core.fluid.PylonFluid;
-import io.github.pylonmc.pylon.core.recipe.FluidOrItem;
-import io.github.pylonmc.pylon.core.recipe.PylonRecipe;
-import io.github.pylonmc.pylon.core.recipe.RecipeInput;
+import io.github.pylonmc.rebar.fluid.RebarFluid;
+import io.github.pylonmc.rebar.recipe.FluidOrItem;
+import io.github.pylonmc.rebar.recipe.RebarRecipe;
+import io.github.pylonmc.rebar.recipe.RecipeInput;
 import it.unimi.dsi.fastutil.objects.Object2DoubleOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
 import lombok.Data;
@@ -25,7 +25,7 @@ import java.util.Map;
 @Data
 @RequiredArgsConstructor
 @NullMarked
-public class CustomRecipe implements PylonRecipe {
+public class CustomRecipe implements RebarRecipe {
     private final CustomRecipeType recipeType;
     private final NamespacedKey key;
     private final List<RecipeInput> inputs;
@@ -45,7 +45,7 @@ public class CustomRecipe implements PylonRecipe {
 
     @Override
     public Gui display() {
-        return recipeType.makeGui(Gui.normal(), this);
+        return recipeType.makeGui(Gui.builder(), this);
     }
 
     /**
@@ -66,5 +66,5 @@ public class CustomRecipe implements PylonRecipe {
     @Getter
     @Setter
     @Nullable
-    private Object2DoubleOpenHashMap<PylonFluid> countOutputFluids;
+    private Object2DoubleOpenHashMap<RebarFluid> countOutputFluids;
 }

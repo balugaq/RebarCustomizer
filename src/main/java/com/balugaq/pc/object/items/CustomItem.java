@@ -4,29 +4,29 @@ import com.balugaq.pc.GlobalVars;
 import com.balugaq.pc.object.RuntimeObject;
 import com.balugaq.pc.object.Scriptable;
 import com.destroystokyo.paper.event.player.PlayerReadyArrowEvent;
-import io.github.pylonmc.pylon.core.config.PylonConfig;
-import io.github.pylonmc.pylon.core.config.adapter.ConfigAdapter;
-import io.github.pylonmc.pylon.core.i18n.PylonArgument;
-import io.github.pylonmc.pylon.core.item.PylonItem;
-import io.github.pylonmc.pylon.core.item.base.PylonArmor;
-import io.github.pylonmc.pylon.core.item.base.PylonArrow;
-import io.github.pylonmc.pylon.core.item.base.PylonBlockInteractor;
-import io.github.pylonmc.pylon.core.item.base.PylonBow;
-import io.github.pylonmc.pylon.core.item.base.PylonBrewingStandFuel;
-import io.github.pylonmc.pylon.core.item.base.PylonBucket;
-import io.github.pylonmc.pylon.core.item.base.PylonConsumable;
-import io.github.pylonmc.pylon.core.item.base.PylonDispensable;
-import io.github.pylonmc.pylon.core.item.base.PylonInteractor;
-import io.github.pylonmc.pylon.core.item.base.PylonInventoryEffectItem;
-import io.github.pylonmc.pylon.core.item.base.PylonInventoryTicker;
-import io.github.pylonmc.pylon.core.item.base.PylonItemDamageable;
-import io.github.pylonmc.pylon.core.item.base.PylonItemEntityInteractor;
-import io.github.pylonmc.pylon.core.item.base.PylonLingeringPotion;
-import io.github.pylonmc.pylon.core.item.base.PylonSplashPotion;
-import io.github.pylonmc.pylon.core.item.base.PylonTool;
-import io.github.pylonmc.pylon.core.item.base.PylonUnmergeable;
-import io.github.pylonmc.pylon.core.item.base.PylonWeapon;
-import io.github.pylonmc.pylon.core.item.base.VanillaCookingFuel;
+import io.github.pylonmc.rebar.config.RebarConfig;
+import io.github.pylonmc.rebar.config.adapter.ConfigAdapter;
+import io.github.pylonmc.rebar.i18n.RebarArgument;
+import io.github.pylonmc.rebar.item.RebarItem;
+import io.github.pylonmc.rebar.item.base.RebarArmor;
+import io.github.pylonmc.rebar.item.base.RebarArrow;
+import io.github.pylonmc.rebar.item.base.RebarBlockInteractor;
+import io.github.pylonmc.rebar.item.base.RebarBow;
+import io.github.pylonmc.rebar.item.base.RebarBrewingStandFuel;
+import io.github.pylonmc.rebar.item.base.RebarBucket;
+import io.github.pylonmc.rebar.item.base.RebarConsumable;
+import io.github.pylonmc.rebar.item.base.RebarDispensable;
+import io.github.pylonmc.rebar.item.base.RebarInteractor;
+import io.github.pylonmc.rebar.item.base.RebarInventoryEffectItem;
+import io.github.pylonmc.rebar.item.base.RebarInventoryTicker;
+import io.github.pylonmc.rebar.item.base.RebarItemDamageable;
+import io.github.pylonmc.rebar.item.base.RebarItemEntityInteractor;
+import io.github.pylonmc.rebar.item.base.RebarLingeringPotion;
+import io.github.pylonmc.rebar.item.base.RebarSplashPotion;
+import io.github.pylonmc.rebar.item.base.RebarTool;
+import io.github.pylonmc.rebar.item.base.RebarUnmergeable;
+import io.github.pylonmc.rebar.item.base.RebarWeapon;
+import io.github.pylonmc.rebar.item.base.VanillaCookingFuel;
 import net.kyori.adventure.key.Key;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -87,10 +87,10 @@ import java.util.List;
  * @author balugaq
  */
 @NullMarked
-public class CustomItem extends PylonItem implements PylonArmor, PylonArrow, PylonBlockInteractor, PylonBow, PylonBrewingStandFuel,
-                                                     PylonBucket, PylonConsumable, PylonDispensable, PylonInteractor, PylonInventoryEffectItem,
-                                                     PylonInventoryTicker, PylonItemDamageable, PylonItemEntityInteractor, PylonLingeringPotion,
-                                                     PylonSplashPotion, PylonTool, PylonUnmergeable, PylonWeapon, VanillaCookingFuel, RuntimeObject {
+public class CustomItem extends RebarItem implements RebarArmor, RebarArrow, RebarBlockInteractor, RebarBow, RebarBrewingStandFuel,
+                                                     RebarBucket, RebarConsumable, RebarDispensable, RebarInteractor, RebarInventoryEffectItem,
+                                                     RebarInventoryTicker, RebarItemDamageable, RebarItemEntityInteractor, RebarLingeringPotion,
+                                                     RebarSplashPotion, RebarTool, RebarUnmergeable, RebarWeapon, VanillaCookingFuel, RuntimeObject {
     public CustomItem(final ItemStack stack) {
         super(stack);
     }
@@ -136,8 +136,8 @@ public class CustomItem extends PylonItem implements PylonArmor, PylonArrow, Pyl
             }
         }
         var settings = getSettingsOrNull();
-        if (settings == null) return PylonConfig.DEFAULT_TICK_INTERVAL;
-        return settings.get("tick-interval", ConfigAdapter.LONG, (long) PylonConfig.DEFAULT_TICK_INTERVAL);
+        if (settings == null) return RebarConfig.DEFAULT_TICK_INTERVAL;
+        return settings.get("tick-interval", ConfigAdapter.LONG, (long) RebarConfig.DEFAULT_TICK_INTERVAL);
     }
 
     @Override
@@ -209,24 +209,24 @@ public class CustomItem extends PylonItem implements PylonArmor, PylonArrow, Pyl
 
     @Override
     public NamespacedKey getItemKey() {
-        return PylonInventoryEffectItem.super.getItemKey();
+        return RebarInventoryEffectItem.super.getItemKey();
     }
 
     @Override
     public void onTick(final Player player) {
-        PylonInventoryEffectItem.super.onTick(player);
+        RebarInventoryEffectItem.super.onTick(player);
         callScript(this, player);
     }
 
     @Override
     public void onRemovedFromInventory(final Player player) {
-        PylonInventoryEffectItem.super.onRemovedFromInventory(player);
+        RebarInventoryEffectItem.super.onRemovedFromInventory(player);
         callScript(this, player);
     }
 
     @Override
     public void onAddedToInventory(final Player player) {
-        PylonInventoryEffectItem.super.onAddedToInventory(player);
+        RebarInventoryEffectItem.super.onAddedToInventory(player);
         callScript(this, player);
     }
 
@@ -271,7 +271,7 @@ public class CustomItem extends PylonItem implements PylonArmor, PylonArrow, Pyl
     }
 
     @Override
-    public List<PylonArgument> getPlaceholders() {
+    public List<RebarArgument> getPlaceholders() {
         return RuntimeObject.super.getPlaceholders();
     }
 }

@@ -41,13 +41,13 @@ repositories {
     }
 }
 
-val coreVersion = project.properties["pylon-core.version"] as String
-val baseVersion = project.properties["pylon-base.version"] as String
+val rebarVersion = project.properties["rebar.version"] as String
+val pylonVersion = project.properties["pylon.version"] as String
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT")
-    compileOnly("io.github.pylonmc:pylon-core:$coreVersion")
-    compileOnly("io.github.pylonmc:pylon-base:${baseVersion}")
+    compileOnly("io.github.pylonmc:rebar:$rebarVersion")
+    compileOnly("io.github.pylonmc:pylon:${pylonVersion}")
     implementation("net.byteflux:libby-bukkit:1.3.1")
     compileOnly("com.caoccao.javet:javet:5.0.2")
     compileOnly("com.caoccao.javet:javet-node-linux-arm64:5.0.2")
@@ -92,17 +92,17 @@ bukkit {
     main = project.properties["main-class"] as String
     version = project.version.toString()
     apiVersion = "1.21"
-    depend = listOf("PylonCore")
+    depend = listOf("Rebar")
     load = BukkitPluginDescription.PluginLoadOrder.STARTUP
     softDepend = listOf(
-        "PylonBase"
+        "Pylon"
     )
 }
 
 tasks.runServer {
     downloadPlugins {
-        github("pylonmc", "pylon-core", coreVersion, "pylon-core-$coreVersion.jar")
-        github("pylonmc", "pylon-base", baseVersion, "pylon-base-$baseVersion.jar")
+        github("pylonmc", "rebar", rebarVersion, "rebar-$rebarVersion.jar")
+        github("pylonmc", "pylon", pylonVersion, "pylon-$pylonVersion.jar")
     }
     maxHeapSize = "4G"
     minecraftVersion("1.21.10")

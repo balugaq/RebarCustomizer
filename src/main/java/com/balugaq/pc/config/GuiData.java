@@ -17,7 +17,7 @@ public record GuiData(
         NamespacedKey key,
         List<String> structure,
         @Nullable ItemStackProvider provider,
-        Gui.Builder.Normal builder,
+        Gui.Builder<?, ?> builder,
         @Nullable CustomRecipe recipe,
         List<Character> invSlotChars
 ) {

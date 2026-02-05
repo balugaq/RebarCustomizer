@@ -10,7 +10,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.NullMarked;
 import xyz.xenondevs.invui.item.Item;
-import xyz.xenondevs.invui.item.impl.SimpleItem;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -39,7 +38,7 @@ public class GuiReader {
                 for (String key : sec.getKeys(false)) {
                     ItemStack itemStack = Deserializer.ITEMSTACK.deserialize(sec.get(key));
                     if (itemStack != null) {
-                        map.put(key.charAt(0), new SimpleItem(itemStack));
+                        map.put(key.charAt(0), Item.simple(itemStack));
                     }
                 }
                 guiProvider.set((c, r) -> {

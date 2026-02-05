@@ -36,10 +36,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  * For each yml:
  * <p>
  * [Internal object ID]:
- *   material: [Material]
+ *   icon: [Material Format]
  *   cost: [Integer]
  *   unlocks:
- *     - [Pylon Item ID]
+ *     - [Rebar Item ID]
  *   *name: [String]
  *   *postload: boolean
  * <p>
@@ -71,9 +71,9 @@ public class Researches implements FileObject<Researches> {
                     var section = PreRegister.read(config, key);
                     if (section == null) continue;
 
-                    if (!section.contains("material")) throw new MissingArgumentException("material");
+                    if (!section.contains("icon")) throw new MissingArgumentException("icon");
 
-                    var s2 = section.get("material");
+                    var s2 = section.get("icon");
                     ItemStack item = Deserializer.ITEMSTACK.deserialize(s2);
                     if (item == null) continue;
                     Material dm = MaterialUtil.getDisplayMaterial(item);
@@ -88,7 +88,7 @@ public class Researches implements FileObject<Researches> {
 
                     List<String> unlocks = section.getStringList("unlocks");
                     boolean postLoad = section.getBoolean("postload", false);
-                    researches.put(id, new PreparedResearch(id, dm, name, cost, unlocks, postLoad));
+                    researches.put(id, new PreparedResearch(id, item, name, cost, unlocks, postLoad));
                 } catch (Exception e) {
                     StackTrace.handle(e);
                 }}

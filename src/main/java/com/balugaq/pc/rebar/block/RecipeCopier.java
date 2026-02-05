@@ -1,13 +1,13 @@
-package com.balugaq.pc.pylon.block;
+package com.balugaq.pc.rebar.block;
 
 import com.balugaq.pc.gui.ButtonSet;
-import com.balugaq.pc.pylon.PylonCustomizerKeys;
+import com.balugaq.pc.rebar.RebarCustomizerKeys;
 import com.balugaq.pc.util.Keys;
-import io.github.pylonmc.pylon.core.block.PylonBlock;
-import io.github.pylonmc.pylon.core.block.base.PylonGuiBlock;
-import io.github.pylonmc.pylon.core.block.context.BlockCreateContext;
-import io.github.pylonmc.pylon.core.datatypes.PylonSerializers;
-import io.github.pylonmc.pylon.core.item.builder.ItemStackBuilder;
+import io.github.pylonmc.rebar.block.RebarBlock;
+import io.github.pylonmc.rebar.block.base.RebarGuiBlock;
+import io.github.pylonmc.rebar.block.context.BlockCreateContext;
+import io.github.pylonmc.rebar.datatypes.RebarSerializers;
+import io.github.pylonmc.rebar.item.builder.ItemStackBuilder;
 import kotlin.Pair;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,7 +18,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.jspecify.annotations.NullMarked;
 import xyz.xenondevs.invui.gui.Gui;
 import xyz.xenondevs.invui.inventory.Inventory;
-import xyz.xenondevs.invui.item.impl.AbstractItem;
+import xyz.xenondevs.invui.item.AbstractItem;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @NullMarked
-public class RecipeCopier extends PylonBlock implements PylonGuiBlock {
+public class RecipeCopier extends RebarBlock implements RebarGuiBlock {
     public Map<Integer, ItemStack> recipe = new HashMap<>();
 
     public RecipeCopier(Block block, BlockCreateContext context) {
@@ -46,7 +46,7 @@ public class RecipeCopier extends PylonBlock implements PylonGuiBlock {
 
     public static Map<Integer, ItemStack> fromArray(PersistentDataContainer pdc, String key) {
         return pdc.getKeys().stream().filter(k -> k.toString().startsWith(key))
-                .map(k -> new Pair<>(k, pdc.get(k, PylonSerializers.ITEM_STACK)))
+                .map(k -> new Pair<>(k, pdc.get(k, RebarSerializers.ITEM_STACK)))
                 .collect(Collectors.toMap(
                         p -> Integer.parseInt(p.getFirst().toString().substring(key.length())),
                         Pair::getSecond
@@ -56,13 +56,13 @@ public class RecipeCopier extends PylonBlock implements PylonGuiBlock {
     @Override
     public void write(PersistentDataContainer pdc) {
         super.write(pdc);
-        recipe.forEach((key, value) -> pdc.set(Keys.create("recipe" + key), PylonSerializers.ITEM_STACK, value));
+        recipe.forEach((key, value) -> pdc.set(Keys.create("recipe" + key), RebarSerializers.ITEM_STACK, value));
     }
 
     @Override
     public Gui createGui() {
         RecipeCopierButtonSet<?> buttons = new RecipeCopierButtonSet<>(this);
-        return Gui.normal()
+        return Gui.builder()
                 .setStructure(
                         "x . I I I I I . x",
                         "x . I 1 2 3 I . x",
@@ -90,11 +90,6 @@ public class RecipeCopier extends PylonBlock implements PylonGuiBlock {
                 .build();
     }
 
-    @Override
-    public Map<String, Inventory> createInventoryMapping() {
-        return Map.of();
-    }
-
     @Getter
     public static class RecipeCopierButtonSet<T extends RecipeCopier> extends ButtonSet<T> {
         public final AbstractItem
@@ -104,9 +99,9 @@ public class RecipeCopier extends PylonBlock implements PylonGuiBlock {
             super(b2);
 
             makeRecipe = create()
-                    .item(data -> ItemStackBuilder.pylon(
+                    .item(data -> ItemStackBuilder.rebar(
                             Material.CRAFTING_TABLE,
-                            PylonCustomizerKeys.make_recipe
+                            RebarCustomizerKeys.make_recipe
                     ))
                     .click((data, clickType, player, event) -> {
                         var recipe = data.getRecipe();
@@ -136,14 +131,12 @@ public class RecipeCopier extends PylonBlock implements PylonGuiBlock {
                             return ItemStackBuilder.EMPTY;
                         }
                     })
-                    .click((block, clickType, player, event) -> {
-                        handleClick(event);
-
-                        ItemStack currentItem = event.getCurrentItem();
+                    .click((block, clickType, player, click) -> {
+                        ItemStack cursor = player.getItemOnCursor();
                         var data = assertBlock(block, RecipeCopier.class);
 
-                        if (currentItem != null && currentItem.getType() != Material.AIR) {
-                            data.getRecipe().put(n, currentItem.clone());
+                        if (cursor != null && cursor.getType() != Material.AIR) {
+                            data.getRecipe().put(n, cursor.clone());
                         } else {
                             data.getRecipe().remove(n);
                         }

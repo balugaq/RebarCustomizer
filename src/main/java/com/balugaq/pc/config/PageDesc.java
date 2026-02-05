@@ -1,9 +1,9 @@
 package com.balugaq.pc.config;
 
-import com.balugaq.pc.PylonCustomizer;
+import com.balugaq.pc.RebarCustomizer;
 import com.balugaq.pc.config.pack.PackNamespace;
 import com.balugaq.pc.exceptions.UnknownPageException;
-import io.github.pylonmc.pylon.core.guide.pages.base.SimpleStaticGuidePage;
+import io.github.pylonmc.rebar.guide.pages.base.SimpleStaticGuidePage;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -49,7 +49,7 @@ public class PageDesc implements Deserializer<PageDesc> {
     }
 
     public SimpleStaticGuidePage getPage() {
-        SimpleStaticGuidePage page = PylonCustomizer.getPages().get(key);
+        SimpleStaticGuidePage page = RebarCustomizer.getPages().get(key);
         if (page == null) throw new UnknownPageException(key.toString());
 
         return page;
