@@ -274,7 +274,7 @@ public class Pack implements FileObject<Pack> {
             var meta = files.stream().filter(file -> file.getName().equals("pack.yml")).findFirst().orElse(null);
             if (meta == null) throw new MissingFileException(dir.getAbsolutePath() + "/pack.yml");
 
-            try (var ignored = StackFormatter.setPosition("Reading file: pack.yml")) {
+            try (var ignored = StackTrace.record("Reading file: pack.yml")) {
                 YamlConfiguration config = YamlConfiguration.loadConfiguration(meta);
 
                 PackID id = read(config, PackID.class, "id");
@@ -307,91 +307,91 @@ public class Pack implements FileObject<Pack> {
                 Material material = Pack.readEnum(config, Material.class, "material", Deserializer.EnumDeserializer::forceUpperCase);
                 PackNamespace namespace = PackNamespace.warp(id, locales, material);
 
-                StackFormatter.setPosition("Reading recipes");
+                StackTrace.record("Reading recipes");
                 Recipes recipes = null;
                 var recipesFolder = findDir(files, "recipes");
                 if (recipesFolder != null)
                     recipes = new Recipes(recipesFolder, namespace);
-                StackFormatter.destroy();
+                StackTrace.destroy();
 
-                StackFormatter.setPosition("Reading settings");
+                StackTrace.record("Reading settings");
                 Settings settings = null;
                 var settingsFolder = findDir(files, "settings");
                 if (settingsFolder != null)
                     settings = new Settings(settingsFolder, namespace);
-                StackFormatter.destroy();
+                StackTrace.destroy();
 
-                StackFormatter.setPosition("Reading scripts");
+                StackTrace.record("Reading scripts");
                 Scripts scripts = null;
                 var scriptsFolder = findDir(files, "scripts");
                 if (scriptsFolder != null)
                     scripts = new Scripts()
                             .deserialize(scriptsFolder);
-                StackFormatter.destroy();
+                StackTrace.destroy();
                 namespace.setScripts(scripts);
 
-                StackFormatter.setPosition("Reading saveditems");
+                StackTrace.record("Reading saveditems");
                 Saveditems saveditems = null;
                 var saveditemsFolder = findDir(files, "saveditems");
                 if (saveditemsFolder != null)
                     saveditems = new Saveditems()
                             .deserialize(saveditemsFolder);
-                StackFormatter.destroy();
+                StackTrace.destroy();
 
-                StackFormatter.setPosition("Reading pages");
+                StackTrace.record("Reading pages");
                 Pages pages = null;
                 var pagesFolder = findDir(files, "pages");
                 if (pagesFolder != null)
                     pages = new Pages()
                             .setPackNamespace(namespace)
                             .deserialize(pagesFolder);
-                StackFormatter.destroy();
+                StackTrace.destroy();
 
-                StackFormatter.setPosition("Reading items");
+                StackTrace.record("Reading items");
                 Items items = null;
                 var itemsFolder = findDir(files, "items");
                 if (itemsFolder != null)
                     items = new Items()
                             .setPackNamespace(namespace)
                             .deserialize(itemsFolder);
-                StackFormatter.destroy();
+                StackTrace.destroy();
 
-                StackFormatter.setPosition("Reading blocks");
+                StackTrace.record("Reading blocks");
                 Blocks blocks = null;
                 var blocksFolder = findDir(files, "blocks");
                 if (blocksFolder != null)
                     blocks = new Blocks()
                             .setPackNamespace(namespace)
                             .deserialize(blocksFolder);
-                StackFormatter.destroy();
+                StackTrace.destroy();
 
-                StackFormatter.setPosition("Reading fluids");
+                StackTrace.record("Reading fluids");
                 Fluids fluids = null;
                 var fluidsFolder = findDir(files, "fluids");
                 if (fluidsFolder != null)
                     fluids = new Fluids()
                             .setPackNamespace(namespace)
                             .deserialize(fluidsFolder);
-                StackFormatter.destroy();
+                StackTrace.destroy();
 
-                StackFormatter.setPosition("Reading Recipe Types");
+                StackTrace.record("Reading Recipe Types");
                 RecipeTypes recipeTypes = null;
                 var recipesTypesFolder = findDir(files, "recipe_types");
                 if (recipesTypesFolder != null)
                     recipeTypes = new RecipeTypes()
                             .setPackNamespace(namespace)
                             .deserialize(recipesTypesFolder);
-                StackFormatter.destroy();
+                StackTrace.destroy();
 
                 Researches researches = null;
                 if (PylonConfig.RESEARCHES_ENABLED) {
-                    StackFormatter.setPosition("Reading researches");
+                    StackTrace.record("Reading researches");
                     var researchesFolder = findDir(files, "researches");
                     if (researchesFolder != null)
                         researches = new Researches()
                                 .setPackNamespace(namespace)
                                 .deserialize(researchesFolder);
-                    StackFormatter.destroy();
+                    StackTrace.destroy();
                 }
 
                 boolean suppressLanguageMissingWarning = config.getBoolean("suppressLanguageMissingWarning", false);
@@ -428,7 +428,7 @@ public class Pack implements FileObject<Pack> {
                         suppressLanguageMissingWarning
                 );
             } catch (Exception e) {
-                StackFormatter.handle(e);
+                StackTrace.handle(e);
             }
 
             return this;
@@ -544,7 +544,7 @@ public class Pack implements FileObject<Pack> {
         for (var entry : pages.getPages().values()) {
             PackManager.load(entry, e -> {
                 RegisteredObjectID id = e.id();
-                try (var sk = StackFormatter.setPosition("Loading page: " + id)) {
+                try (var sk = StackTrace.record("Loading page: " + id)) {
                     Material icon = e.material();
                     CustomGuidePage page = new CustomGuidePage(id.key());
                     CustomPageButton button = new CustomPageButton(id.key(), ItemStack.of(icon), page);
@@ -559,7 +559,7 @@ public class Pack implements FileObject<Pack> {
                     Debug.debug("Registered Page: " + id.key());
                     pages.getLoadedPages().incrementAndGet();
                 } catch (Exception ex) {
-                    StackFormatter.handle(ex);
+                    StackTrace.handle(ex);
                 }
             });
         }
@@ -570,7 +570,7 @@ public class Pack implements FileObject<Pack> {
         for (var entry : items.getItems().values()) {
             PackManager.load(entry, e -> {
                 RegisteredObjectID id = e.id();
-                try (var sk = StackFormatter.setPosition("Loading item: " + id)) {
+                try (var sk = StackTrace.record("Loading item: " + id)) {
                     ItemStack icon = entry.icon();
 
                     // suppress pylon core warnings
@@ -585,14 +585,14 @@ public class Pack implements FileObject<Pack> {
 
                     List<PageDesc> descs = e.pages();
                     if (descs != null) descs.forEach(desc -> {
-                        try (var ignored = StackFormatter.setPosition("Adding to page: " + desc.getKey())) {
+                        try (var ignored = StackTrace.record("Adding to page: " + desc.getKey())) {
                             desc.getPage().addItem(e.icon());
                         } catch (Exception ex) {
-                            StackFormatter.handle(ex);
+                            StackTrace.handle(ex);
                         }
                     });
                 } catch (Exception ex) {
-                    StackFormatter.handle(ex);
+                    StackTrace.handle(ex);
                 }
             });
         }
@@ -603,20 +603,20 @@ public class Pack implements FileObject<Pack> {
         for (var entry : researches.getResearches().values()) {
             PackManager.load(entry, e -> {
                 RegisteredObjectID id = e.id();
-                try (var sk = StackFormatter.setPosition("Loading research: " + id)) {
+                try (var sk = StackTrace.record("Loading research: " + id)) {
                     String name = e.name() != null ? e.name() : ("pylon." + id.key().getNamespace() +".research." + id.key().getKey());
                     Set<NamespacedKey> unlocks = new HashSet<>();
                     for (String s : e.unlocks()) {
                         var choice = Deserializer.RECIPE_CHOICE.deserializeOrNull(s);
                         if (choice == null) {
-                            StackFormatter.handle(new InvalidDescException(s));
+                            StackTrace.handle(new InvalidDescException(s));
                             continue;
                         }
 
                         for (var item : choice.getChoices()) {
                             PylonItem pylon = PylonItem.fromStack(item);
                             if (pylon == null) {
-                                StackFormatter.handle(new UnknownItemException(item.toString()));
+                                StackTrace.handle(new UnknownItemException(item.toString()));
                                 continue;
                             }
 
@@ -627,7 +627,7 @@ public class Pack implements FileObject<Pack> {
                     Debug.debug("Registered Research: " + id.key());
                     researches.getLoadedResearches().incrementAndGet();
                 } catch (Exception ex) {
-                    StackFormatter.handle(ex);
+                    StackTrace.handle(ex);
                 }
             });
         }
@@ -638,7 +638,7 @@ public class Pack implements FileObject<Pack> {
         for (var entry : blocks.getBlocks().values()) {
             PackManager.load(entry, e -> {
                 RegisteredObjectID id = e.id();
-                try (var sk = StackFormatter.setPosition("Loading block: " + id)) {
+                try (var sk = StackTrace.record("Loading block: " + id)) {
                     Material material = e.material();
 
                     if (GlobalVars.getMultiBlockComponents(id.key()).isEmpty()) {
@@ -649,7 +649,7 @@ public class Pack implements FileObject<Pack> {
                     Debug.debug("Registered Block: " + id.key());
                     blocks.getLoadedBlocks().incrementAndGet();
                 } catch (Exception ex) {
-                    StackFormatter.handle(ex);
+                    StackTrace.handle(ex);
                 }
             });
         }
@@ -714,15 +714,15 @@ public class Pack implements FileObject<Pack> {
 
     public Pack register() {
         plugin().registerWithPylon();
-        StackFormatter.run("Loading lang", () -> loadLang(findDir(Arrays.asList(dir.listFiles()), "lang"), getLangFolder()));
-        StackFormatter.run("Loading settings", this::registerSettings);
-        StackFormatter.run("Loading pages", this::registerPages);
-        StackFormatter.run("Loading items", this::registerItems);
-        StackFormatter.run("Loading blocks", this::registerBlocks);
-        StackFormatter.run("Loading fluids", this::registerFluids);
-        StackFormatter.run("Loading recipe types", this::registerRecipeTypes);
-        StackFormatter.run("Loading recipes", this::registerRecipes);
-        StackFormatter.run("Loading researches", this::registerResearches);
+        StackTrace.run("Loading lang", () -> loadLang(findDir(Arrays.asList(dir.listFiles()), "lang"), getLangFolder()));
+        StackTrace.run("Loading settings", this::registerSettings);
+        StackTrace.run("Loading pages", this::registerPages);
+        StackTrace.run("Loading items", this::registerItems);
+        StackTrace.run("Loading blocks", this::registerBlocks);
+        StackTrace.run("Loading fluids", this::registerFluids);
+        StackTrace.run("Loading recipe types", this::registerRecipeTypes);
+        StackTrace.run("Loading recipes", this::registerRecipes);
+        StackTrace.run("Loading researches", this::registerResearches);
         if (!suppressLanguageMissingWarning) {
             printMissingLanguage();
         }

@@ -1,7 +1,7 @@
 package com.balugaq.pc;
 
 import com.balugaq.pc.command.PylonCustomizerCommand;
-import com.balugaq.pc.config.StackFormatter;
+import com.balugaq.pc.config.StackTrace;
 import com.balugaq.pc.listener.ChatInputListener;
 import com.balugaq.pc.manager.ConfigManager;
 import com.balugaq.pc.manager.IntegrationManager;
@@ -153,10 +153,10 @@ public class PylonCustomizer extends JavaPlugin implements PylonAddon, Debuggabl
         PylonCustomizerBlocks.initialize();
 
         runTaskLater(() -> {
-            try (var ignored = StackFormatter.setPosition("Loading packs")) {
+            try (var ignored = StackTrace.record("Loading packs")) {
                 packManager.loadPacks();
             } catch (Exception e) {
-                StackFormatter.handle(e);
+                StackTrace.handle(e);
             }
         }, 2L); // wait plugin dependencies load
 

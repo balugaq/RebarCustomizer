@@ -5,7 +5,7 @@ import com.balugaq.pc.config.FileObject;
 import com.balugaq.pc.config.FileReader;
 import com.balugaq.pc.config.InternalObjectID;
 import com.balugaq.pc.config.RegisteredObjectID;
-import com.balugaq.pc.config.StackFormatter;
+import com.balugaq.pc.config.StackTrace;
 import com.balugaq.pc.config.preloads.PreparedResearch;
 import com.balugaq.pc.config.register.PreRegister;
 import com.balugaq.pc.exceptions.IncompatibleMaterialException;
@@ -64,10 +64,10 @@ public class Researches implements FileObject<Researches> {
         return List.of(dir -> {
             List<File> files = Arrays.stream(dir.listFiles()).toList();
             List<File> ymls = files.stream().filter(file -> file.getName().endsWith(".yml") || file.getName().endsWith(".yaml")).toList();
-            for (File yml : ymls) {try (var ignored = StackFormatter.setPosition("Reading file: " + StringUtil.simplifyPath(yml.getAbsolutePath()))) {
+            for (File yml : ymls) {try (var ignored = StackTrace.record("Reading file: " + StringUtil.simplifyPath(yml.getAbsolutePath()))) {
                 var config = YamlConfiguration.loadConfiguration(yml);
 
-                for (String key : config.getKeys(false)) {try (var ignored1 = StackFormatter.setPosition("Reading key: " + key)) {
+                for (String key : config.getKeys(false)) {try (var ignored1 = StackTrace.record("Reading key: " + key)) {
                     var section = PreRegister.read(config, key);
                     if (section == null) continue;
 
@@ -90,10 +90,10 @@ public class Researches implements FileObject<Researches> {
                     boolean postLoad = section.getBoolean("postload", false);
                     researches.put(id, new PreparedResearch(id, dm, name, cost, unlocks, postLoad));
                 } catch (Exception e) {
-                    StackFormatter.handle(e);
+                    StackTrace.handle(e);
                 }}
             } catch (Exception e) {
-                StackFormatter.handle(e);
+                StackTrace.handle(e);
             }}
 
             return this;

@@ -4,7 +4,7 @@ import com.balugaq.pc.config.Advancer;
 import com.balugaq.pc.config.BiGenericDeserializer;
 import com.balugaq.pc.config.ConfigReader;
 import com.balugaq.pc.config.Deserializer;
-import com.balugaq.pc.config.StackFormatter;
+import com.balugaq.pc.config.StackTrace;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -92,10 +92,10 @@ public class MyObject2ObjectOpenHashMap<T1, T2> extends Object2ObjectOpenHashMap
                     var serializer2 = advancer2.advance(getDeserializer2());
                     MyObject2ObjectOpenHashMap<T1, T2> res = new MyObject2ObjectOpenHashMap<>();
                     for (Map.Entry<Object, Object> e : (Set<Map.Entry<Object, Object>>) map.entrySet()) {
-                        try (var ignored = StackFormatter.setPosition("Reading Map<" + getDeserializer().type() + ", " + getDeserializer2().type() + ">")) {
+                        try (var ignored = StackTrace.record("Reading Map<" + getDeserializer().type() + ", " + getDeserializer2().type() + ">")) {
                             res.put(serializer.deserialize(e.getKey()), serializer2.deserialize(e.getValue()));
                         } catch (Exception ex) {
-                            StackFormatter.handle(ex);
+                            StackTrace.handle(ex);
                         }
                     }
                     return res;
@@ -105,10 +105,10 @@ public class MyObject2ObjectOpenHashMap<T1, T2> extends Object2ObjectOpenHashMap
                     var serializer2 = advancer2.advance(getDeserializer2());
                     MyObject2ObjectOpenHashMap<T1, T2> res = new MyObject2ObjectOpenHashMap<>();
                     for (String key : section.getKeys(false)) {
-                        try (var ignored = StackFormatter.setPosition("Reading Map<" + getDeserializer().type() + ", " + getDeserializer2().type() + ">")) {
+                        try (var ignored = StackTrace.record("Reading Map<" + getDeserializer().type() + ", " + getDeserializer2().type() + ">")) {
                             res.put(serializer.deserialize(key), serializer2.deserialize(section.get(key)));
                         } catch (Exception ex) {
-                            StackFormatter.handle(ex);
+                            StackTrace.handle(ex);
                         }
                     }
                     return res;

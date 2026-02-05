@@ -11,7 +11,7 @@ import com.balugaq.pc.config.PluginDesc;
 import com.balugaq.pc.config.PostLoadTask;
 import com.balugaq.pc.config.PostLoadable;
 import com.balugaq.pc.config.SaveditemDesc;
-import com.balugaq.pc.config.StackFormatter;
+import com.balugaq.pc.config.StackTrace;
 import com.balugaq.pc.config.pack.Saveditems;
 import com.balugaq.pc.data.MyArrayList;
 import com.balugaq.pc.exceptions.IdConflictException;
@@ -242,7 +242,7 @@ public @Data class PackManager {
     public void loadPack(File packFolder) {
         if (!packFolder.exists()) return;
         if (!packFolder.isDirectory()) return;
-        try (var ignored = StackFormatter.setPosition("Loading pack folder: " + packFolder.getName())) {
+        try (var ignored = StackTrace.record("Loading pack folder: " + packFolder.getName())) {
             Debug.log("Loading pack: " + packFolder.getName());
             Pack pack = FileObject.newDeserializer(Pack.class).deserialize(packFolder);
             MinecraftVersion min = pack.getPackMinAPIVersion();
@@ -270,7 +270,7 @@ public @Data class PackManager {
             }
             packs.add(pack);
         } catch (Exception e) {
-            StackFormatter.handle(e);
+            StackTrace.handle(e);
         }
     }
 
@@ -285,7 +285,7 @@ public @Data class PackManager {
         }
 
         for (Pack pack : PackSorter.sortPacks(packs)) {
-            try (var ignored = StackFormatter.setPosition("Registering Pack: " + pack.getPackID())) {
+            try (var ignored = StackTrace.record("Registering Pack: " + pack.getPackID())) {
                 MyArrayList<PackDesc> packDependencies = pack.getPackDependencies();
                 if (packDependencies != null) {
                     ArrayList<PackDesc> missing = new ArrayList<>();
@@ -313,7 +313,7 @@ public @Data class PackManager {
                     });
                 }
             } catch (Exception e) {
-                StackFormatter.handle(e);
+                StackTrace.handle(e);
             }
         }
 
@@ -345,7 +345,7 @@ public @Data class PackManager {
                         }
                     }
                 } catch (IllegalAccessException ex) {
-                    StackFormatter.handle(ex);
+                    StackTrace.handle(ex);
                 }
             }
         }
@@ -353,12 +353,12 @@ public @Data class PackManager {
         try {
             ReflectionUtil.invokeMethod(BlockStorage.INSTANCE, "cleanup$pylon_core", plugin);
         } catch (Exception e) {
-            StackFormatter.handle(e);
+            StackTrace.handle(e);
         }
         try {
             ReflectionUtil.invokeMethod(EntityStorage.INSTANCE, "cleanup$pylon_core", plugin);
         } catch (Exception e) {
-            StackFormatter.handle(e);
+            StackTrace.handle(e);
         }
         PylonCustomizer.getPages().values().forEach(page -> {
             page.getButtons().removeIf(item -> {

@@ -440,13 +440,13 @@ public interface Deserializer<T> {
 
         @Override
         public @UnknownNullability E deserialize(@Nullable Object o) {
-            try (var ignore = StackFormatter.setPosition("Reading " + clazz.getSimpleName())) {
+            try (var ignore = StackTrace.record("Reading " + clazz.getSimpleName())) {
                 return read(o);
             } catch (Throwable e) {
                 if (e instanceof IllegalArgumentException e2) {
-                    StackFormatter.handle(new UnknownEnumException(clazz, e2.getMessage()));
+                    StackTrace.handle(new UnknownEnumException(clazz, e2.getMessage()));
                 } else {
-                    StackFormatter.handle(e);
+                    StackTrace.handle(e);
                 }
                 return null;
             }

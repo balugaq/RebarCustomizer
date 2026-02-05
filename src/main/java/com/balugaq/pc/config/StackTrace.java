@@ -12,12 +12,12 @@ import org.jspecify.annotations.NullMarked;
  * @author balugaq
  */
 @NullMarked
-public class StackFormatter implements AutoCloseable {
-    private static final StackFormatter inst = new StackFormatter();
+public class StackTrace implements AutoCloseable {
+    private static final StackTrace instance = new StackTrace();
     @Getter
     private static final Int2ObjectOpenHashMap<String> backup = new Int2ObjectOpenHashMap<>();
     @Getter
-    private static final Int2ObjectOpenHashMap<String> positions = new Int2ObjectOpenHashMap<>();
+    private static final Int2ObjectOpenHashMap<String> record = new Int2ObjectOpenHashMap<>();
 
     @SuppressWarnings("UnnecessaryUnicodeEscape")
     public static void handle(Throwable e) {
@@ -43,43 +43,43 @@ public class StackFormatter implements AutoCloseable {
     }
 
     public static void run(String position, Runnable runnable) {
-        setPosition(position);
+        record(position);
         runnable.run();
         destroy();
     }
 
     @CanIgnoreReturnValue
-    public static StackFormatter setPosition(String position) {
-        return setPosition(positions.size() + 1, position);
+    public static StackTrace record(String position) {
+        return record(record.size() + 1, position);
     }
 
     @CanIgnoreReturnValue
-    public static StackFormatter destroy() {
+    public static StackTrace destroy() {
         syncBackup();
-        positions.remove(positions.size());
-        return inst;
+        record.remove(record.size());
+        return instance;
     }
 
-    public static StackFormatter setPosition(@Range(from = 1, to = Integer.MAX_VALUE) int level, String position) {
+    public static StackTrace record(@Range(from = 1, to = Integer.MAX_VALUE) int level, String position) {
         syncBackup();
-        if (level < positions.size()) {
-            int c = positions.size();
+        if (level < record.size()) {
+            int c = record.size();
             for (int i = level + 1; i < c; i++) {
-                positions.remove(i);
+                record.remove(i);
             }
         }
 
-        positions.put(level, position);
-        return inst;
+        record.put(level, position);
+        return instance;
     }
 
     private static void syncBackup() {
         backup.clear();
-        backup.putAll(positions);
+        backup.putAll(record);
     }
 
-    public static StackFormatter getInstance() {
-        return inst;
+    public static StackTrace getInstance() {
+        return instance;
     }
 
     @Override

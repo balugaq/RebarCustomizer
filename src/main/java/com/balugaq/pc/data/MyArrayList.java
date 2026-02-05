@@ -4,7 +4,7 @@ import com.balugaq.pc.config.Advancer;
 import com.balugaq.pc.config.ConfigReader;
 import com.balugaq.pc.config.Deserializer;
 import com.balugaq.pc.config.GenericDeserializer;
-import com.balugaq.pc.config.StackFormatter;
+import com.balugaq.pc.config.StackTrace;
 import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
@@ -50,10 +50,10 @@ public class MyArrayList<T> extends ArrayList<T> implements GenericDeserializer<
                     Deserializer<T> serializer = advancer.advance(getDeserializer());
                     MyArrayList<T> res = new MyArrayList<>();
                     for (Object object : lst) {
-                        try (var ignored = StackFormatter.setPosition("Reading List<" + getDeserializer().type() + ">")) {
+                        try (var ignored = StackTrace.record("Reading List<" + getDeserializer().type() + ">")) {
                             res.add(serializer.deserialize(object));
                         } catch (Exception e) {
-                            StackFormatter.handle(e);
+                            StackTrace.handle(e);
                         }
                     }
                     return res;
@@ -61,10 +61,10 @@ public class MyArrayList<T> extends ArrayList<T> implements GenericDeserializer<
                 Object.class, s -> {
                     Deserializer<T> serializer = advancer.advance(getDeserializer());
                     MyArrayList<T> res = new MyArrayList<>();
-                    try (var ignored = StackFormatter.setPosition("Reading List<" + getDeserializer().type() + ">")) {
+                    try (var ignored = StackTrace.record("Reading List<" + getDeserializer().type() + ">")) {
                         res.add(serializer.deserialize(s));
                     } catch (Exception e) {
-                        StackFormatter.handle(e);
+                        StackTrace.handle(e);
                     }
                     return res;
                 }

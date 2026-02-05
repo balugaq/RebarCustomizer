@@ -1,7 +1,7 @@
 package com.balugaq.pc.manager;
 
 import com.balugaq.pc.PylonCustomizer;
-import com.balugaq.pc.config.StackFormatter;
+import com.balugaq.pc.config.StackTrace;
 import com.balugaq.pc.integration.Integration;
 import com.balugaq.pc.integration.PylonBaseIntegration;
 import com.balugaq.pc.util.Debug;
@@ -46,11 +46,11 @@ public class IntegrationManager {
         }
         if (enabled) {
             var integration = supplier.get();
-            try (var sk = StackFormatter.setPosition("Hooking " + name)) {
+            try (var sk = StackTrace.record("Hooking " + name)) {
                 integration.apply();
                 integrations.add(integration);
             } catch (Exception e) {
-                StackFormatter.handle(e);
+                StackTrace.handle(e);
             }
         }
     }

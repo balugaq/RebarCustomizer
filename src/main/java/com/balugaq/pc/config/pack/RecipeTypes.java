@@ -9,7 +9,7 @@ import com.balugaq.pc.config.Pack;
 import com.balugaq.pc.config.RecipeTypeDesc;
 import com.balugaq.pc.config.RegisteredObjectID;
 import com.balugaq.pc.config.ScriptDesc;
-import com.balugaq.pc.config.StackFormatter;
+import com.balugaq.pc.config.StackTrace;
 import com.balugaq.pc.config.preloads.PreparedRecipeType;
 import com.balugaq.pc.config.register.PreRegister;
 import com.balugaq.pc.exceptions.InvalidStructureException;
@@ -72,11 +72,11 @@ public class RecipeTypes implements FileObject<RecipeTypes> {
             List<File> ymls = files.stream().filter(file -> file.getName().endsWith(".yml") || file.getName().endsWith(".yaml")).toList();
 
             for (File yml : ymls) {
-                try (var ignored = StackFormatter.setPosition("Reading file: " + StringUtil.simplifyPath(yml.getAbsolutePath()))) {
+                try (var ignored = StackTrace.record("Reading file: " + StringUtil.simplifyPath(yml.getAbsolutePath()))) {
                     var config = YamlConfiguration.loadConfiguration(yml);
 
                     for (String key : config.getKeys(false)) {
-                        try (var ignored1 = StackFormatter.setPosition("Reading key: " + key)) {
+                        try (var ignored1 = StackTrace.record("Reading key: " + key)) {
                             var section = PreRegister.read(config, key);
                             if (section == null) continue;
 
@@ -119,11 +119,11 @@ public class RecipeTypes implements FileObject<RecipeTypes> {
                             boolean postLoad = section.getBoolean("postload", false);
                             recipeTypes.put(id, new PreparedRecipeType(id, gui.structure(), gui.provider(), loader, postLoad, cloneType));
                         } catch (Exception e) {
-                            StackFormatter.handle(e);
+                            StackTrace.handle(e);
                         }
                     }
                 } catch (Exception e) {
-                    StackFormatter.handle(e);
+                    StackTrace.handle(e);
                 }
             }
 

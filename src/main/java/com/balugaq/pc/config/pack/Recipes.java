@@ -2,7 +2,7 @@ package com.balugaq.pc.config.pack;
 
 import com.balugaq.pc.config.Deserializer;
 import com.balugaq.pc.config.Pack;
-import com.balugaq.pc.config.StackFormatter;
+import com.balugaq.pc.config.StackTrace;
 import com.balugaq.pc.exceptions.InvalidNamespacedKeyException;
 import com.balugaq.pc.exceptions.MissingArgumentException;
 import com.balugaq.pc.util.ReflectionUtil;
@@ -73,7 +73,7 @@ public class Recipes {
             var namespace = dir.getName();
             for (var cfg : dir.listFiles()) {
                 if (!cfg.getName().endsWith(".yml")) continue;
-                try (var sk2 = StackFormatter.setPosition("Loading file: " + StringUtil.simplifyPath(cfg.getAbsolutePath()))) {
+                try (var sk2 = StackTrace.record("Loading file: " + StringUtil.simplifyPath(cfg.getAbsolutePath()))) {
 
                 var key = new NamespacedKey(namespace, cfg.getName().substring(0, cfg.getName().length() - 4));
                 var type = PylonRegistry.RECIPE_TYPES.get(key);
@@ -102,7 +102,7 @@ public class Recipes {
                 }
 
                 } catch (Exception e) {
-                    StackFormatter.handle(e);
+                    StackTrace.handle(e);
                 }
             }
         }
@@ -119,7 +119,7 @@ public class Recipes {
                 // default namespace
                 k = new NamespacedKey(namespace.getNamespace(), ky);
             }
-            try (var sk = StackFormatter.setPosition("Reading " + ky)) {
+            try (var sk = StackTrace.record("Reading " + ky)) {
                 loader.accept(k, ky);
                 success.accept(k);
             } catch (Exception e) {

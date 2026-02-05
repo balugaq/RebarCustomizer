@@ -17,7 +17,7 @@ import com.balugaq.pc.config.ScriptDesc;
 import com.balugaq.pc.config.SingletonFluidBlockData;
 import com.balugaq.pc.config.SingletonFluidBufferBlockData;
 import com.balugaq.pc.config.SingletonLogisticBlockData;
-import com.balugaq.pc.config.StackFormatter;
+import com.balugaq.pc.config.StackTrace;
 import com.balugaq.pc.config.preloads.PreparedBlock;
 import com.balugaq.pc.config.register.PreRegister;
 import com.balugaq.pc.exceptions.IncompatibleKeyFormatException;
@@ -137,10 +137,10 @@ public class Blocks implements FileObject<Blocks> {
             List<File> files = Arrays.stream(dir.listFiles()).toList();
             List<File> ymls = files.stream().filter(file -> file.getName().endsWith(".yml") || file.getName().endsWith(".yaml")).toList();
 
-            for (File yml : ymls) {try (var ignored = StackFormatter.setPosition("Reading file: " + StringUtil.simplifyPath(yml.getAbsolutePath()))) {
+            for (File yml : ymls) {try (var ignored = StackTrace.record("Reading file: " + StringUtil.simplifyPath(yml.getAbsolutePath()))) {
                 var config = YamlConfiguration.loadConfiguration(yml);
 
-                for (String key : config.getKeys(false)) {try (var ignored1 = StackFormatter.setPosition("Reading key: " + key)) {
+                for (String key : config.getKeys(false)) {try (var ignored1 = StackTrace.record("Reading key: " + key)) {
                     var section = PreRegister.read(config, key);
                     if (section == null) continue;
 
@@ -165,7 +165,7 @@ public class Blocks implements FileObject<Blocks> {
                     // fluid-block
                     var fluidBlock = section.getConfigurationSection("fluid-block");
                     if (fluidBlock != null) {
-                        try (var ignored2 = StackFormatter.setPosition("Reading fluid-block section: " + key)) {
+                        try (var ignored2 = StackTrace.record("Reading fluid-block section: " + key)) {
 
                         List<SingletonFluidBlockData> singletons = new ArrayList<>();
                         for (String k : fluidBlock.getKeys(false)) {
@@ -175,14 +175,14 @@ public class Blocks implements FileObject<Blocks> {
                         GlobalVars.putFluidBlockData(id.key(), new FluidBlockData(singletons));
 
                         } catch (Exception ex) {
-                            StackFormatter.handle(ex);
+                            StackTrace.handle(ex);
                         }
                     }
 
                     // fluid-buffer
                     var fluidBuffer = section.getConfigurationSection("fluid-buffer");
                     if (fluidBuffer != null) {
-                        try (var ignored2 = StackFormatter.setPosition("Reading fluid-buffer section: " + key)) {
+                        try (var ignored2 = StackTrace.record("Reading fluid-buffer section: " + key)) {
 
                         List<SingletonFluidBufferBlockData> singletons = new ArrayList<>();
                         for (String k : fluidBuffer.getKeys(false)) {
@@ -192,14 +192,14 @@ public class Blocks implements FileObject<Blocks> {
                         GlobalVars.putFluidBufferBlockData(id.key(), new FluidBufferBlockData(singletons));
 
                         } catch (Exception ex) {
-                            StackFormatter.handle(ex);
+                            StackTrace.handle(ex);
                         }
                     }
 
                     // multiblock
                     var multiblock = section.getConfigurationSection("multiblock");
                     if (multiblock != null) {
-                        try (var ignored2 = StackFormatter.setPosition("Reading multiblock section: " + key)) {
+                        try (var ignored2 = StackTrace.record("Reading multiblock section: " + key)) {
 
                         Map<Vector3i, PylonSimpleMultiblock.MultiblockComponent> components = new HashMap<>();
                         Map<String, PylonSimpleMultiblock.MultiblockComponent> symbols = new HashMap<>();
@@ -226,7 +226,7 @@ public class Blocks implements FileObject<Blocks> {
                         GlobalVars.putMultiBlockComponents(id.key(), components);
 
                         } catch (Exception ex) {
-                            StackFormatter.handle(ex);
+                            StackTrace.handle(ex);
                         }
                     }
 
@@ -234,7 +234,7 @@ public class Blocks implements FileObject<Blocks> {
                     var logistic = section.getConfigurationSection("logistic");
                     CharArrayList invSlotChars = new CharArrayList();
                     if (logistic != null) {
-                        try (var ignored2 = StackFormatter.setPosition("Reading logistic section: " + key)) {
+                        try (var ignored2 = StackTrace.record("Reading logistic section: " + key)) {
 
                         List<SingletonLogisticBlockData> singletons = new ArrayList<>();
                         for (String k : logistic.getKeys(false)) {
@@ -248,7 +248,7 @@ public class Blocks implements FileObject<Blocks> {
                         }
 
                         } catch (Exception ex) {
-                            StackFormatter.handle(ex);
+                            StackTrace.handle(ex);
                         }
                     }
 
@@ -259,7 +259,7 @@ public class Blocks implements FileObject<Blocks> {
 
                     var recipes = section.getConfigurationSection("recipes");
                     if (recipes != null) {
-                        try (var ignored2 = StackFormatter.setPosition("Reading recipes section: " + key)) {
+                        try (var ignored2 = StackTrace.record("Reading recipes section: " + key)) {
 
                         // create recipe type automatically
 
@@ -279,14 +279,14 @@ public class Blocks implements FileObject<Blocks> {
                         Recipes.loadRecipesNormal(namespace, recipeType, new ConfigSection(recipes), k -> {});
 
                         } catch (Exception ex) {
-                            StackFormatter.handle(ex);
+                            StackTrace.handle(ex);
                         }
                     }
                 } catch (Exception e) {
-                    StackFormatter.handle(e);
+                    StackTrace.handle(e);
                 }}
             } catch (Exception e) {
-                StackFormatter.handle(e);
+                StackTrace.handle(e);
             }}
 
             return this;

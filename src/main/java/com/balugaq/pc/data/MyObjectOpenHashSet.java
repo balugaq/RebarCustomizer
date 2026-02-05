@@ -4,7 +4,7 @@ import com.balugaq.pc.config.Advancer;
 import com.balugaq.pc.config.ConfigReader;
 import com.balugaq.pc.config.Deserializer;
 import com.balugaq.pc.config.GenericDeserializer;
-import com.balugaq.pc.config.StackFormatter;
+import com.balugaq.pc.config.StackTrace;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -52,10 +52,10 @@ public class MyObjectOpenHashSet<T> extends ObjectOpenHashSet<T> implements Gene
                     Deserializer<T> serializer = advancer.advance(getDeserializer());
                     MyObjectOpenHashSet<T> res = new MyObjectOpenHashSet<>();
                     for (Object object : lst) {
-                        try (var ignored = StackFormatter.setPosition("Reading Set<" + getDeserializer().type() + ">")) {
+                        try (var ignored = StackTrace.record("Reading Set<" + getDeserializer().type() + ">")) {
                             res.add(serializer.deserialize(object));
                         } catch (Exception e) {
-                            StackFormatter.handle(e);
+                            StackTrace.handle(e);
                         }
                     }
                     return res;
@@ -63,10 +63,10 @@ public class MyObjectOpenHashSet<T> extends ObjectOpenHashSet<T> implements Gene
                 Object.class, s -> {
                     Deserializer<T> serializer = advancer.advance(getDeserializer());
                     MyObjectOpenHashSet<T> res = new MyObjectOpenHashSet<>();
-                    try (var ignored = StackFormatter.setPosition("Reading Set<" + getDeserializer().type() + ">")) {
+                    try (var ignored = StackTrace.record("Reading Set<" + getDeserializer().type() + ">")) {
                         res.add(serializer.deserialize(s));
                     } catch (Exception e) {
-                        StackFormatter.handle(e);
+                        StackTrace.handle(e);
                     }
                     return res;
                 }

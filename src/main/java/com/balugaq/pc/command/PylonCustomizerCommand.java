@@ -5,7 +5,7 @@ import com.balugaq.pc.config.Language;
 import com.balugaq.pc.config.Pack;
 import com.balugaq.pc.config.PackDesc;
 import com.balugaq.pc.config.PluginDesc;
-import com.balugaq.pc.config.StackFormatter;
+import com.balugaq.pc.config.StackTrace;
 import com.balugaq.pc.config.pack.Author;
 import com.balugaq.pc.config.pack.Contributor;
 import com.balugaq.pc.config.pack.GitHubUpdateLink;
@@ -219,7 +219,7 @@ public class PylonCustomizerCommand {
     private int clearAll(CommandContext<CommandSourceStack> ctx) {
         clearSettings(ctx);
         clearLang(ctx);
-        StackFormatter.getPositions().clear();
+        StackTrace.getRecord().clear();
         return Command.SINGLE_SUCCESS;
     }
 

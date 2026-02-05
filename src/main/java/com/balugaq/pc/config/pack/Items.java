@@ -8,7 +8,7 @@ import com.balugaq.pc.config.Pack;
 import com.balugaq.pc.config.PageDesc;
 import com.balugaq.pc.config.RegisteredObjectID;
 import com.balugaq.pc.config.ScriptDesc;
-import com.balugaq.pc.config.StackFormatter;
+import com.balugaq.pc.config.StackTrace;
 import com.balugaq.pc.config.preloads.PreparedItem;
 import com.balugaq.pc.config.register.PreRegister;
 import com.balugaq.pc.data.MyArrayList;
@@ -72,10 +72,10 @@ public class Items implements FileObject<Items> {
         return List.of(dir -> {
             List<File> files = Arrays.stream(dir.listFiles()).toList();
             List<File> ymls = files.stream().filter(file -> file.getName().endsWith(".yml") || file.getName().endsWith(".yaml")).toList();
-            for (File yml : ymls) {try (var ignored = StackFormatter.setPosition("Reading file: " + StringUtil.simplifyPath(yml.getAbsolutePath()))) {
+            for (File yml : ymls) {try (var ignored = StackTrace.record("Reading file: " + StringUtil.simplifyPath(yml.getAbsolutePath()))) {
                 var config = YamlConfiguration.loadConfiguration(yml);
 
-                for (String key : config.getKeys(false)) {try (var ignored1 = StackFormatter.setPosition("Reading key: " + key)) {
+                for (String key : config.getKeys(false)) {try (var ignored1 = StackTrace.record("Reading key: " + key)) {
                     var section = PreRegister.read(config, key);
                     if (section == null) continue;
 
@@ -103,10 +103,10 @@ public class Items implements FileObject<Items> {
                     boolean postLoad = section.getBoolean("postload", false);
                     items.put(id, new PreparedItem(id, icon, pages, postLoad));
                 } catch (Exception e) {
-                    StackFormatter.handle(e);
+                    StackTrace.handle(e);
                 }}
             } catch (Exception e) {
-                StackFormatter.handle(e);
+                StackTrace.handle(e);
             }}
 
             return this;
