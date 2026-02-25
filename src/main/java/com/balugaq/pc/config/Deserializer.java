@@ -109,7 +109,7 @@ public interface Deserializer<T> {
     Deserializer<MyObject2ObjectOpenHashMap<RebarFluid, Double>> FLUID_MAP = new FluidMapDeserializer();
     Deserializer<Byte> BYTE = warp(ConfigAdapter.BYTE);
     Deserializer<Short> SHORT = warp(ConfigAdapter.SHORT);
-    Deserializer<Integer> INT = warp(ConfigAdapter.INT);
+    Deserializer<Integer> INT = warp(ConfigAdapter.INTEGER);
     Deserializer<Long> LONG = warp(ConfigAdapter.LONG);
     Deserializer<Float> FLOAT = warp(ConfigAdapter.FLOAT);
     Deserializer<Double> DOUBLE = warp(ConfigAdapter.DOUBLE);

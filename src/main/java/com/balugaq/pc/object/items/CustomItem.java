@@ -30,6 +30,7 @@ import io.github.pylonmc.rebar.item.base.VanillaCookingFuel;
 import net.kyori.adventure.key.Key;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockDispenseEvent;
@@ -59,7 +60,7 @@ import java.util.List;
  * - onUsedToClickBlock
  * - onUsedAsBrewingStandFuel
  * - onConsumed
- * - onUsedToRightClick
+ * - onUsedToClick
  * - onDispense
  * - onTick
  * - getTickInterval
@@ -96,33 +97,33 @@ public class CustomItem extends RebarItem implements RebarArmor, RebarArrow, Reb
     }
 
     @Override
-    public void onUsedToClickBlock(final PlayerInteractEvent event) {
-        callScript(this, event);
+    public void onUsedToClickBlock(final PlayerInteractEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override
-    public void onUsedAsBrewingStandFuel(final BrewingStandFuelEvent event) {
-        callOrCancelEvent(this, event);
+    public void onUsedAsBrewingStandFuel(final BrewingStandFuelEvent event, final EventPriority priority) {
+        callOrCancelEvent(this, event, priority);
     }
 
     @Override
-    public void onConsumed(final PlayerItemConsumeEvent event) {
-        callOrCancelEvent(this, event);
+    public void onConsumed(final PlayerItemConsumeEvent event, final EventPriority priority) {
+        callOrCancelEvent(this, event, priority);
     }
 
     @Override
-    public void onUsedToRightClick(final PlayerInteractEvent event) {
-        callScript(this, event);
+    public void onUsedToClick(final PlayerInteractEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override
-    public void onUsedToRightClickEntity(final PlayerInteractEntityEvent event) {
-        callScript(this, event);
+    public void onUsedToRightClickEntity(final PlayerInteractEntityEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override
-    public void onDispense(final BlockDispenseEvent event) {
-        callScript(this, event);
+    public void onDispense(final BlockDispenseEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override
@@ -141,58 +142,58 @@ public class CustomItem extends RebarItem implements RebarArmor, RebarArrow, Reb
     }
 
     @Override
-    public void onSplash(final LingeringPotionSplashEvent event) {
-        callOrCancelEvent(this, event);
+    public void onSplash(final LingeringPotionSplashEvent event, final EventPriority priority) {
+        callOrCancelEvent(this, event, priority);
     }
 
     @Override
-    public void onSplash(final PotionSplashEvent event) {
-        callOrCancelEvent(this, event);
+    public void onSplash(final PotionSplashEvent event, final EventPriority priority) {
+        callOrCancelEvent(this, event, priority);
     }
 
     @Override
-    public void onBurntAsFuel(final FurnaceBurnEvent event) {
-        callOrCancelEvent(this, event);
+    public void onBurntAsFuel(final FurnaceBurnEvent event, final EventPriority priority) {
+        callOrCancelEvent(this, event, priority);
     }
 
     @Override
-    public void onArrowReady(final PlayerReadyArrowEvent event) {
-        callOrCancelEvent(this, event);
+    public void onArrowReady(final PlayerReadyArrowEvent event, final EventPriority priority) {
+        callOrCancelEvent(this, event, priority);
     }
 
     @Override
-    public void onArrowShotFromBow(final EntityShootBowEvent event) {
-        callOrCancelEvent(this, event);
+    public void onArrowShotFromBow(final EntityShootBowEvent event, final EventPriority priority) {
+        callOrCancelEvent(this, event, priority);
     }
 
     @Override
-    public void onArrowHit(final ProjectileHitEvent event) {
-        callOrCancelEvent(this, event);
+    public void onArrowHit(final ProjectileHitEvent event, final EventPriority priority) {
+        callOrCancelEvent(this, event, priority);
     }
 
     @Override
-    public void onArrowDamage(final EntityDamageByEntityEvent event) {
-        callScript(this, event);
+    public void onArrowDamage(final EntityDamageByEntityEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override
-    public void onBowReady(final PlayerReadyArrowEvent event) {
-        callOrCancelEvent(this, event);
+    public void onBowReady(final PlayerReadyArrowEvent event, final EventPriority priority) {
+        callOrCancelEvent(this, event, priority);
     }
 
     @Override
-    public void onBowFired(final EntityShootBowEvent event) {
-        callOrCancelEvent(this, event);
+    public void onBowFired(final EntityShootBowEvent event, final EventPriority priority) {
+        callOrCancelEvent(this, event, priority);
     }
 
     @Override
-    public void onBucketEmptied(final PlayerBucketEmptyEvent event) {
-        callOrCancelEvent(this, event);
+    public void onBucketEmptied(final PlayerBucketEmptyEvent event, final EventPriority priority) {
+        callOrCancelEvent(this, event, priority);
     }
 
     @Override
-    public void onBucketFilled(final PlayerBucketFillEvent event) {
-        callOrCancelEvent(this, event);
+    public void onBucketFilled(final PlayerBucketFillEvent event, final EventPriority priority) {
+        callOrCancelEvent(this, event, priority);
     }
 
     @Override
@@ -231,38 +232,38 @@ public class CustomItem extends RebarItem implements RebarArmor, RebarArrow, Reb
     }
 
     @Override
-    public void onItemDamaged(final PlayerItemDamageEvent event) {
-        callScript(this, event);
+    public void onItemDamaged(final PlayerItemDamageEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override
-    public void onItemBreaks(final PlayerItemBreakEvent event) {
-        callScript(this, event);
+    public void onItemBreaks(final PlayerItemBreakEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override
-    public void onItemMended(final PlayerItemMendEvent event) {
-        callScript(this, event);
+    public void onItemMended(final PlayerItemMendEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override
-    public void onUsedToDamageBlock(final BlockDamageEvent event) {
-        callScript(this, event);
+    public void onUsedToDamageBlock(final BlockDamageEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override
-    public void onUsedToBreakBlock(final BlockBreakEvent event) {
-        callScript(this, event);
+    public void onUsedToBreakBlock(final BlockBreakEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override
-    public void onUsedToDamageEntity(final EntityDamageByEntityEvent event) {
-        callScript(this, event);
+    public void onUsedToDamageEntity(final EntityDamageByEntityEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override
-    public void onUsedToKillEntity(final EntityDeathEvent event) {
-        callScript(this, event);
+    public void onUsedToKillEntity(final EntityDeathEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override

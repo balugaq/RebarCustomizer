@@ -383,7 +383,7 @@ public class Pack implements FileObject<Pack> {
                 StackTrace.destroy();
 
                 Researches researches = null;
-                if (RebarConfig.RESEARCHES_ENABLED) {
+                if (RebarConfig.ResearchConfig.ENABLED) {
                     StackTrace.record("Reading researches");
                     var researchesFolder = findDir(files, "researches");
                     if (researchesFolder != null)

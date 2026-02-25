@@ -118,7 +118,7 @@ public class CustomRecipeType extends ConfigurableRecipeType<RebarRecipe> {
         }
         List<RecipeInput> inputs = readInputs(other.get("inputs"));
         List<FluidOrItem> results = readResults(other.get("results"));
-        int timeSeconds = section.get("time-seconds", ConfigAdapter.INT, 0);
+        int timeSeconds = section.get("time-seconds", ConfigAdapter.INTEGER, 0);
 
         return new CustomRecipe(this, key, inputs, results, timeSeconds, other);
     }

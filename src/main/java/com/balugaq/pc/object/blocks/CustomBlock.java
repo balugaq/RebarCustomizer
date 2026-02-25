@@ -78,6 +78,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BellResonateEvent;
 import org.bukkit.event.block.BellRingEvent;
 import org.bukkit.event.block.BlockCookEvent;
@@ -205,8 +206,8 @@ public class CustomBlock extends RebarBlock implements RebarInteractBlock, Rebar
     }
 
     @Override
-    public void onInteract(final PlayerInteractEvent event) {
-        var v = callScriptA("onPreInteract", this, event);
+    public void onInteract(final PlayerInteractEvent event, final EventPriority priority) {
+        var v = callScriptA("onPreInteract", this, event, priority);
         if (v instanceof Boolean cancelled && cancelled) return;
 
         if (!event.getAction().isRightClick()
@@ -227,42 +228,42 @@ public class CustomBlock extends RebarBlock implements RebarInteractBlock, Rebar
                     .open();
         }
 
-        callScriptA("onPostInteract", this, event);
+        callScriptA("onPostInteract", this, event, priority);
     }
 
     @Override
-    public void onFlowerPotManipulated(final PlayerFlowerPotManipulateEvent event) {
-        callScript(this, event);
+    public void onFlowerPotManipulated(final PlayerFlowerPotManipulateEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override
-    public void onActivated(final BeaconActivatedEvent event) {
-        callScript(this, event);
+    public void onActivated(final BeaconActivatedEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override
-    public void onDeactivated(final BeaconDeactivatedEvent event) {
-        callScript(this, event);
+    public void onDeactivated(final BeaconDeactivatedEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override
-    public void onEffectChange(final PlayerChangeBeaconEffectEvent event) {
-        callScript(this, event);
+    public void onEffectChange(final PlayerChangeBeaconEffectEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override
-    public void onEffectApply(final BeaconEffectEvent event) {
-        callScript(this, event);
+    public void onEffectApply(final BeaconEffectEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override
-    public void onRing(final BellRingEvent event) {
-        callScript(this, event);
+    public void onRing(final BellRingEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override
-    public void onResonate(final BellResonateEvent event) {
-        callScript(this, event);
+    public void onResonate(final BellResonateEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override
@@ -287,78 +288,78 @@ public class CustomBlock extends RebarBlock implements RebarInteractBlock, Rebar
     }
 
     @Override
-    public void onStartCooking(final InventoryBlockStartEvent event) {
-        callScript(this, event);
+    public void onStartCooking(final InventoryBlockStartEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override
-    public void onEndCooking(final BlockCookEvent event) {
-        callScript(this, event);
+    public void onEndCooking(final BlockCookEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override
-    public void onLevelChange(final CauldronLevelChangeEvent event) {
-        callScript(this, event);
+    public void onLevelChange(final CauldronLevelChangeEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override
-    public void onCompostByHopper(final CompostItemEvent event) {
-        callScript(this, event);
+    public void onCompostByHopper(final CompostItemEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override
-    public void onCompostByEntity(final EntityCompostItemEvent event) {
-        callScript(this, event);
+    public void onCompostByEntity(final EntityCompostItemEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override
-    public void onInventoryOpen(final InventoryOpenEvent event) {
-        callScript(this, event);
+    public void onInventoryOpen(final InventoryOpenEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override
-    public void onItemMoveTo(final InventoryMoveItemEvent event) {
-        callScript(this, event);
+    public void onItemMoveTo(final InventoryMoveItemEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override
-    public void onItemMoveFrom(final InventoryMoveItemEvent event) {
-        callScript(this, event);
+    public void onItemMoveFrom(final InventoryMoveItemEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override
-    public void onDecayNaturally(final LeavesDecayEvent event) {
-        callScript(this, event);
+    public void onDecayNaturally(final LeavesDecayEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override
-    public void onJumpedOn(final PlayerJumpEvent event) {
-        callScript(this, event);
+    public void onJumpedOn(final PlayerJumpEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override
-    public void onGrow(final BlockGrowEvent event) {
-        callScript(this, event);
+    public void onGrow(final BlockGrowEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override
-    public void onFertilize(final BlockFertilizeEvent event) {
-        callScript(this, event);
+    public void onFertilize(final BlockFertilizeEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override
-    public void onInsertBook(final PlayerInsertLecternBookEvent event) {
-        callScript(this, event);
+    public void onInsertBook(final PlayerInsertLecternBookEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override
-    public void onRemoveBook(final PlayerTakeLecternBookEvent event) {
-        callScript(this, event);
+    public void onRemoveBook(final PlayerTakeLecternBookEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override
-    public void onChangePage(final PlayerLecternPageChangeEvent event) {
-        callScript(this, event);
+    public void onChangePage(final PlayerLecternPageChangeEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override
@@ -379,7 +380,7 @@ public class CustomBlock extends RebarBlock implements RebarInteractBlock, Rebar
         }
         var settings = getSettingsOrNull();
         if (settings == null) return RebarTickingBlock.super.getTickInterval();
-        var v3 = settings.get("tick-interval", ConfigAdapter.INT, RebarTickingBlock.super.getTickInterval());
+        var v3 = settings.get("tick-interval", ConfigAdapter.INTEGER, RebarTickingBlock.super.getTickInterval());
         setTickInterval(v3);
         return v3;
     }
@@ -526,77 +527,77 @@ public class CustomBlock extends RebarBlock implements RebarInteractBlock, Rebar
 
         var settings = getSettingsOrNull();
         if (settings == null) return 1;
-        return settings.get("speed", ConfigAdapter.INT, 1);
+        return settings.get("speed", ConfigAdapter.INTEGER, 1);
     }
 
     @Override
-    public void onNotePlay(final NotePlayEvent event) {
-        callScript(this, event);
+    public void onNotePlay(final NotePlayEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override
-    public void onCurrentChange(final BlockRedstoneEvent event) {
-        callScript(this, event);
+    public void onCurrentChange(final BlockRedstoneEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override
-    public void onShear(final PlayerShearBlockEvent event) {
-        callScript(this, event);
+    public void onShear(final PlayerShearBlockEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override
-    public void onAbsorb(final SpongeAbsorbEvent event) {
-        callScript(this, event);
+    public void onAbsorb(final SpongeAbsorbEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override
-    public void onIgnite(final TNTPrimeEvent event) {
-        callScript(this, event);
+    public void onIgnite(final TNTPrimeEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override
-    public void onHit(final TargetHitEvent event) {
-        callScript(this, event);
+    public void onHit(final TargetHitEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override
-    public void onDisplayItem(final VaultDisplayItemEvent event) {
-        callScript(this, event);
+    public void onDisplayItem(final VaultDisplayItemEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override
-    public void onUnload(final RebarBlockUnloadEvent event) {
-        callScript(this, event);
+    public void onUnload(final RebarBlockUnloadEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override
-    public void onExtend(final BlockPistonExtendEvent event) {
-        callScript(this, event);
+    public void onExtend(final BlockPistonExtendEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override
-    public void onRetract(final BlockPistonRetractEvent event) {
-        callScript(this, event);
+    public void onRetract(final BlockPistonRetractEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override
-    public void onSignChange(final SignChangeEvent event) {
-        callScript(this, event);
+    public void onSignChange(final SignChangeEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override
-    public void onOpen(final PlayerOpenSignEvent event) {
-        callScript(this, event);
+    public void onOpen(final PlayerOpenSignEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override
-    public void onSneakedOn(final PlayerToggleSneakEvent event) {
-        callScript(this, event);
+    public void onSneakedOn(final PlayerToggleSneakEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override
-    public void onUnsneakedOn(final PlayerToggleSneakEvent event) {
-        callScript(this, event);
+    public void onUnsneakedOn(final PlayerToggleSneakEvent event, final EventPriority priority) {
+        callScript(this, event, priority);
     }
 
     @Override
