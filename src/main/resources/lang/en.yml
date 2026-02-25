@@ -1,13 +1,1 @@
 addon: "RebarCustomizer"
-
-item:
-  black_background:
-    name: " "
-  gray_background:
-    name: " "
-  recipe_copier:
-    name: "<gold>Recipe Copier"
-
-guide:
-  page:
-    main: "Rebar Customizer"

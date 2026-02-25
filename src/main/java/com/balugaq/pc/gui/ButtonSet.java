@@ -1,7 +1,6 @@
 package com.balugaq.pc.gui;
 
 import com.balugaq.pc.RebarCustomizer;
-import com.balugaq.pc.rebar.RebarCustomizerKeys;
 import io.github.pylonmc.rebar.block.RebarBlock;
 import io.github.pylonmc.rebar.block.base.RebarGuiBlock;
 import io.github.pylonmc.rebar.item.builder.ItemStackBuilder;
