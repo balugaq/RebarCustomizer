@@ -1,0 +1,13 @@
+addon: "RebarCustomizer"
+
+item:
+  black_background:
+    name: " "
+  gray_background:
+    name: " "
+  recipe_copier:
+    name: "<gold>조합법 복사기"
+
+guide:
+  page:
+    main: "리바 커스터마이저"
