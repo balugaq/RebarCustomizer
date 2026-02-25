@@ -39,7 +39,7 @@ public class GuiItem<T extends RebarBlock & RebarGuiBlock> extends AbstractItem 
     public GuiItem(T data) {
         this.data = data;
         this.itemProvider = (block, p) -> null;
-        this.clickHandler = ButtonSet.deny();
+        this.clickHandler = denyClick();
     }
 
     public static <T extends RebarBlock & RebarGuiBlock> GuiItem<T> create(@NotNull T data) {
@@ -131,5 +131,11 @@ public class GuiItem<T extends RebarBlock & RebarGuiBlock> extends AbstractItem 
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    public static <T extends RebarBlock & RebarGuiBlock> ClickHandler<T> denyClick() {
+        return (data, clickType, player, click) -> {
+            return false;
+        };
     }
 }
