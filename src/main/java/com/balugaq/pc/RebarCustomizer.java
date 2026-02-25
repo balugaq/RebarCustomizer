@@ -6,8 +6,6 @@ import com.balugaq.pc.listener.ChatInputListener;
 import com.balugaq.pc.manager.ConfigManager;
 import com.balugaq.pc.manager.IntegrationManager;
 import com.balugaq.pc.manager.PackManager;
-import com.balugaq.pc.rebar.RebarCustomizerBlocks;
-import com.balugaq.pc.rebar.RebarCustomizerItems;
 import com.balugaq.pc.util.Debug;
 import com.balugaq.pc.util.OSUtil;
 import io.github.pylonmc.rebar.addon.RebarAddon;
@@ -148,9 +146,6 @@ public class RebarCustomizer extends JavaPlugin implements RebarAddon, Debuggabl
         configManager = new ConfigManager(this);
         integrationManager = new IntegrationManager();
         packManager = new PackManager();
-
-        RebarCustomizerItems.initialize();
-        RebarCustomizerBlocks.initialize();
 
         runTaskLater(() -> {
             try (var ignored = StackTrace.record("Loading packs")) {
