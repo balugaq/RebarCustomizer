@@ -35,12 +35,10 @@ import io.github.pylonmc.rebar.block.base.RebarRecipeProcessor;
 import io.github.pylonmc.rebar.block.base.RebarRedstoneBlock;
 import io.github.pylonmc.rebar.block.base.RebarShearable;
 import io.github.pylonmc.rebar.block.base.RebarSign;
-import io.github.pylonmc.rebar.block.base.RebarSneakableBlock;
 import io.github.pylonmc.rebar.block.base.RebarSponge;
 import io.github.pylonmc.rebar.block.base.RebarTNT;
 import io.github.pylonmc.rebar.block.base.RebarTargetBlock;
 import io.github.pylonmc.rebar.block.base.RebarTickingBlock;
-import io.github.pylonmc.rebar.block.base.RebarTrialVault;
 import io.github.pylonmc.rebar.block.base.RebarUnloadBlock;
 import io.github.pylonmc.rebar.block.context.BlockBreakContext;
 import io.github.pylonmc.rebar.block.context.BlockCreateContext;
@@ -172,19 +170,15 @@ public class CustomBlock extends RebarBlock implements RebarInteractBlock, Rebar
                                                        RebarBeacon, RebarBell, RebarBreakHandler, RebarCampfire, RebarCauldron,
                                                        RebarComposter, RebarFlowerPot, RebarFluidBlock, RebarFluidBufferBlock,
                                                        RebarGrowable, RebarJumpBlock, RebarLeaf, RebarLectern, RebarNoteBlock,
-                                                       RebarPiston, RebarRedstoneBlock, RebarShearable, RebarSign, RebarSneakableBlock,
-                                                       RebarSponge, RebarTargetBlock, RebarTNT, RebarTrialVault, RebarUnloadBlock,
-                                                       RebarGuiBlock, RebarLogisticBlock, RebarRecipeProcessor<CustomRecipe>, RuntimeObject {
+                                                       RebarPiston, RebarRedstoneBlock, RebarShearable, RebarSign, RebarSponge,
+                                                       RebarTargetBlock, RebarTNT, RebarUnloadBlock, RebarGuiBlock,
+                                                       RebarLogisticBlock, RebarRecipeProcessor<CustomRecipe>, RuntimeObject {
     private final Char2ObjectOpenHashMap<VirtualInventory> vs = new Char2ObjectOpenHashMap<>();
     private final @Nullable RecipeType<?> loadRecipeType = RebarRegistry.RECIPE_TYPES.get(getKey());
     private final @Nullable GuiData guiData = GlobalVars.getGuiData(getKey());
     private final @Nullable LogisticBlockData logisticBlockData = GlobalVars.getLogisticBlockData(getKey());
     private final @Nullable FluidBlockData fluidBlockData = GlobalVars.getFluidBlockData(getKey());
     private final @Nullable FluidBufferBlockData fluidBufferBlockData = GlobalVars.getFluidBufferBlockData(getKey());
-
-    public CustomBlock(final Block block) {
-        super(block);
-    }
 
     public CustomBlock(final Block block, final PersistentDataContainer pdc) {
         super(block, pdc);
@@ -561,11 +555,6 @@ public class CustomBlock extends RebarBlock implements RebarInteractBlock, Rebar
     }
 
     @Override
-    public void onDisplayItem(final VaultDisplayItemEvent event, final EventPriority priority) {
-        callScript(this, event, priority);
-    }
-
-    @Override
     public void onUnload(final RebarBlockUnloadEvent event, final EventPriority priority) {
         callScript(this, event, priority);
     }
@@ -587,16 +576,6 @@ public class CustomBlock extends RebarBlock implements RebarInteractBlock, Rebar
 
     @Override
     public void onOpen(final PlayerOpenSignEvent event, final EventPriority priority) {
-        callScript(this, event, priority);
-    }
-
-    @Override
-    public void onSneakedOn(final PlayerToggleSneakEvent event, final EventPriority priority) {
-        callScript(this, event, priority);
-    }
-
-    @Override
-    public void onUnsneakedOn(final PlayerToggleSneakEvent event, final EventPriority priority) {
         callScript(this, event, priority);
     }
 

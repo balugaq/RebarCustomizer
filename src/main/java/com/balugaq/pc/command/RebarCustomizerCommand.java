@@ -52,7 +52,7 @@ import java.util.function.Function;
 public class RebarCustomizerCommand {
     public static final int MAX_SAVEDITEMS = 1 << 14;
     //@formatter:off
-    public static final LiteralCommandNode<CommandSourceStack> ROOT = Commands.literal("pc")
+    public static final LiteralCommandNode<CommandSourceStack> ROOT = Commands.literal("rc")
         .then(Commands.literal("clearsettings")
             .requires(source -> source.getSender().hasPermission("RebarCustomizer.command.clearsettings"))
             .executes(RebarCustomizerCommand::clearSettings)

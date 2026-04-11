@@ -19,11 +19,7 @@ import java.util.Map;
 @NullMarked
 public class CustomMultiBlock extends CustomBlock implements RebarSimpleMultiblock {
     private final @Nullable CustomRecipeType recipeType = (CustomRecipeType) RebarRegistry.RECIPE_TYPES.get(getKey());
-
-    public CustomMultiBlock(final Block block) {
-        super(block);
-    }
-
+    
     public CustomMultiBlock(final Block block, final PersistentDataContainer pdc) {
         super(block, pdc);
     }
