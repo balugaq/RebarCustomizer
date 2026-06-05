@@ -1,0 +1,13 @@
+package com.balugaq.rc.exceptions;
+
+import org.jspecify.annotations.NullMarked;
+
+/**
+ * @author balugaq
+ */
+@NullMarked
+public class WrongStateException extends RuntimeException {
+    public WrongStateException(String message) {
+        super(message);
+    }
+}

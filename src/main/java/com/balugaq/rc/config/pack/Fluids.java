@@ -1,0 +1,115 @@
+package com.balugaq.rc.config.pack;
+
+import com.balugaq.rc.config.Deserializer;
+import com.balugaq.rc.config.FileObject;
+import com.balugaq.rc.config.FileReader;
+import com.balugaq.rc.config.InternalObjectID;
+import com.balugaq.rc.config.Pack;
+import com.balugaq.rc.config.PageDesc;
+import com.balugaq.rc.config.RegisteredObjectID;
+import com.balugaq.rc.config.StackTrace;
+import com.balugaq.rc.config.preloads.PreparedFluid;
+import com.balugaq.rc.config.register.PreRegister;
+import com.balugaq.rc.data.MyArrayList;
+import com.balugaq.rc.exceptions.IncompatibleMaterialException;
+import com.balugaq.rc.exceptions.MissingArgumentException;
+import com.balugaq.rc.util.MaterialUtil;
+import com.balugaq.rc.util.StringUtil;
+import io.github.pylonmc.rebar.fluid.tags.FluidTemperature;
+import lombok.Data;
+import net.kyori.adventure.text.format.TextColor;
+import org.bukkit.Material;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.ItemStack;
+import org.jspecify.annotations.NullMarked;
+
+import java.io.File;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+
+/**
+ * <li>fluids/
+ *   <ul>
+ *     <li>fluids-partA.yml</li>
+ *     <li>fluids-partB.yml</li>
+ *   </ul>
+ * </li>
+ * <p>
+ * For each yml:
+ * <p>
+ * [Internal object ID]:
+ *   material: [Material Format]
+ *   *temperature: [Temperature]
+ *   *postload: boolean
+ * <p>
+ *
+ * @author balugaq
+ */
+@Data
+@NullMarked
+public class Fluids implements FileObject<Fluids> {
+    private AtomicInteger loadedFluids = new AtomicInteger(0);
+    private PackNamespace namespace;
+    private Map<RegisteredObjectID, PreparedFluid> fluids = new HashMap<>();
+
+    public Fluids setPackNamespace(PackNamespace namespace) {
+        this.namespace = namespace;
+        return this;
+    }
+
+    // @formatter:off
+    @Override
+    public List<FileReader<Fluids>> readers() {
+        return List.of(dir -> {
+            List<File> files = Arrays.stream(dir.listFiles()).toList();
+            List<File> ymls = files.stream().filter(file -> file.getName().endsWith(".yml") || file.getName().endsWith(".yaml")).toList();
+            for (File yml : ymls) {try (var ignored = StackTrace.record("Reading file: " + StringUtil.simplifyPath(yml.getAbsolutePath()))) {
+                var config = YamlConfiguration.loadConfiguration(yml);
+                for (String key : config.getKeys(false)) {try (var ignored1 = StackTrace.record("Reading key: " + key)) {
+                    var section = PreRegister.read(config, key);
+                    if (section == null) continue;
+
+                    if (!section.contains("material")) throw new MissingArgumentException("material");
+
+                    var s2 = section.get("material");
+
+                    ItemStack item = Deserializer.ITEM_STACK.deserialize(s2);
+                    if (item == null) continue;
+                    Material dm = MaterialUtil.getDisplayMaterial(item);
+                    if (!dm.isItem() || dm.isAir()) throw new IncompatibleMaterialException("material must be items: " + item.getType());
+
+                    TextColor color = Deserializer.TEXT_COLOR.deserialize(section.getString("color"));
+
+                    var id = InternalObjectID.of(key).register(namespace);
+                    var ts = section.getString("temperature");
+                    if (ts == null) {
+                        ts = FluidTemperature.NORMAL.name();
+                    }
+
+                    FluidTemperature temperature = Deserializer.FLUID_TEMPERATURE.deserialize(ts);
+                    if (temperature == null) continue;
+
+                    PageDesc page = Pack.readOrNull(section, PageDesc.class, "page", t -> t.setPackNamespace(getNamespace()));
+                    MyArrayList<PageDesc> pages = Pack.readOrNull(section, MyArrayList.class, PageDesc.class, "pages", t -> t.setPackNamespace(getNamespace()));
+                    if (page != null) {
+                        if (pages == null) pages = new MyArrayList<>();
+                        pages.add(page);
+                    }
+
+                    boolean postLoad = section.getBoolean("postload", false);
+                    fluids.put(id, new PreparedFluid(id, dm, color, temperature, pages, postLoad));
+                } catch (Exception e) {
+                    StackTrace.handle(e);
+                }}
+            } catch (Exception e) {
+                StackTrace.handle(e);
+            }}
+
+            return this;
+        });
+    }
+    // @formatter:on
+}
