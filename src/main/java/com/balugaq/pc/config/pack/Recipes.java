@@ -204,7 +204,7 @@ public class Recipes {
         var template = Deserializer.RECIPE_CHOICE.deserialize(config.get("template"));
         var base = Deserializer.RECIPE_CHOICE.deserialize(config.get("base"));
         var addition = Deserializer.RECIPE_CHOICE.deserialize(config.get("addition"));
-        var result = Deserializer.ITEMSTACK.deserialize(config.get("result"));
+        var result = Deserializer.ITEM_STACK.deserialize(config.get("result"));
         return new SmithingTransformRecipeWrapper(
                 new SmithingTransformRecipe(
                         key,
@@ -229,7 +229,7 @@ public class Recipes {
     private static ShapelessRecipeWrapper advancedVanillaShapeless(NamespacedKey key, ConfigurationSection config) {
         List<?> is = config.getList("ingredients");
         List<RecipeChoice.ExactChoice> ingredients = (is == null || is.isEmpty()) ? new ArrayList<>() : is.stream().map(Deserializer.RECIPE_CHOICE::deserialize).toList();
-        var result = Deserializer.ITEMSTACK.deserialize(config.get("result"));
+        var result = Deserializer.ITEM_STACK.deserialize(config.get("result"));
 
         var recipe = new ShapelessRecipe(key, result);
         for (var ingredient : ingredients) {
@@ -251,7 +251,7 @@ public class Recipes {
             ingredientKey.put(e.toCharArray()[0], Deserializer.RECIPE_CHOICE.deserialize(c.get(e)));
         }
         var pattern = config.getStringList("pattern");
-        var result = Deserializer.ITEMSTACK.deserialize(config.get("result"));
+        var result = Deserializer.ITEM_STACK.deserialize(config.get("result"));
 
         var recipe = new ShapedRecipe(key, result);
         recipe.shape(pattern.toArray(new String[0]));
@@ -269,7 +269,7 @@ public class Recipes {
         var cookingTime = config.getInt("cookingtime", DEFAULT_COOKING_TIME);
         var experience = (float) config.getDouble("experience", 0f);
         var ingredient = Deserializer.RECIPE_CHOICE.deserialize(config.get("ingredient"));
-        var result = Deserializer.ITEMSTACK.deserialize(config.get("result"));
+        var result = Deserializer.ITEM_STACK.deserialize(config.get("result"));
         var recipe = function.invoke(key, result, ingredient, experience, cookingTime);
         var category = Deserializer.COOKING_BOOK_CATEGORY.deserializeOrNull(config.get("category"));
         if (category != null) recipe.setCategory(category);

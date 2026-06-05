@@ -148,7 +148,7 @@ public class Blocks implements FileObject<Blocks> {
 
                     var s2 = section.get("material");
 
-                    ItemStack item = Deserializer.ITEMSTACK.deserialize(s2);
+                    ItemStack item = Deserializer.ITEM_STACK.deserialize(s2);
                     if (item == null) continue;
                     Material dm = MaterialUtil.getDisplayMaterial(item);
                     if (!dm.isBlock() || dm.isAir()) throw new IncompatibleMaterialException("material must be blocks: " + item.getType());

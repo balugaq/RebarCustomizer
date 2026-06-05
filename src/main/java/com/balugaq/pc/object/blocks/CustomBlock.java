@@ -22,13 +22,12 @@ import io.github.pylonmc.rebar.block.base.RebarFlowerPot;
 import io.github.pylonmc.rebar.block.base.RebarFluidBlock;
 import io.github.pylonmc.rebar.block.base.RebarFluidBufferBlock;
 import io.github.pylonmc.rebar.block.base.RebarGrowable;
-import io.github.pylonmc.rebar.block.base.RebarGuiBlock;
 import io.github.pylonmc.rebar.block.base.RebarInteractBlock;
+import io.github.pylonmc.rebar.block.base.RebarInventoryBlock;
 import io.github.pylonmc.rebar.block.base.RebarJumpBlock;
 import io.github.pylonmc.rebar.block.base.RebarLeaf;
 import io.github.pylonmc.rebar.block.base.RebarLectern;
 import io.github.pylonmc.rebar.block.base.RebarLogisticBlock;
-import io.github.pylonmc.rebar.block.base.RebarNoVanillaContainerBlock;
 import io.github.pylonmc.rebar.block.base.RebarNoteBlock;
 import io.github.pylonmc.rebar.block.base.RebarPiston;
 import io.github.pylonmc.rebar.block.base.RebarRecipeProcessor;
@@ -163,15 +162,18 @@ import java.util.Map;
  * - createGui
  * - onPostInitialise
  *
+ *
+ * todo: rewrite with bytebuddy
+ *
  * @author balugaq
  */
 @NullMarked
-public class CustomBlock extends RebarBlock implements RebarInteractBlock, RebarTickingBlock, RebarNoVanillaContainerBlock,
+public class CustomBlock extends RebarBlock implements RebarInteractBlock, RebarTickingBlock, RebarInventoryBlock,
                                                        RebarBeacon, RebarBell, RebarBreakHandler, RebarCampfire, RebarCauldron,
                                                        RebarComposter, RebarFlowerPot, RebarFluidBlock, RebarFluidBufferBlock,
                                                        RebarGrowable, RebarJumpBlock, RebarLeaf, RebarLectern, RebarNoteBlock,
                                                        RebarPiston, RebarRedstoneBlock, RebarShearable, RebarSign, RebarSponge,
-                                                       RebarTargetBlock, RebarTNT, RebarUnloadBlock, RebarGuiBlock,
+                                                       RebarTargetBlock, RebarTNT, RebarUnloadBlock,
                                                        RebarLogisticBlock, RebarRecipeProcessor<CustomRecipe>, RuntimeObject {
     private final Char2ObjectOpenHashMap<VirtualInventory> vs = new Char2ObjectOpenHashMap<>();
     private final @Nullable RecipeType<?> loadRecipeType = RebarRegistry.RECIPE_TYPES.get(getKey());
@@ -435,8 +437,8 @@ public class CustomBlock extends RebarBlock implements RebarInteractBlock, Rebar
                 switch (e) {
                     case RecipeInput.Item item -> {
                         if (logisticBlockData == null || vi == null) continue recipe;
-                        if (!vi.contains(item::contains)) continue recipe;
-                        if (vi.count(item::contains) < item.getAmount()) continue recipe;
+                        if (!vi.contains(item::matches)) continue recipe;
+                        if (vi.count(item::matches) < item.getAmount()) continue recipe;
                     }
                     case RecipeInput.Fluid fluid -> {
                         if (fluidBufferBlockData == null) continue recipe;

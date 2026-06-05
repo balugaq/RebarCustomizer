@@ -19,6 +19,7 @@ import com.balugaq.pc.exceptions.UnknownKeyedException;
 import com.balugaq.pc.exceptions.UnknownMultiblockComponentException;
 import com.balugaq.pc.exceptions.UnknownRecipeInputException;
 import com.balugaq.pc.exceptions.UnknownSaveditemException;
+import com.balugaq.pc.exceptions.UnknownSymbolException;
 import com.balugaq.pc.manager.PackManager;
 import com.balugaq.pc.object.CustomRecipeType;
 import com.balugaq.pc.util.ClassUtil;
@@ -38,6 +39,7 @@ import io.github.pylonmc.rebar.util.RandomizedSound;
 import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
 import lombok.SneakyThrows;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Keyed;
 import org.bukkit.Material;
@@ -95,7 +97,7 @@ public interface Deserializer<T> {
         return t;
     }
 
-    Deserializer<ItemStack> ITEMSTACK = new ItemStackDeserializer();
+    Deserializer<ItemStack> ITEM_STACK = new ItemStackDeserializer();
     Deserializer<RebarFluid> PYLON_FLUID = new RebarFluidDeserializer();
     MultiblockComponentDeserializer MULTIBLOCK_COMPONENT = new MultiblockComponentDeserializer();
     Vector3iDeserializer VECTOR3I = new Vector3iDeserializer();
@@ -138,6 +140,7 @@ public interface Deserializer<T> {
     Deserializer<RegisterConditions> REGISTER_CONDITIONS = Deserializer.newDeserializer(RegisterConditions.class);
     Deserializer<MinecraftVersion> MINECRAFT_VERSION = Deserializer.newDeserializer(MinecraftVersion.class);
     Deserializer<LogisticGroupType> LOGISTIC_GROUP_TYPE = enumDeserializer(LogisticGroupType.class).forceUpperCase();
+    Deserializer<TextColor> TEXT_COLOR = new TextColorDeserializer();
 
     static <E extends Enum<E>> EnumDeserializer<E> enumDeserializer(Class<E> clazz) {
         return EnumDeserializer.of(clazz);
@@ -373,7 +376,7 @@ public interface Deserializer<T> {
                                     return fromString(key);
                                 }
                             } else {
-                                return ITEMSTACK.deserialize(k);
+                                return ITEM_STACK.deserialize(k);
                             }
                         }
 
@@ -520,10 +523,13 @@ public interface Deserializer<T> {
         public List<ConfigReader<?, RebarSimpleMultiblock.MultiblockComponent>> readers() {
             return ConfigReader.list(
                     String.class, s -> {
-                        List<RebarSimpleMultiblock.MultiblockComponent> list = new ArrayList<>();
+                        List<BlockData> dataList = new ArrayList<>();
+                        List<NamespacedKey> keyList = new ArrayList<>();
                         if (s.contains("|")) {
                             for (var s2 : s.split("\\|")) {
-                                list.add(Deserializer.MULTIBLOCK_COMPONENT.deserialize(s2.trim()));
+                                var com = Deserializer.MULTIBLOCK_COMPONENT.deserialize(s2.trim());
+                                dataList.addAll(com.getVanillaBlocks());
+                                keyList.addAll(com.getRebarBlocks());
                             }
                         } else {
                             if (s.startsWith("minecraft:")) {
@@ -531,10 +537,10 @@ public interface Deserializer<T> {
                                     var mat = s.substring(10, s.indexOf("["));
                                     Material material = MATERIAL.deserialize(mat);
                                     var data = s.substring(s.indexOf("["));
-                                    list.add(new RebarSimpleMultiblock.VanillaBlockdataMultiblockComponent(material.createBlockData(data)));
+                                    dataList.add(material.createBlockData(data));
                                 } else {
                                     var mat = s.substring(10);
-                                    list.add(new RebarSimpleMultiblock.VanillaMultiblockComponent(MATERIAL.deserialize(mat)));
+                                    dataList.add(MATERIAL.deserialize(mat).createBlockData());
                                 }
                             } else {
                                 var key = NamespacedKey.fromString(s);
@@ -542,11 +548,11 @@ public interface Deserializer<T> {
                                 if (!RebarRegistry.BLOCKS.contains(key)) {
                                     throw new UnknownMultiblockComponentException(s);
                                 }
-                                list.add(new RebarSimpleMultiblock.RebarMultiblockComponent(key));
+                                keyList.add(key);
                             }
                         }
 
-                        return new RebarSimpleMultiblock.MixedMultiblockComponent(list);
+                        return RebarSimpleMultiblock.MultiblockComponent.of(dataList, keyList);
                     }
             );
         }
@@ -595,7 +601,7 @@ public interface Deserializer<T> {
                                 }
                             }
 
-                            var item = ITEMSTACK.deserializeOrNull(s);
+                            var item = ITEM_STACK.deserializeOrNull(s);
                             if (item != null) {
                                 return new RecipeChoice.ExactChoice(item);
                             }
@@ -604,8 +610,8 @@ public interface Deserializer<T> {
                             return new RecipeChoice.ExactChoice(ConfigAdapter.ITEM_TAG.convert(s).getValues().stream().map(ItemTypeWrapper::createItemStack).toList());
                         }
                     },
-                    ConfigurationSection.class, s -> new RecipeChoice.ExactChoice(ITEMSTACK.deserialize(s)),
-                    Map.class, s -> new RecipeChoice.ExactChoice(ITEMSTACK.deserialize(s))
+                    ConfigurationSection.class, s -> new RecipeChoice.ExactChoice(ITEM_STACK.deserialize(s)),
+                    Map.class, s -> new RecipeChoice.ExactChoice(ITEM_STACK.deserialize(s))
             );
         }
     }
@@ -694,7 +700,7 @@ public interface Deserializer<T> {
                         }
 
                         try {
-                            var r3 = ITEMSTACK.deserialize(s);
+                            var r3 = ITEM_STACK.deserialize(s);
                             if (r3 != null) return FluidOrItem.of(r3);
                         } catch (Exception ignored) {
                         }
@@ -717,7 +723,7 @@ public interface Deserializer<T> {
                         }
 
                         try {
-                            var r3 = ITEMSTACK.deserialize(m);
+                            var r3 = ITEM_STACK.deserialize(m);
                             if (r3 != null) return FluidOrItem.of(r3);
                         } catch (Exception ignored) {
                         }
@@ -740,7 +746,7 @@ public interface Deserializer<T> {
                         }
 
                         try {
-                            var r3 = ITEMSTACK.deserializeOrNull(c);
+                            var r3 = ITEM_STACK.deserializeOrNull(c);
                             if (r3 != null) return FluidOrItem.of(r3);
                         } catch (Exception ignored) {
                         }
@@ -789,7 +795,7 @@ public interface Deserializer<T> {
                         }
 
                         try {
-                            var r3 = ITEMSTACK.deserialize(s);
+                            var r3 = ITEM_STACK.deserialize(s);
                             if (r3 != null) return RecipeInput.of(r3);
                         } catch (Exception ignored) {
                         }
@@ -812,7 +818,7 @@ public interface Deserializer<T> {
                         }
 
                         try {
-                            var r3 = ITEMSTACK.deserialize(m);
+                            var r3 = ITEM_STACK.deserialize(m);
                             if (r3 != null) return RecipeInput.of(r3);
                         } catch (Exception ignored) {
                         }
@@ -835,12 +841,32 @@ public interface Deserializer<T> {
                         }
 
                         try {
-                            var r3 = ITEMSTACK.deserializeOrNull(c);
+                            var r3 = ITEM_STACK.deserializeOrNull(c);
                             if (r3 != null) return RecipeInput.of(r3);
                         } catch (Exception ignored) {
                         }
 
                         throw new UnknownRecipeInputException(c.toString());
+                    }
+            );
+        }
+    }
+
+    /**
+     * @author balugaq
+     */
+    class TextColorDeserializer implements Deserializer<TextColor> {
+        @Override
+        public List<ConfigReader<?, TextColor>> readers() {
+            return ConfigReader.list(
+                    String.class, s -> {
+                        TextColor color = TextColor.fromHexString(s);
+                        if (color == null) {
+                            color = TextColor.fromCSSHexString(s);
+                            if (color == null) throw new UnknownSymbolException("unknown color: " + s);
+                        }
+
+                        return color;
                     }
             );
         }

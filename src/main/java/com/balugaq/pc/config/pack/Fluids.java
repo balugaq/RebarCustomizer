@@ -17,6 +17,7 @@ import com.balugaq.pc.util.MaterialUtil;
 import com.balugaq.pc.util.StringUtil;
 import io.github.pylonmc.rebar.fluid.tags.FluidTemperature;
 import lombok.Data;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -75,10 +76,12 @@ public class Fluids implements FileObject<Fluids> {
 
                     var s2 = section.get("material");
 
-                    ItemStack item = Deserializer.ITEMSTACK.deserialize(s2);
+                    ItemStack item = Deserializer.ITEM_STACK.deserialize(s2);
                     if (item == null) continue;
                     Material dm = MaterialUtil.getDisplayMaterial(item);
                     if (!dm.isItem() || dm.isAir()) throw new IncompatibleMaterialException("material must be items: " + item.getType());
+
+                    TextColor color = Deserializer.TEXT_COLOR.deserialize(section.getString("color"));
 
                     var id = InternalObjectID.of(key).register(namespace);
                     var ts = section.getString("temperature");
@@ -97,7 +100,7 @@ public class Fluids implements FileObject<Fluids> {
                     }
 
                     boolean postLoad = section.getBoolean("postload", false);
-                    fluids.put(id, new PreparedFluid(id, dm, temperature, pages, postLoad));
+                    fluids.put(id, new PreparedFluid(id, dm, color, temperature, pages, postLoad));
                 } catch (Exception e) {
                     StackTrace.handle(e);
                 }}

@@ -5,7 +5,7 @@ import com.balugaq.pc.exceptions.JumpoutException;
 import com.balugaq.pc.exceptions.WrongStateException;
 import com.balugaq.pc.listener.ChatInputListener;
 import io.github.pylonmc.rebar.block.RebarBlock;
-import io.github.pylonmc.rebar.block.base.RebarGuiBlock;
+import io.github.pylonmc.rebar.block.base.RebarInventoryBlock;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
@@ -31,7 +31,7 @@ import static com.balugaq.pc.util.Lang.gui_err_1;
  */
 @Getter
 @NullMarked
-public class GuiItem<T extends RebarBlock & RebarGuiBlock> extends AbstractItem {
+public class GuiItem<T extends RebarBlock & RebarInventoryBlock> extends AbstractItem {
     private final T data;
     private BiFunction<T, Player, @Nullable ItemProvider> itemProvider;
     private ClickHandler<T> clickHandler;
@@ -42,7 +42,7 @@ public class GuiItem<T extends RebarBlock & RebarGuiBlock> extends AbstractItem 
         this.clickHandler = denyClick();
     }
 
-    public static <T extends RebarBlock & RebarGuiBlock> GuiItem<T> create(@NotNull T data) {
+    public static <T extends RebarBlock & RebarInventoryBlock> GuiItem<T> create(@NotNull T data) {
         return new GuiItem<>(data);
     }
 
@@ -72,7 +72,7 @@ public class GuiItem<T extends RebarBlock & RebarGuiBlock> extends AbstractItem 
         player.sendMessage(component.asComponent());
     }
 
-    public static <T extends RebarBlock & RebarGuiBlock, K> K assertBlock(T block, Class<K> expected) {
+    public static <T extends RebarBlock & RebarInventoryBlock, K> K assertBlock(T block, Class<K> expected) {
         if (expected.isInstance(block)) {
             return expected.cast(block);
         } else {
@@ -133,7 +133,7 @@ public class GuiItem<T extends RebarBlock & RebarGuiBlock> extends AbstractItem 
         }
     }
 
-    public static <T extends RebarBlock & RebarGuiBlock> ClickHandler<T> denyClick() {
+    public static <T extends RebarBlock & RebarInventoryBlock> ClickHandler<T> denyClick() {
         return (data, clickType, player, click) -> {
             return false;
         };

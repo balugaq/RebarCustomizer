@@ -36,7 +36,7 @@ public class GuiReader {
             if (sec != null) {
                 Char2ObjectOpenHashMap<Item> map = new Char2ObjectOpenHashMap<>();
                 for (String key : sec.getKeys(false)) {
-                    ItemStack itemStack = Deserializer.ITEMSTACK.deserialize(sec.get(key));
+                    ItemStack itemStack = Deserializer.ITEM_STACK.deserialize(sec.get(key));
                     if (itemStack != null) {
                         map.put(key.charAt(0), Item.simple(itemStack));
                     }

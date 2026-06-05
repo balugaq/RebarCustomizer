@@ -82,7 +82,7 @@ public class Items implements FileObject<Items> {
                     if (!section.contains("icon")) throw new MissingArgumentException("icon");
 
                     var s2 = section.get("icon");
-                    ItemStack item = Deserializer.ITEMSTACK.deserialize(s2);
+                    ItemStack item = Deserializer.ITEM_STACK.deserialize(s2);
                     if (item == null) continue;
                     Material dm = MaterialUtil.getDisplayMaterial(item);
                     if (!dm.isItem() || dm.isAir()) throw new IncompatibleMaterialException("material must be items: " + item.getType());

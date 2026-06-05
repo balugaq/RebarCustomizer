@@ -76,7 +76,7 @@ public class Pages implements FileObject<Pages> {
                     if (!section.contains("material")) throw new MissingArgumentException("material");
 
                     var s2 = section.get("material");
-                    ItemStack item = Deserializer.ITEMSTACK.deserialize(s2);
+                    ItemStack item = Deserializer.ITEM_STACK.deserialize(s2);
                     if (item == null) continue;
                     Material dm = MaterialUtil.getDisplayMaterial(item);
                     if (!dm.isItem() || dm.isAir()) throw new IncompatibleMaterialException("material must be items: " + item.getType());

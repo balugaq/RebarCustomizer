@@ -8,7 +8,6 @@ plugins {
     id("com.gradleup.shadow") version "9.0.0"
     id("net.minecrell.plugin-yml.bukkit") version "0.6.0"
     id("xyz.jpenilla.run-paper") version "2.3.0"
-    id("io.freefair.lombok") version "8.13.1"
 }
 
 group = project.properties["group"]!!
@@ -61,6 +60,10 @@ dependencies {
     compileOnly("com.caoccao.javet:javet-v8-macos-x86_64:5.0.2")
     compileOnly("com.caoccao.javet:javet-v8-windows-x86_64:5.0.2")
     compileOnly("org.apache.httpcomponents:httpclient:4.5.14")
+    compileOnly("org.projectlombok:lombok:1.18.46")
+    annotationProcessor("org.projectlombok:lombok:1.18.46")
+    testCompileOnly("org.projectlombok:lombok:1.18.46")
+    testAnnotationProcessor("org.projectlombok:lombok:1.18.46")
 }
 
 idea {
@@ -71,7 +74,9 @@ idea {
 }
 
 java {
-    toolchain.languageVersion = JavaLanguageVersion.of(21)
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
 }
 
 tasks.shadowJar {

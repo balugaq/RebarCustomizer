@@ -85,6 +85,8 @@ import java.util.List;
  * - onUsedToDamageEntity
  * - onUsedToKillEntity
  *
+ * todo: rewrite with bytebuddy
+ *
  * @author balugaq
  */
 @NullMarked
@@ -127,10 +129,10 @@ public class CustomItem extends RebarItem implements RebarArmor, RebarArrow, Reb
     }
 
     @Override
-    public long getTickInterval() {
+    public long getBaseTickInterval() {
         if (!isFunctionExists("onTick"))
             return Integer.MAX_VALUE;
-        if (isFunctionExists("getTickInterval")) {
+        if (isFunctionExists("getBaseTickInterval")) {
             var v = callScript(this);
             if (v instanceof Number number) {
                 return number.intValue();

@@ -1,7 +1,7 @@
 package com.balugaq.pc.gui;
 
 import io.github.pylonmc.rebar.block.RebarBlock;
-import io.github.pylonmc.rebar.block.base.RebarGuiBlock;
+import io.github.pylonmc.rebar.block.base.RebarInventoryBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
@@ -14,7 +14,7 @@ import xyz.xenondevs.invui.item.Item;
  */
 @FunctionalInterface
 @NullMarked
-public interface ClickHandler<T extends RebarBlock & RebarGuiBlock> {
+public interface ClickHandler<T extends RebarBlock & RebarInventoryBlock> {
     /**
      * A method called if the {@link ItemStack} associated to this {@link Item} has been clicked by a player.
      *

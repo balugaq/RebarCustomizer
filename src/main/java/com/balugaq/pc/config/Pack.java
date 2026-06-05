@@ -126,7 +126,7 @@ public class Pack implements FileObject<Pack> {
                 var k = c - 'a';
                 if (k >= i.size()) return () -> Item.EMPTY;
                 var s = i.get(k);
-                if (s instanceof RecipeInput.Item item) return () -> ItemButton.from(item);
+                if (s instanceof RecipeInput.Item item) return () -> ItemButton.of(item);
                 else if (s instanceof RecipeInput.Fluid fluid) return () -> new FluidButton(fluid);
             }
             if ('1' <= c && c <= '9') {
@@ -134,7 +134,7 @@ public class Pack implements FileObject<Pack> {
                 var k = c - '1';
                 if (k >= o.size()) return () -> Item.EMPTY;
                 var s = o.get(k);
-                if (s instanceof FluidOrItem.Item item) return () -> ItemButton.from(item.item());
+                if (s instanceof FluidOrItem.Item item) return () -> ItemButton.of(item.item());
                 else if (s instanceof FluidOrItem.Fluid fluid)
                     return () -> new FluidButton(fluid.amountMillibuckets(), fluid.fluid());
             }
@@ -661,7 +661,7 @@ public class Pack implements FileObject<Pack> {
                 RegisteredObjectID id = e.id();
                 Material material = e.material();
                 FluidTemperature temperature = e.temperature();
-                RebarFluid fluid = new CustomFluid(id.key(), material).addTag(temperature);
+                RebarFluid fluid = new CustomFluid(id.key(), e.color(), material).addTag(temperature);
                 fluid.register();
                 Debug.debug("Registered Fluid: " + id.key());
                 fluids.getLoadedFluids().incrementAndGet();

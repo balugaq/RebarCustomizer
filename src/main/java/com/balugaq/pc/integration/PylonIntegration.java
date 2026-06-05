@@ -15,7 +15,6 @@ import io.github.pylonmc.pylon.recipes.MeltingRecipe;
 import io.github.pylonmc.pylon.recipes.MixingPotRecipe;
 import io.github.pylonmc.pylon.recipes.MoldingRecipe;
 import io.github.pylonmc.pylon.recipes.PipeBendingRecipe;
-import io.github.pylonmc.pylon.recipes.PitKilnRecipe;
 import io.github.pylonmc.pylon.recipes.PressRecipe;
 import io.github.pylonmc.pylon.recipes.ShimmerAltarRecipe;
 import io.github.pylonmc.pylon.recipes.SmelteryRecipe;
@@ -56,24 +55,24 @@ public class PylonIntegration implements Integration {
     public static BloomeryDisplayRecipe advancedBloomeryDisplay(NamespacedKey key, ConfigurationSection section) {
         return new BloomeryDisplayRecipe(
                 key,
-                Deserializer.ITEMSTACK.deserialize(section.get("input")),
-                Deserializer.ITEMSTACK.deserialize(section.get("result"))
+                Deserializer.ITEM_STACK.deserialize(section.get("input")),
+                Deserializer.ITEM_STACK.deserialize(section.get("result"))
         );
     }
 
     public static DrillingDisplayRecipe advancedDrillingDisplay(NamespacedKey key, ConfigurationSection section) {
         return new DrillingDisplayRecipe(
                 key,
-                Deserializer.ITEMSTACK.deserialize(section.get("input")),
-                Deserializer.ITEMSTACK.deserialize(section.get("result"))
+                Deserializer.ITEM_STACK.deserialize(section.get("input")),
+                Deserializer.ITEM_STACK.deserialize(section.get("result"))
         );
     }
 
     public static ForgingDisplayRecipe advancedForgingDisplay(NamespacedKey key, ConfigurationSection section) {
         return new ForgingDisplayRecipe(
                 key,
-                Deserializer.ITEMSTACK.deserialize(section.get("input")),
-                Deserializer.ITEMSTACK.deserialize(section.get("result"))
+                Deserializer.ITEM_STACK.deserialize(section.get("input")),
+                Deserializer.ITEM_STACK.deserialize(section.get("result"))
         );
     }
 
@@ -82,8 +81,7 @@ public class PylonIntegration implements Integration {
                 key,
                 Deserializer.RECIPE_INPUT_ITEM.deserialize(section.get("input")),
                 toWeightedSet(Pack.read(section, MyArrayList.class, WeightedElement.class, "results")),
-                section.getInt("cycles"),
-                Deserializer.BLOCK_DATA.deserialize(section.get("particle-data"))
+                section.getInt("cycles")
         );
     }
 
@@ -99,9 +97,9 @@ public class PylonIntegration implements Integration {
         return new HammerRecipe(
                 key,
                 Deserializer.RECIPE_INPUT_ITEM.deserialize(section.get("input")),
-                Deserializer.ITEMSTACK.deserialize(section.get("result")),
+                Deserializer.ITEM_STACK.deserialize(section.get("result")),
                 MINING_LEVEL.deserialize(section.get("mining-level")),
-                (float) section.getDouble("chance")
+                section.getInt("uses")
         );
     }
 
@@ -138,7 +136,7 @@ public class PylonIntegration implements Integration {
                 key,
                 inputs,
                 catalyst,
-                Deserializer.ITEMSTACK.deserialize(section.get("result")),
+                Deserializer.ITEM_STACK.deserialize(section.get("result")),
                 section.getInt("time-seconds")
         );
     }
@@ -148,8 +146,7 @@ public class PylonIntegration implements Integration {
                 key,
                 Deserializer.RECIPE_INPUT_ITEM.deserialize(section.get("input")),
                 Deserializer.PYLON_FLUID.deserialize(section.get("result")),
-                section.getDouble("amount"),
-                section.getDouble("temperature")
+                section.getDouble("amount")
         );
     }
 
@@ -166,8 +163,8 @@ public class PylonIntegration implements Integration {
     public static MoldingRecipe advancedMolding(NamespacedKey key, ConfigurationSection section) {
         return new MoldingRecipe(
                 key,
-                Deserializer.ITEMSTACK.deserialize(section.get("input")),
-                Deserializer.ITEMSTACK.deserialize(section.get("result")),
+                Deserializer.ITEM_STACK.deserialize(section.get("input")),
+                Deserializer.ITEM_STACK.deserialize(section.get("result")),
                 section.getInt("clicks")
         );
     }
@@ -176,17 +173,9 @@ public class PylonIntegration implements Integration {
         return new PipeBendingRecipe(
                 key,
                 Deserializer.RECIPE_INPUT_ITEM.deserialize(section.get("input")),
-                Deserializer.ITEMSTACK.deserialize(section.get("result")),
-                Deserializer.BLOCK_DATA.deserialize(section.get("particle-data")),
+                Deserializer.ITEM_STACK.deserialize(section.get("result")),
+                Deserializer.ITEM_STACK.deserialize(section.get("particle-item")),
                 section.getInt("time-ticks")
-        );
-    }
-
-    public static PitKilnRecipe advancedPitKiln(NamespacedKey key, ConfigurationSection section) {
-        return new PitKilnRecipe(
-                key,
-                Pack.read(section, MyArrayList.class, Deserializer.RECIPE_INPUT_ITEM, "inputs"),
-                Pack.read(section, MyArrayList.class, Deserializer.ITEMSTACK, "outputs")
         );
     }
 
@@ -210,9 +199,9 @@ public class PylonIntegration implements Integration {
     public static TableSawRecipe advancedTableSaw(NamespacedKey key, ConfigurationSection section) {
         return new TableSawRecipe(
                 key,
-                Deserializer.ITEMSTACK.deserialize(section.get("input")),
-                Deserializer.ITEMSTACK.deserialize(section.get("result")),
-                Deserializer.BLOCK_DATA.deserialize(section.get("particle-data")),
+                Deserializer.ITEM_STACK.deserialize(section.get("input")),
+                Deserializer.ITEM_STACK.deserialize(section.get("result")),
+                Deserializer.ITEM_STACK.deserialize(section.get("particle-item")),
                 section.getInt("time-ticks")
         );
     }
@@ -229,7 +218,6 @@ public class PylonIntegration implements Integration {
         Recipes.loadAdvance(MixingPotRecipe.RECIPE_TYPE, PylonIntegration::advancedMixingPot);
         Recipes.loadAdvance(MoldingRecipe.RECIPE_TYPE, PylonIntegration::advancedMolding);
         Recipes.loadAdvance(PipeBendingRecipe.RECIPE_TYPE, PylonIntegration::advancedPipeBending);
-        Recipes.loadAdvance(PitKilnRecipe.RECIPE_TYPE, PylonIntegration::advancedPitKiln);
         Recipes.loadAdvance(PressRecipe.RECIPE_TYPE, PylonIntegration::advancedPress);
         Recipes.loadAdvance(SmelteryRecipe.RECIPE_TYPE, PylonIntegration::advancedSmeltery);
         Recipes.loadAdvance(TableSawRecipe.RECIPE_TYPE, PylonIntegration::advancedTableSaw);

@@ -28,7 +28,7 @@ public @Data class WeightedElement implements Deserializer<WeightedElement> {
                     var v = map.get("weight");
                     if (v instanceof Number f) {
                         return new WeightedElement(
-                                Deserializer.ITEMSTACK.deserialize(map.get("value")),
+                                Deserializer.ITEM_STACK.deserialize(map.get("value")),
                                 f.floatValue()
                         );
                     }
@@ -37,7 +37,7 @@ public @Data class WeightedElement implements Deserializer<WeightedElement> {
                 },
                 String.class, s ->
                     new WeightedElement(
-                            Deserializer.ITEMSTACK.deserialize(s),
+                            Deserializer.ITEM_STACK.deserialize(s),
                             1f
                     )
         );
