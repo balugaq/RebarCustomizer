@@ -112,9 +112,11 @@ public class CustomItemBuilder {
                 .name(makeName(prepared))
                 .implement(handlers.toArray(new Class<?>[0]))
                 .method(matcher)
-                .intercept(MethodDelegation.to(delegate))
+                .intercept(MethodDelegation.withDefaultConfiguration()
+                                   .filter(ElementMatchers.named("intercept"))
+                                   .to(delegate))
                 .make()
-                .load(RebarItem.class.getClassLoader(), ClassLoadingStrategy.Default.WRAPPER)
+                .load(RebarItem.class.getClassLoader())
                 .getLoaded();
 
         return (Class<T>) loaded;
@@ -131,10 +133,8 @@ public class CustomItemBuilder {
         @RuntimeType
         public Object intercept(@Origin Method method,
                                 @AllArguments Object[] rawArgs,
-                                @SuperCall Callable<?> zuper/*,
-                                @Super(strategy = Super.Instantiation.UNSAFE) RebarItem rebar*/) throws Exception {
+                                @Super(strategy = Super.Instantiation.UNSAFE) RebarItem rebar) throws Exception {
             Object[] args = new Object[rawArgs.length + 1];
-            Object rebar = null;
             args[0] = rebar;
             System.arraycopy(rawArgs, 0, args, 1, rawArgs.length);
             String name = method.getName();
@@ -191,7 +191,7 @@ public class CustomItemBuilder {
                 return callScriptA(name, args);
             }
 
-            return zuper.call();
+            return method.invoke(rebar, rawArgs);
         }
     }
 }

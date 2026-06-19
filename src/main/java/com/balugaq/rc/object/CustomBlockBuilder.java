@@ -209,14 +209,18 @@ public class CustomBlockBuilder {
 
                 .constructor(ElementMatchers.takesArguments(Block.class, BlockCreateContext.class))
                 .intercept(SuperMethodCall.INSTANCE.andThen(
-                        MethodDelegation.to(delegate)
+                        MethodDelegation.withDefaultConfiguration()
+                                .filter(ElementMatchers.named("init"))
+                                .to(delegate)
                 ))
 
                 .method(matcher)
-                .intercept(MethodDelegation.to(delegate))
+                .intercept(MethodDelegation.withDefaultConfiguration()
+                                   .filter(ElementMatchers.named("intercept"))
+                                   .to(delegate))
 
                 .make()
-                .load(RebarBlock.class.getClassLoader(), ClassLoadingStrategy.Default.WRAPPER)
+                .load(RebarBlock.class.getClassLoader())
                 .getLoaded();
 
         return (Class<T>) loaded;
@@ -255,7 +259,6 @@ public class CustomBlockBuilder {
         @RuntimeType
         public Object intercept(@Origin Method method,
                                 @AllArguments Object[] rawArgs,
-                                @SuperCall Callable<?> zuper,
                                 @Super(strategy = Super.Instantiation.UNSAFE) RebarBlock rebar) throws Exception {
             Object[] args = new Object[rawArgs.length + 1];
             args[0] = rebar;
@@ -387,7 +390,7 @@ public class CustomBlockBuilder {
                 return callScriptA(name, args);
             }
 
-            return zuper.call();
+            return method.invoke(rebar, rawArgs);
         }
 
         private void postInitialise(RecipeProcessorRebarBlock<CustomRecipe> recipeProcessor, FluidBufferRebarBlock fluidBuffer, LogisticRebarBlock logistic, Object... args) {
