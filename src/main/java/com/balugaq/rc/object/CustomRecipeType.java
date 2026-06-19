@@ -184,7 +184,7 @@ public class CustomRecipeType extends ConfigurableRecipeType<RebarRecipe> {
     }
 
     @NullMarked
-    public record Handler(Deserializer<?> deserializer, @Nullable Object defaultValue) implements Deserializer<Handler> {
+    public record Handler(Deserializer<?> deserializer, Object defaultValue) implements Deserializer<Handler> {
         public Handler() {
             this(null, null);
         }
@@ -251,7 +251,7 @@ public class CustomRecipeType extends ConfigurableRecipeType<RebarRecipe> {
                         var adt = readDeserializer(List.of(parts));
 
                         if (a.length == 1) {
-                            return new Handler(adt, null);
+                            return this;
                         }
 
                         String def = a[1];

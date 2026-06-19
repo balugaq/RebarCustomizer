@@ -60,17 +60,25 @@ public class MyObjectOpenHashSet<T> extends ObjectOpenHashSet<T> implements Gene
                     }
                     return res;
                 },
-                Object.class, s -> {
-                    Deserializer<T> serializer = advancer.advance(getDeserializer());
-                    MyObjectOpenHashSet<T> res = new MyObjectOpenHashSet<>();
-                    try (var ignored = StackTrace.record("Reading Set<" + getDeserializer().type() + ">")) {
-                        res.add(serializer.deserialize(s));
-                    } catch (Exception e) {
-                        StackTrace.handle(e);
+                String.class, s -> {
+                    if ("$$EMPTY".equals(s)) {
+                        return new MyObjectOpenHashSet<>();
                     }
-                    return res;
-                }
+                    return objReader(s);
+                },
+                Object.class, this::objReader
         );
+    }
+
+    public MyObjectOpenHashSet<T> objReader(Object obj) {
+        Deserializer<T> serializer = advancer.advance(getDeserializer());
+        MyObjectOpenHashSet<T> res = new MyObjectOpenHashSet<>();
+        try (var ignored = StackTrace.record("Reading Set<" + getDeserializer().type() + ">")) {
+            res.add(serializer.deserialize(obj));
+        } catch (Exception e) {
+            StackTrace.handle(e);
+        }
+        return res;
     }
 
     @Override

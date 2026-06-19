@@ -1,6 +1,7 @@
 package com.balugaq.rc.object;
 
 import com.balugaq.rc.GlobalVars;
+import com.balugaq.rc.RebarCustomizer;
 import com.balugaq.rc.config.FluidBlockData;
 import com.balugaq.rc.config.FluidBufferBlockData;
 import com.balugaq.rc.config.GuiData;
@@ -93,6 +94,7 @@ import net.bytebuddy.implementation.bind.annotation.Origin;
 import net.bytebuddy.implementation.bind.annotation.RuntimeType;
 import net.bytebuddy.implementation.bind.annotation.Super;
 import net.bytebuddy.implementation.bind.annotation.SuperCall;
+import net.bytebuddy.implementation.bind.annotation.This;
 import net.bytebuddy.matcher.ElementMatchers;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -103,6 +105,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
 import xyz.xenondevs.invui.gui.Gui;
 import xyz.xenondevs.invui.inventory.VirtualInventory;
 import xyz.xenondevs.invui.inventory.event.UpdateReason;
@@ -220,7 +223,7 @@ public class CustomBlockBuilder {
                                    .to(delegate))
 
                 .make()
-                .load(RebarBlock.class.getClassLoader())
+                .load(RebarCustomizer.getInstance().getJavaPlugin().getClass().getClassLoader())
                 .getLoaded();
 
         return (Class<T>) loaded;
@@ -230,22 +233,31 @@ public class CustomBlockBuilder {
      * @author balugaq
      */
     @Getter
-    @RequiredArgsConstructor
+    @NullMarked
     public static class BlockDelegation implements RuntimeObject {
         private final NamespacedKey key;
         private final Char2ObjectOpenHashMap<VirtualInventory> vs = new Char2ObjectOpenHashMap<>();
-        private final @Nullable RecipeType<?> loadRecipeType = RebarRegistry.RECIPE_TYPES.get(getKey());
-        private final @Nullable GuiData guiData = GlobalVars.getGuiData(getKey());
-        private final @Nullable LogisticBlockData logisticBlockData = GlobalVars.getLogisticBlockData(getKey());
-        private final @Nullable FluidBlockData fluidBlockData = GlobalVars.getFluidBlockData(getKey());
-        private final @Nullable FluidBufferBlockData fluidBufferBlockData = GlobalVars.getFluidBufferBlockData(getKey());
+        private final @Nullable RecipeType<?> loadRecipeType;
+        private final @Nullable GuiData guiData;
+        private final @Nullable LogisticBlockData logisticBlockData;
+        private final @Nullable FluidBlockData fluidBlockData;
+        private final @Nullable FluidBufferBlockData fluidBufferBlockData;
         private boolean havePostInitialised = false;
 
+        public BlockDelegation(NamespacedKey key) {
+            this.key = key;
+            this.loadRecipeType = RebarRegistry.RECIPE_TYPES.get(getKey());
+            this.guiData = GlobalVars.getGuiData(getKey());
+            this.logisticBlockData = GlobalVars.getLogisticBlockData(getKey());
+            this.fluidBlockData = GlobalVars.getFluidBlockData(getKey());
+            this.fluidBufferBlockData = GlobalVars.getFluidBufferBlockData(getKey());
+        }
+
         @RuntimeType
-        public void init(@Super(strategy = Super.Instantiation.UNSAFE) RebarBlock rebar, Block block, BlockCreateContext context) {
+        public void init(@This RebarBlock rebar, @AllArguments Object[] args) {
             if (fluidBlockData != null) {
                 for (var e : fluidBlockData) {
-                    ((FluidRebarBlock) rebar).createFluidPoint(e.fluidPointType(), e.face(), context, e.allowVerticalFaces());
+                    ((FluidRebarBlock) rebar).createFluidPoint(e.fluidPointType(), e.face(), (BlockCreateContext) args[1], e.allowVerticalFaces());
                 }
             }
             if (fluidBufferBlockData != null) {
@@ -257,6 +269,7 @@ public class CustomBlockBuilder {
         }
 
         @RuntimeType
+        @Nullable
         public Object intercept(@Origin Method method,
                                 @AllArguments Object[] rawArgs,
                                 @Super(strategy = Super.Instantiation.UNSAFE) RebarBlock rebar) throws Exception {

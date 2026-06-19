@@ -58,17 +58,25 @@ public class MyArrayList<T> extends ArrayList<T> implements GenericDeserializer<
                     }
                     return res;
                 },
-                Object.class, s -> {
-                    Deserializer<T> serializer = advancer.advance(getDeserializer());
-                    MyArrayList<T> res = new MyArrayList<>();
-                    try (var ignored = StackTrace.record("Reading List<" + getDeserializer().type() + ">")) {
-                        res.add(serializer.deserialize(s));
-                    } catch (Exception e) {
-                        StackTrace.handle(e);
+                String.class, s -> {
+                    if ("$$EMPTY".equals(s)) {
+                        return new MyArrayList<>();
                     }
-                    return res;
-                }
+                    return objReader(s);
+                },
+                Object.class, this::objReader
         );
+    }
+
+    public MyArrayList<T> objReader(Object obj) {
+        Deserializer<T> serializer = advancer.advance(getDeserializer());
+        MyArrayList<T> res = new MyArrayList<>();
+        try (var ignored = StackTrace.record("Reading List<" + getDeserializer().type() + ">")) {
+            res.add(serializer.deserialize(obj));
+        } catch (Exception e) {
+            StackTrace.handle(e);
+        }
+        return res;
     }
 
     @Override

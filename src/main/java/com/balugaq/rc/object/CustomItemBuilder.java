@@ -1,7 +1,9 @@
 package com.balugaq.rc.object;
 
 import com.balugaq.rc.GlobalVars;
+import com.balugaq.rc.RebarCustomizer;
 import com.balugaq.rc.config.preloads.PreparedItem;
+import io.github.pylonmc.rebar.Rebar;
 import io.github.pylonmc.rebar.config.ConfigSection;
 import io.github.pylonmc.rebar.config.RebarConfig;
 import io.github.pylonmc.rebar.config.adapter.ConfigAdapter;
@@ -116,7 +118,7 @@ public class CustomItemBuilder {
                                    .filter(ElementMatchers.named("intercept"))
                                    .to(delegate))
                 .make()
-                .load(RebarItem.class.getClassLoader())
+                .load(RebarCustomizer.getInstance().getJavaPlugin().getClass().getClassLoader())
                 .getLoaded();
 
         return (Class<T>) loaded;

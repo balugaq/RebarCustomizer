@@ -100,6 +100,7 @@ public class MyObject2ObjectOpenHashMap<T1, T2> extends Object2ObjectOpenHashMap
                     }
                     return res;
                 },
+                String.class, s -> new MyObject2ObjectOpenHashMap<>(),
                 ConfigurationSection.class, section -> {
                     var serializer = advancer.advance(getDeserializer());
                     var serializer2 = advancer2.advance(getDeserializer2());

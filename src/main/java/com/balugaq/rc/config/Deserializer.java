@@ -592,7 +592,7 @@ public interface Deserializer<T> {
                             }
                             return new RecipeChoice.ExactChoice(list);
                         } else {
-                            if (!s.contains(":") && !s.contains("#") && Material.getMaterial(s) == null) {
+                            if (!s.contains(":") && !s.startsWith("#") && Material.getMaterial(s) == null) {
                                 // item: example_item
                                 // pylon item
                                 List<RebarItemSchema> schs = RebarRegistry.ITEMS.stream().filter(schema -> schema.getKey().getKey().equals(s)).toList();
@@ -601,9 +601,11 @@ public interface Deserializer<T> {
                                 }
                             }
 
-                            var item = ITEM_STACK.deserializeOrNull(s);
-                            if (item != null) {
-                                return new RecipeChoice.ExactChoice(item);
+                            if (!s.startsWith("#")) {
+                                var item = ITEM_STACK.deserializeOrNull(s);
+                                if (item != null) {
+                                    return new RecipeChoice.ExactChoice(item);
+                                }
                             }
 
                             // tag
