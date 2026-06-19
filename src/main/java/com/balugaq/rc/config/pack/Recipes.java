@@ -7,7 +7,6 @@ import com.balugaq.rc.exceptions.InvalidNamespacedKeyException;
 import com.balugaq.rc.exceptions.MissingArgumentException;
 import com.balugaq.rc.util.ReflectionUtil;
 import com.balugaq.rc.util.StringUtil;
-import io.github.pylonmc.rebar.config.Config;
 import io.github.pylonmc.rebar.config.ConfigSection;
 import io.github.pylonmc.rebar.recipe.ConfigurableRecipeType;
 import io.github.pylonmc.rebar.recipe.RebarRecipe;
@@ -97,7 +96,7 @@ public class Recipes {
                     var cg = YamlConfiguration.loadConfiguration(new File(new File(recipeFolder, namespace), cfg.getName()));
                     loadRecipesAdvanced(this.namespace, key, ctp, cg, success);
                 } else {
-                    var config = new Config(cfg.toPath());
+                    var config = ConfigSection.from(cfg.toPath());
                     loadRecipesNormal(this.namespace, ctp, config, success);
                 }
 

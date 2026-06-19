@@ -11,6 +11,7 @@ import org.jspecify.annotations.NullMarked;
 /**
  * @author balugaq
  */
+@SuppressWarnings("resource")
 @NullMarked
 public class StackTrace implements AutoCloseable {
     private static final StackTrace instance = new StackTrace();

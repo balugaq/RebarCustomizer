@@ -14,6 +14,10 @@ import org.jspecify.annotations.NullMarked;
  */
 @NullMarked
 public interface Scriptable {
+    static Scriptable build(NamespacedKey key) {
+        return () -> key;
+    }
+
     @CanIgnoreReturnValue
     @Nullable
     default Object callScript(@Nullable Object... objects) {
@@ -42,6 +46,14 @@ public interface Scriptable {
     default <T extends Event & Cancellable> Object callOrCancelEvent(Scriptable self, T event, @Nullable Object... objects) {
         String caller = getCallerMethodName();
         var v = callScriptA(caller, self, event, objects);
+        if (v == null) event.setCancelled(true);
+        return v;
+    }
+
+    @CanIgnoreReturnValue
+    @Nullable
+    default <T extends Event & Cancellable> Object callOrCancelEventA(String methodName, Scriptable self, T event, @Nullable Object... objects) {
+        var v = callScriptA(methodName, self, event, objects);
         if (v == null) event.setCancelled(true);
         return v;
     }

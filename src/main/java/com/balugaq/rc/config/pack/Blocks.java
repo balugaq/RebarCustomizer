@@ -29,7 +29,7 @@ import com.balugaq.rc.exceptions.UnknownSymbolException;
 import com.balugaq.rc.object.CustomRecipeType;
 import com.balugaq.rc.util.MaterialUtil;
 import com.balugaq.rc.util.StringUtil;
-import io.github.pylonmc.rebar.block.base.RebarSimpleMultiblock;
+import io.github.pylonmc.rebar.block.interfaces.SimpleRebarMultiblock;
 import io.github.pylonmc.rebar.config.ConfigSection;
 import it.unimi.dsi.fastutil.chars.CharArrayList;
 import lombok.Data;
@@ -201,8 +201,8 @@ public class Blocks implements FileObject<Blocks> {
                     if (multiblock != null) {
                         try (var ignored2 = StackTrace.record("Reading multiblock section: " + key)) {
 
-                        Map<Vector3i, RebarSimpleMultiblock.MultiblockComponent> components = new HashMap<>();
-                        Map<String, RebarSimpleMultiblock.MultiblockComponent> symbols = new HashMap<>();
+                        Map<Vector3i, SimpleRebarMultiblock.MultiblockComponent> components = new HashMap<>();
+                        Map<String, SimpleRebarMultiblock.MultiblockComponent> symbols = new HashMap<>();
                         var blocks = multiblock.getConfigurationSection("blocks");
                         if (blocks != null) {
                             for (String k : blocks.getKeys(false)) {
@@ -276,7 +276,7 @@ public class Blocks implements FileObject<Blocks> {
                             }
                         }
 
-                        Recipes.loadRecipesNormal(namespace, recipeType, new ConfigSection(recipes), k -> {});
+                        Recipes.loadRecipesNormal(namespace, recipeType, ConfigSection.from("recipes", recipes), k -> {});
 
                         } catch (Exception ex) {
                             StackTrace.handle(ex);

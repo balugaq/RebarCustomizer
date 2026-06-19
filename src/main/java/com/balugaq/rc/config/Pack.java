@@ -28,17 +28,17 @@ import com.balugaq.rc.exceptions.PackException;
 import com.balugaq.rc.exceptions.UnknownEnumException;
 import com.balugaq.rc.exceptions.UnknownItemException;
 import com.balugaq.rc.manager.PackManager;
+import com.balugaq.rc.object.CustomBlockBuilder;
 import com.balugaq.rc.object.CustomFluid;
 import com.balugaq.rc.object.CustomGuidePage;
+import com.balugaq.rc.object.CustomItemBuilder;
 import com.balugaq.rc.object.CustomPageButton;
 import com.balugaq.rc.object.CustomRecipeType;
 import com.balugaq.rc.object.ItemStackProvider;
 import com.balugaq.rc.object.PackAddon;
-import com.balugaq.rc.object.blocks.CustomBlock;
-import com.balugaq.rc.object.blocks.CustomMultiBlock;
-import com.balugaq.rc.object.items.CustomItem;
 import com.balugaq.rc.util.Debug;
 import com.balugaq.rc.util.MinecraftVersion;
+import io.github.pylonmc.rebar.block.RebarBlock;
 import io.github.pylonmc.rebar.config.RebarConfig;
 import io.github.pylonmc.rebar.content.guide.RebarGuide;
 import io.github.pylonmc.rebar.fluid.RebarFluid;
@@ -102,7 +102,7 @@ import java.util.Set;
  * @author balugaq
  */
 @Slf4j
-@SuppressWarnings({"unchecked", "RegExpRedundantEscape", "ResultOfMethodCallIgnored", "unused"})
+@SuppressWarnings({"unchecked", "RegExpRedundantEscape", "ResultOfMethodCallIgnored", "unused", "resource"})
 @Data
 @RequiredArgsConstructor
 @NoArgsConstructor(force = true)
@@ -127,7 +127,7 @@ public class Pack implements FileObject<Pack> {
                 if (k >= i.size()) return () -> Item.EMPTY;
                 var s = i.get(k);
                 if (s instanceof RecipeInput.Item item) return () -> ItemButton.of(item);
-                else if (s instanceof RecipeInput.Fluid fluid) return () -> new FluidButton(fluid);
+                else if (s instanceof RecipeInput.Fluid fluid) return () -> FluidButton.of(fluid);
             }
             if ('1' <= c && c <= '9') {
                 var o = r.getResults();
@@ -136,7 +136,7 @@ public class Pack implements FileObject<Pack> {
                 var s = o.get(k);
                 if (s instanceof FluidOrItem.Item item) return () -> ItemButton.of(item.item());
                 else if (s instanceof FluidOrItem.Fluid fluid)
-                    return () -> new FluidButton(fluid.amountMillibuckets(), fluid.fluid());
+                    return () -> FluidButton.of(fluid.amountMillibuckets(), fluid.fluid());
             }
         }
         if (c == 'B') return GuiItems::background;
@@ -508,7 +508,9 @@ public class Pack implements FileObject<Pack> {
         if (!from.exists()) from.mkdir();
         if (!to.exists()) to.mkdir();
 
-        for (File file : from.listFiles()) {
+        File[] files = from.listFiles();
+        if (files == null) return;
+        for (File file : files) {
             if (file.isFile() && file.getName().matches("[a-zA-Z0-9_\\-\\./]+\\.yml$")) {
                 YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
                 File targetFile = new File(to, file.getName());
@@ -572,12 +574,13 @@ public class Pack implements FileObject<Pack> {
                 try (var sk = StackTrace.record("Loading item: " + id)) {
                     ItemStack icon = entry.icon();
 
-                    // suppress pylon core warnings
+                    // suppress rebar warnings
                     RebarItem.suppressNameWarnings(id.key());
+                    Class<? extends RebarItem> clazz = CustomItemBuilder.build(e);
                     if (blocks != null && blocks.getBlocks().containsKey(id)) {
-                        CustomItem.register(CustomItem.class, icon, id.key());
+                        RebarItem.register(clazz, icon, id.key());
                     } else {
-                        CustomItem.register(CustomItem.class, icon);
+                        RebarItem.register(clazz, icon);
                     }
                     Debug.debug("Registered Item: " + id.key());
                     items.getLoadedItems().incrementAndGet();
@@ -640,11 +643,10 @@ public class Pack implements FileObject<Pack> {
                 try (var sk = StackTrace.record("Loading block: " + id)) {
                     Material material = e.material();
 
-                    if (GlobalVars.getMultiBlockComponents(id.key()).isEmpty()) {
-                        CustomBlock.register(id.key(), material, CustomBlock.class);
-                    } else {
-                        CustomMultiBlock.register(id.key(), material, CustomMultiBlock.class);
-                    }
+                    Class<? extends RebarBlock> clazz = CustomBlockBuilder.build(e);
+                    RebarBlock.register(id.key(), material, clazz);
+                    //if (GlobalVars.getMultiBlockComponents(id.key()).isEmpty()) {
+                    //}
                     Debug.debug("Registered Block: " + id.key());
                     blocks.getLoadedBlocks().incrementAndGet();
                 } catch (Exception ex) {
@@ -713,7 +715,10 @@ public class Pack implements FileObject<Pack> {
 
     public Pack register() {
         plugin().registerWithRebar();
-        StackTrace.run("Loading lang", () -> loadLang(findDir(Arrays.asList(dir.listFiles()), "lang"), getLangFolder()));
+        File[] files = dir.listFiles();
+        if (files != null) {
+            StackTrace.run("Loading lang", () -> loadLang(findDir(Arrays.asList(files), "lang"), getLangFolder()));
+        }
         StackTrace.run("Loading settings", this::registerSettings);
         StackTrace.run("Loading pages", this::registerPages);
         StackTrace.run("Loading items", this::registerItems);

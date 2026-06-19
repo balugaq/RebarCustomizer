@@ -12,7 +12,7 @@ import com.caoccao.javet.exceptions.JavetException;
 import com.caoccao.javet.interop.V8Host;
 import com.caoccao.javet.interop.V8Runtime;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import io.github.pylonmc.rebar.block.base.RebarSimpleMultiblock;
+import io.github.pylonmc.rebar.block.interfaces.SimpleRebarMultiblock;
 import io.github.pylonmc.rebar.guide.button.PageButton;
 import lombok.Getter;
 import net.kyori.adventure.key.Key;
@@ -39,7 +39,7 @@ public class GlobalVars {
     private static final @Getter KeyedMap<CustomPageButton> customPages = new KeyedMap<>();
     private static final @Getter KeyedMap<FluidBlockData> fluidBlockDatas = new KeyedMap<>();
     private static final @Getter KeyedMap<FluidBufferBlockData> fluidBufferBlockDatas = new KeyedMap<>();
-    private static final @Getter KeyedMap<Map<Vector3i, RebarSimpleMultiblock.MultiblockComponent>> multiBlockComponents = new KeyedMap<>();
+    private static final @Getter KeyedMap<Map<Vector3i, SimpleRebarMultiblock.MultiblockComponent>> multiBlockComponents = new KeyedMap<>();
     private static final @Getter KeyedMap<LogisticBlockData> logisticBlockDatas = new KeyedMap<>();
     private static final @Getter KeyedMap<Key> equipmentTypes = new KeyedMap<>();
     private static final @Getter V8Runtime scriptRuntime;
@@ -145,12 +145,12 @@ public class GlobalVars {
     }
 
     @CanIgnoreReturnValue
-    public static Map<Vector3i, RebarSimpleMultiblock.MultiblockComponent> putMultiBlockComponents(NamespacedKey key, Map<Vector3i, RebarSimpleMultiblock.MultiblockComponent> components) {
+    public static Map<Vector3i, SimpleRebarMultiblock.MultiblockComponent> putMultiBlockComponents(NamespacedKey key, Map<Vector3i, SimpleRebarMultiblock.MultiblockComponent> components) {
         multiBlockComponents.put(key, components);
         return components;
     }
 
-    public static Map<Vector3i, RebarSimpleMultiblock.MultiblockComponent> getMultiBlockComponents(NamespacedKey key) {
+    public static Map<Vector3i, SimpleRebarMultiblock.MultiblockComponent> getMultiBlockComponents(NamespacedKey key) {
         return multiBlockComponents.get(key);
     }
 

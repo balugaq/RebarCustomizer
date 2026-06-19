@@ -217,6 +217,7 @@ public class RebarCustomizer extends JavaPlugin implements RebarAddon, Debuggabl
             loadLibrary(libraryManager, "com.caoccao.javet", dependency, javetVersion);
         }
 
+        loadLibrary(libraryManager, "net{}bytebuddy", "byte-buddy", "1.18.10");
         loadLibrary(libraryManager, "org.apache.httpcomponents", "httpclient", "4.5.14");
     }
 

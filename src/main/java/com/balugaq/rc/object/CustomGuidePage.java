@@ -1,6 +1,7 @@
 package com.balugaq.rc.object;
 
 import io.github.pylonmc.rebar.fluid.RebarFluid;
+import io.github.pylonmc.rebar.guide.button.FluidButton;
 import io.github.pylonmc.rebar.guide.pages.base.GuidePage;
 import io.github.pylonmc.rebar.guide.pages.base.SimpleStaticGuidePage;
 import io.github.pylonmc.rebar.item.builder.ItemStackBuilder;
@@ -33,7 +34,7 @@ public class CustomGuidePage extends SimpleStaticGuidePage {
 
     @Override
     public boolean addFluid(RebarFluid fluid) {
-        return getButtons().add(new CustomFluidButton(getKey(), fluid));
+        return getButtons().add(FluidButton.of(fluid));
     }
 
     @Override

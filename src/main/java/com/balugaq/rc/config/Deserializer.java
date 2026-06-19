@@ -25,7 +25,7 @@ import com.balugaq.rc.object.CustomRecipeType;
 import com.balugaq.rc.util.ClassUtil;
 import com.balugaq.rc.util.MinecraftVersion;
 import com.balugaq.rc.util.ReflectionUtil;
-import io.github.pylonmc.rebar.block.base.RebarSimpleMultiblock;
+import io.github.pylonmc.rebar.block.interfaces.SimpleRebarMultiblock;
 import io.github.pylonmc.rebar.config.adapter.ConfigAdapter;
 import io.github.pylonmc.rebar.fluid.RebarFluid;
 import io.github.pylonmc.rebar.fluid.tags.FluidTemperature;
@@ -518,9 +518,9 @@ public interface Deserializer<T> {
      * @author balugaq
      */
     @NullMarked
-    class MultiblockComponentDeserializer implements Deserializer<RebarSimpleMultiblock.MultiblockComponent> {
+    class MultiblockComponentDeserializer implements Deserializer<SimpleRebarMultiblock.MultiblockComponent> {
         @Override
-        public List<ConfigReader<?, RebarSimpleMultiblock.MultiblockComponent>> readers() {
+        public List<ConfigReader<?, SimpleRebarMultiblock.MultiblockComponent>> readers() {
             return ConfigReader.list(
                     String.class, s -> {
                         List<BlockData> dataList = new ArrayList<>();
@@ -552,7 +552,7 @@ public interface Deserializer<T> {
                             }
                         }
 
-                        return RebarSimpleMultiblock.MultiblockComponent.of(dataList, keyList);
+                        return SimpleRebarMultiblock.MultiblockComponent.of(dataList, keyList);
                     }
             );
         }
