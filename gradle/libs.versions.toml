@@ -1,7 +1,7 @@
 [versions]
 shadow = "9.0.0"
 pluginYml = "0.6.0"
-runPaper = "2.3.0"
+runPaper = "3.1.0"
 
 paperApi = "1.21.10-R0.1-SNAPSHOT"
 rebar = "0.44.2-26.2"
