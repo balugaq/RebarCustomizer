@@ -11,15 +11,7 @@ import io.github.pylonmc.rebar.config.ConfigSection;
 import io.github.pylonmc.rebar.recipe.ConfigurableRecipeType;
 import io.github.pylonmc.rebar.recipe.RebarRecipe;
 import io.github.pylonmc.rebar.recipe.RecipeType;
-import io.github.pylonmc.rebar.recipe.vanilla.BlastingRecipeWrapper;
-import io.github.pylonmc.rebar.recipe.vanilla.CampfireRecipeWrapper;
-import io.github.pylonmc.rebar.recipe.vanilla.FurnaceRecipeWrapper;
-import io.github.pylonmc.rebar.recipe.vanilla.ShapedRecipeWrapper;
-import io.github.pylonmc.rebar.recipe.vanilla.ShapelessRecipeWrapper;
-import io.github.pylonmc.rebar.recipe.vanilla.SmithingTransformRecipeWrapper;
-import io.github.pylonmc.rebar.recipe.vanilla.SmithingTrimRecipeWrapper;
-import io.github.pylonmc.rebar.recipe.vanilla.SmokingRecipeWrapper;
-import io.github.pylonmc.rebar.recipe.vanilla.TransmuteRecipeWrapper;
+import io.github.pylonmc.rebar.recipe.vanilla.*;
 import io.github.pylonmc.rebar.registry.RebarRegistry;
 import kotlin.jvm.functions.Function5;
 import lombok.Data;
@@ -27,28 +19,11 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.inventory.BlastingRecipe;
-import org.bukkit.inventory.CampfireRecipe;
-import org.bukkit.inventory.CookingRecipe;
-import org.bukkit.inventory.FurnaceRecipe;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.RecipeChoice;
-import org.bukkit.inventory.ShapedRecipe;
-import org.bukkit.inventory.ShapelessRecipe;
-import org.bukkit.inventory.SmithingTransformRecipe;
-import org.bukkit.inventory.SmithingTrimRecipe;
-import org.bukkit.inventory.SmokingRecipe;
-import org.bukkit.inventory.TransmuteRecipe;
-import org.bukkit.inventory.recipe.CraftingBookCategory;
+import org.bukkit.inventory.*;
 import org.jspecify.annotations.NullMarked;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -174,21 +149,20 @@ public class Recipes {
     static {
         loadAdvance(RecipeType.VANILLA_BLASTING, Recipes::advancedVanillaBlasting);
         loadAdvance(RecipeType.VANILLA_CAMPFIRE, Recipes::advancedVanillaCampfire);
-        loadAdvance(RecipeType.VANILLA_FURNACE, Recipes::advancedVanillaFurnace);
+        loadAdvance(RecipeType.VANILLA_SMELTING, Recipes::advancedVanillaSmelting);
         loadAdvance(RecipeType.VANILLA_SHAPED, Recipes::advancedVanillaShaped);
         loadAdvance(RecipeType.VANILLA_SHAPELESS, Recipes::advancedVanillaShapeless);
-        loadAdvance(RecipeType.VANILLA_TRANSMUTE, Recipes::advancedVanillaTransmute);
         loadAdvance(RecipeType.VANILLA_SMITHING_TRANSFORM, Recipes::advancedVanillaSmithingTransform);
         loadAdvance(RecipeType.VANILLA_SMITHING_TRIM, Recipes::advancedVanillaSmithingTrim);
         loadAdvance(RecipeType.VANILLA_SMOKING, Recipes::advancedVanillaSmoking);
     }
 
-    private static SmithingTrimRecipeWrapper advancedVanillaSmithingTrim(NamespacedKey key, ConfigurationSection config) {
+    private static SmithingTrimRebarRecipe advancedVanillaSmithingTrim(NamespacedKey key, ConfigurationSection config) {
         var pattern = Deserializer.TRIM_PATTERN.deserialize(config.get("pattern"));
         var template = Deserializer.RECIPE_CHOICE.deserialize(config.get("template"));
         var base = Deserializer.RECIPE_CHOICE.deserialize(config.get("base"));
         var addition = Deserializer.RECIPE_CHOICE.deserialize(config.get("addition"));
-        return new SmithingTrimRecipeWrapper(
+        return SmithingTrimRebarRecipe.fromVanilla(
                 new SmithingTrimRecipe(
                         key,
                         template,
@@ -199,12 +173,12 @@ public class Recipes {
         );
     }
 
-    private static SmithingTransformRecipeWrapper advancedVanillaSmithingTransform(NamespacedKey key, ConfigurationSection config) {
+    private static SmithingTransformRebarRecipe advancedVanillaSmithingTransform(NamespacedKey key, ConfigurationSection config) {
         var template = Deserializer.RECIPE_CHOICE.deserialize(config.get("template"));
         var base = Deserializer.RECIPE_CHOICE.deserialize(config.get("base"));
         var addition = Deserializer.RECIPE_CHOICE.deserialize(config.get("addition"));
         var result = Deserializer.ITEM_STACK.deserialize(config.get("result"));
-        return new SmithingTransformRecipeWrapper(
+        return SmithingTransformRebarRecipe.fromVanilla(
                 new SmithingTransformRecipe(
                         key,
                         result,
@@ -215,17 +189,7 @@ public class Recipes {
         );
     }
 
-    private static TransmuteRecipeWrapper advancedVanillaTransmute(NamespacedKey key, ConfigurationSection config) {
-        var result = Deserializer.MATERIAL.deserialize(config.get("result"));
-        var recipe = new TransmuteRecipe(key, result, Deserializer.RECIPE_CHOICE.deserialize(config.get("input")), Deserializer.RECIPE_CHOICE.deserialize(config.get("material")));
-        var category = Deserializer.CRAFTING_BOOK_CATEGORY.deserializeOrNull(config.get("category"));
-        var group = config.getString("group");
-        recipe.setCategory(category == null ? CraftingBookCategory.MISC : category);
-        recipe.setGroup(group == null ? "" : group);
-        return new TransmuteRecipeWrapper(recipe);
-    }
-
-    private static ShapelessRecipeWrapper advancedVanillaShapeless(NamespacedKey key, ConfigurationSection config) {
+    private static ShapelessRebarRecipe advancedVanillaShapeless(NamespacedKey key, ConfigurationSection config) {
         List<?> is = config.getList("ingredients");
         List<RecipeChoice.ExactChoice> ingredients = (is == null || is.isEmpty()) ? new ArrayList<>() : is.stream().map(Deserializer.RECIPE_CHOICE::deserialize).toList();
         var result = Deserializer.ITEM_STACK.deserialize(config.get("result"));
@@ -238,10 +202,10 @@ public class Recipes {
         if (category != null) recipe.setCategory(category);
         var group = config.getString("group");
         if (group != null) recipe.setGroup(group);
-        return new ShapelessRecipeWrapper(recipe);
+        return ShapelessRebarRecipe.fromVanilla(recipe);
     }
 
-    private static ShapedRecipeWrapper advancedVanillaShaped(NamespacedKey key, ConfigurationSection config) {
+    private static ShapedRebarRecipe advancedVanillaShaped(NamespacedKey key, ConfigurationSection config) {
         Map<Character, RecipeChoice.ExactChoice> ingredientKey = new HashMap<>();
         var c = config.getConfigurationSection("key");
         if (c == null) throw new MissingArgumentException("key");
@@ -261,7 +225,7 @@ public class Recipes {
         if (category != null) recipe.setCategory(category);
         var group = config.getString("group");
         if (group != null) recipe.setGroup(group);
-        return new ShapedRecipeWrapper(recipe);
+        return ShapedRebarRecipe.fromVanilla(recipe);
     }
 
     private static <T extends CookingRecipe<T>> T advancedVanillaCooking(NamespacedKey key, ConfigurationSection config, Function5<NamespacedKey, ItemStack, RecipeChoice, Float, Integer, T> function) {
@@ -277,20 +241,20 @@ public class Recipes {
         return recipe;
     }
 
-    private static BlastingRecipeWrapper advancedVanillaBlasting(NamespacedKey key, ConfigurationSection config) {
-        return new BlastingRecipeWrapper(advancedVanillaCooking(key, config, BlastingRecipe::new));
+    private static BlastingRebarRecipe advancedVanillaBlasting(NamespacedKey key, ConfigurationSection config) {
+        return BlastingRebarRecipe.fromVanilla(advancedVanillaCooking(key, config, BlastingRecipe::new));
     }
 
-    private static CampfireRecipeWrapper advancedVanillaCampfire(NamespacedKey key, ConfigurationSection config) {
-        return new CampfireRecipeWrapper(advancedVanillaCooking(key, config, CampfireRecipe::new));
+    private static CampfireRebarRecipe advancedVanillaCampfire(NamespacedKey key, ConfigurationSection config) {
+        return CampfireRebarRecipe.fromVanilla(advancedVanillaCooking(key, config, CampfireRecipe::new));
     }
 
-    private static FurnaceRecipeWrapper advancedVanillaFurnace(NamespacedKey key, ConfigurationSection config) {
-        return new FurnaceRecipeWrapper(advancedVanillaCooking(key, config, FurnaceRecipe::new));
+    private static SmeltingRebarRecipe advancedVanillaSmelting(NamespacedKey key, ConfigurationSection config) {
+        return SmeltingRebarRecipe.fromVanilla(advancedVanillaCooking(key, config, FurnaceRecipe::new));
     }
 
-    private static SmokingRecipeWrapper advancedVanillaSmoking(NamespacedKey key, ConfigurationSection config) {
-        return new SmokingRecipeWrapper(advancedVanillaCooking(key, config, SmokingRecipe::new));
+    private static SmokingRebarRecipe advancedVanillaSmoking(NamespacedKey key, ConfigurationSection config) {
+        return SmokingRebarRecipe.fromVanilla(advancedVanillaCooking(key, config, SmokingRecipe::new));
     }
 
     public static <T extends RebarRecipe> void loadAdvance(RecipeType<T> type, BiFunction<NamespacedKey, ConfigurationSection, T> function) {

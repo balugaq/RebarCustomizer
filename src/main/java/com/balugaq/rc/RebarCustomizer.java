@@ -43,14 +43,9 @@ import java.util.stream.Collectors;
 @NullMarked
 public class RebarCustomizer extends JavaPlugin implements RebarAddon, DebuggablePlugin {
     @Getter
-    @UnknownNullability
     private static RebarCustomizer instance;
-    private final Set<Locale> SUPPORTED_LANGUAGES = new HashSet<>();
-    @UnknownNullability
     private ConfigManager configManager;
-    @UnknownNullability
     private IntegrationManager integrationManager;
-    @UnknownNullability
     private PackManager packManager;
 
     public static Map<NamespacedKey, PageButton> getPageButtons() {
@@ -135,7 +130,6 @@ public class RebarCustomizer extends JavaPlugin implements RebarAddon, Debuggabl
     public void onEnable() {
         // `/pc updatepacks` to update packs from github // todo
         instance = this;
-        addSupportedLanguages(Locale.ENGLISH);
         setupLibraries();
 
         // registerWithRebar();
@@ -238,27 +232,14 @@ public class RebarCustomizer extends JavaPlugin implements RebarAddon, Debuggabl
         }
     }
 
-    public void addSupportedLanguages(Locale languages) {
-        SUPPORTED_LANGUAGES.add(languages);
-    }
-
     @Override
     public JavaPlugin getJavaPlugin() {
         return instance;
     }
 
     @Override
-    public Set<Locale> getLanguages() {
-        return SUPPORTED_LANGUAGES;
-    }
-
-    @Override
     public Material getMaterial() {
         return Material.COPPER_INGOT;
-    }
-
-    public void addSupportedLanguages(Set<Locale> languages) {
-        SUPPORTED_LANGUAGES.addAll(languages);
     }
 
     @Override
@@ -281,5 +262,10 @@ public class RebarCustomizer extends JavaPlugin implements RebarAddon, Debuggabl
 
     public static File getPacksFolder() {
         return GlobalVars.getPacksFolder();
+    }
+
+    @Override
+    public Locale getDefaultLanguage() {
+        return Locale.ENGLISH;
     }
 }

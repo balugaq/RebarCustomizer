@@ -22,20 +22,20 @@ import java.util.Set;
 @NullMarked
 public class PackNamespace {
     private final String namespace;
-    private final Set<Locale> languages;
+    private final Locale defaultLanguage;
     private final Material material;
     private @Nullable Scripts scripts;
     private PackAddon plugin;
 
-    public PackNamespace(String namespace, Set<Locale> languages, Material material) {
+    public PackNamespace(String namespace, Locale defaultLanguage, Material material) {
         this.namespace = namespace;
-        this.languages = languages;
+        this.defaultLanguage = defaultLanguage;
         this.material = material;
-        plugin = PackAddon.generate(namespace, languages, material);
+        plugin = PackAddon.generate(namespace, defaultLanguage, material);
     }
 
-    public static PackNamespace warp(PackID packID, Set<Locale> languages, Material material) {
-        return new PackNamespace(packID.getId().toLowerCase(), languages, material);
+    public static PackNamespace warp(PackID packID, Locale defaultLanguage, Material material) {
+        return new PackNamespace(packID.getId().toLowerCase(), defaultLanguage, material);
     }
 
     public PackAddon plugin() {

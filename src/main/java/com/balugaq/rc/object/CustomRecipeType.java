@@ -1,11 +1,6 @@
 package com.balugaq.rc.object;
 
-import com.balugaq.rc.config.BiGenericDeserializer;
-import com.balugaq.rc.config.ConfigReader;
-import com.balugaq.rc.config.Deserializer;
-import com.balugaq.rc.config.GenericDeserializer;
-import com.balugaq.rc.config.GuiData;
-import com.balugaq.rc.config.Pack;
+import com.balugaq.rc.config.*;
 import com.balugaq.rc.data.MyArrayList;
 import com.balugaq.rc.data.MyObject2ObjectOpenHashMap;
 import com.balugaq.rc.data.MyObjectOpenHashSet;
@@ -16,11 +11,9 @@ import com.balugaq.rc.util.ReflectionUtil;
 import io.github.pylonmc.rebar.config.ConfigSection;
 import io.github.pylonmc.rebar.config.adapter.ConfigAdapter;
 import io.github.pylonmc.rebar.fluid.RebarFluid;
-import io.github.pylonmc.rebar.item.ItemTypeWrapper;
 import io.github.pylonmc.rebar.recipe.ConfigurableRecipeType;
-import io.github.pylonmc.rebar.recipe.FluidOrItem;
 import io.github.pylonmc.rebar.recipe.RebarRecipe;
-import io.github.pylonmc.rebar.recipe.RecipeInput;
+import io.github.pylonmc.rebar.recipe.ingredient.*;
 import io.github.pylonmc.rebar.util.gui.ProgressItem;
 import it.unimi.dsi.fastutil.chars.CharOpenHashSet;
 import org.bukkit.NamespacedKey;
@@ -32,11 +25,7 @@ import xyz.xenondevs.invui.gui.Gui;
 import xyz.xenondevs.invui.inventory.VirtualInventory;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author balugaq
@@ -45,7 +34,7 @@ import java.util.Set;
 public class CustomRecipeType extends ConfigurableRecipeType<RebarRecipe> {
 
     public static final Map<String, Handler> DEFAULT_CONFIG_READER = Map.of(
-            "inputs", new Handler(GenericDeserializer.newDeserializer(MyArrayList.class).setDeserializer(Deserializer.RECIPE_INPUT), new ArrayList<>()),
+            "inputs", new Handler(GenericDeserializer.newDeserializer(MyArrayList.class).setDeserializer(Deserializer.FLUID_OR_ITEM_CHOICE), new ArrayList<>()),
             "results", new Handler(GenericDeserializer.newDeserializer(MyArrayList.class).setDeserializer(Deserializer.FLUID_OR_ITEM), new ArrayList<>())
     );
 
@@ -116,7 +105,7 @@ public class CustomRecipeType extends ConfigurableRecipeType<RebarRecipe> {
                 throw new RuntimeException(ex);
             }
         }
-        List<RecipeInput> inputs = readInputs(other.get("inputs"));
+        List<FluidOrItemChoice> inputs = readInputs(other.get("inputs"));
         List<FluidOrItem> results = readResults(other.get("results"));
         int timeSeconds = section.get("time-seconds", ConfigAdapter.INTEGER, 0);
 
@@ -126,52 +115,53 @@ public class CustomRecipeType extends ConfigurableRecipeType<RebarRecipe> {
     private List<FluidOrItem> readResults(@Nullable Object object) {
         List<FluidOrItem> s = new ArrayList<>();
         if (object == null) return s;
-        for (RecipeInput r : readInputs(object)) {
-            if (r instanceof RecipeInput.Item item) {
-                for (ItemTypeWrapper wrapper : item.getItems()) {
-                    s.add(FluidOrItem.of(wrapper.createItemStack()));
+        for (FluidOrItemChoice r : readInputs(object)) {
+            if (r instanceof ItemChoice item) {
+                for (var stack : item.getRepresentativeItems()) {
+                    s.add(FluidOrItem.of(stack));
                 }
-            } else if (r instanceof RecipeInput.Fluid fluid) {
-                for (RebarFluid f : fluid.fluids()) {
-                    s.add(FluidOrItem.of(f, fluid.amountMillibuckets()));
+            } else if (r instanceof FluidChoice fluid) {
+                for (RebarFluid f : fluid.getFluids()) {
+                    s.add(FluidOrItem.of(f, fluid.getAmount()));
                 }
             }
         }
+
         return s;
     }
 
-    private List<RecipeInput> readInputs(@Nullable Object object) {
-        List<RecipeInput> s = new ArrayList<>();
+    private List<FluidOrItemChoice> readInputs(@Nullable Object object) {
+        List<FluidOrItemChoice> s = new ArrayList<>();
         if (object == null) return s;
         switch (object) {
             case ItemStack stack -> {
-                return List.of(RecipeInput.of(stack));
+                return List.of(ItemChoice.exact(stack));
             }
             case RebarFluid fluid -> {
-                return List.of(RecipeInput.of(fluid, 1));
+                return List.of(FluidChoice.of(fluid, 1));
             }
-            case RecipeInput.Item item -> {
+            case ItemChoice item -> {
                 return List.of(item);
             }
-            case RecipeInput.Fluid fluid -> {
+            case FluidChoice fluid -> {
                 return List.of(fluid);
             }
             case FluidOrItem.Item item -> {
-                return List.of(RecipeInput.of(item.item()));
+                return List.of(ItemChoice.exact(item.item()));
             }
-            case FluidOrItem.Fluid fluid -> {
-                return List.of(RecipeInput.of(fluid.fluid(), fluid.amountMillibuckets()));
+            case FluidWithAmount fluid -> {
+                return List.of(FluidChoice.of(fluid.fluid(), fluid.amount()));
             }
             case List<?> list -> {
                 for (Object o : list) {
-                    List<RecipeInput> r = readInputs(o);
+                    List<FluidOrItemChoice> r = readInputs(o);
                     s.addAll(r);
                 }
                 return s;
             }
             case Set<?> set -> {
                 for (Object o : set) {
-                    List<RecipeInput> r = readInputs(o);
+                    List<FluidOrItemChoice> r = readInputs(o);
                     s.addAll(r);
                 }
                 return s;

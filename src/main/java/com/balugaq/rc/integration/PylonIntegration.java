@@ -6,20 +6,8 @@ import com.balugaq.rc.config.pack.Recipes;
 import com.balugaq.rc.data.MyArrayList;
 import com.balugaq.rc.data.WeightedElement;
 import com.balugaq.rc.exceptions.MissingArgumentException;
-import io.github.pylonmc.pylon.recipes.BloomeryDisplayRecipe;
-import io.github.pylonmc.pylon.recipes.DrillingDisplayRecipe;
-import io.github.pylonmc.pylon.recipes.ForgingDisplayRecipe;
-import io.github.pylonmc.pylon.recipes.GrindstoneRecipe;
-import io.github.pylonmc.pylon.recipes.HammerRecipe;
-import io.github.pylonmc.pylon.recipes.MeltingRecipe;
-import io.github.pylonmc.pylon.recipes.MixingPotRecipe;
-import io.github.pylonmc.pylon.recipes.MoldingRecipe;
-import io.github.pylonmc.pylon.recipes.PipeBendingRecipe;
-import io.github.pylonmc.pylon.recipes.PressRecipe;
-import io.github.pylonmc.pylon.recipes.ShimmerAltarRecipe;
-import io.github.pylonmc.pylon.recipes.SmelteryRecipe;
-import io.github.pylonmc.pylon.recipes.TableSawRecipe;
-import io.github.pylonmc.rebar.recipe.RecipeInput;
+import io.github.pylonmc.pylon.recipes.*;
+import io.github.pylonmc.rebar.recipe.ingredient.ItemChoice;
 import io.github.pylonmc.rebar.util.MiningLevel;
 import io.github.pylonmc.rebar.util.WeightedSet;
 import org.bukkit.Bukkit;
@@ -30,11 +18,7 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * @author balugaq
@@ -55,7 +39,7 @@ public class PylonIntegration implements Integration {
     public static BloomeryDisplayRecipe advancedBloomeryDisplay(NamespacedKey key, ConfigurationSection section) {
         return new BloomeryDisplayRecipe(
                 key,
-                Deserializer.ITEM_STACK.deserialize(section.get("input")),
+                Deserializer.ITEM_CHOICE.deserialize(section.get("input")),
                 Deserializer.ITEM_STACK.deserialize(section.get("result"))
         );
     }
@@ -79,7 +63,7 @@ public class PylonIntegration implements Integration {
     public static GrindstoneRecipe advancedGrindstone(NamespacedKey key, ConfigurationSection section) {
         return new GrindstoneRecipe(
                 key,
-                Deserializer.RECIPE_INPUT_ITEM.deserialize(section.get("input")),
+                Deserializer.ITEM_CHOICE.deserialize(section.get("input")),
                 toWeightedSet(Pack.read(section, MyArrayList.class, WeightedElement.class, "results")),
                 section.getInt("cycles")
         );
@@ -96,7 +80,7 @@ public class PylonIntegration implements Integration {
     public static HammerRecipe advancedHammer(NamespacedKey key, ConfigurationSection section) {
         return new HammerRecipe(
                 key,
-                Deserializer.RECIPE_INPUT_ITEM.deserialize(section.get("input")),
+                Deserializer.ITEM_CHOICE.deserialize(section.get("input")),
                 Deserializer.ITEM_STACK.deserialize(section.get("result")),
                 MINING_LEVEL.deserialize(section.get("mining-level")),
                 section.getInt("uses")
@@ -106,9 +90,9 @@ public class PylonIntegration implements Integration {
     public static ShimmerAltarRecipe advancedShimmerAltar(NamespacedKey key, ConfigurationSection section) {
         var se = section.getConfigurationSection("key");
         if (se == null) throw new MissingArgumentException("key");
-        Map<Character, RecipeInput.Item> itemMap = new HashMap<>();
+        Map<Character, ItemChoice> itemMap = new HashMap<>();
         for (String ke : se.getKeys(false)) {
-            itemMap.put(ke.charAt(0), Deserializer.RECIPE_INPUT_ITEM.deserialize(se.get(ke)));
+            itemMap.put(ke.charAt(0), Deserializer.ITEM_CHOICE.deserialize(se.get(ke)));
         }
         var shape = section.getStringList("shape");
         StringBuilder ingredientChars = new StringBuilder();
@@ -116,7 +100,7 @@ public class PylonIntegration implements Integration {
         ingredientChars.append(shape.get(1).charAt(2));
         ingredientChars.append(new StringBuilder(shape.get(2)).reverse());
         ingredientChars.append(shape.get(1).charAt(0));
-        List<RecipeInput.@Nullable Item> inputs = new ArrayList<>(8);
+        List<@Nullable ItemChoice> inputs = new ArrayList<>(8);
         for (int i = 0; i < ingredientChars.length(); i++) {
             char c = ingredientChars.charAt(i);
             if (c == ' ') {
@@ -127,7 +111,7 @@ public class PylonIntegration implements Integration {
                 throw new IllegalArgumentException("Unknown character in shape: " + c);
             }
         }
-        RecipeInput.Item catalyst = itemMap.get(shape.get(1).charAt(1));
+        ItemChoice catalyst = itemMap.get(shape.get(1).charAt(1));
         if (catalyst == null) {
             throw new IllegalArgumentException("Catalyst (center item) cannot be empty");
         }
@@ -144,8 +128,8 @@ public class PylonIntegration implements Integration {
     public static MeltingRecipe advancedMelting(NamespacedKey key, ConfigurationSection section) {
         return new MeltingRecipe(
                 key,
-                Deserializer.RECIPE_INPUT_ITEM.deserialize(section.get("input")),
-                Deserializer.PYLON_FLUID.deserialize(section.get("result")),
+                Deserializer.ITEM_CHOICE.deserialize(section.get("input")),
+                Deserializer.REBAR_FLUID.deserialize(section.get("result")),
                 section.getDouble("amount")
         );
     }
@@ -153,8 +137,8 @@ public class PylonIntegration implements Integration {
     public static MixingPotRecipe advancedMixingPot(NamespacedKey key, ConfigurationSection section) {
         return new MixingPotRecipe(
                 key,
-                Pack.read(section, MyArrayList.class, Deserializer.RECIPE_INPUT_ITEM, "input-items"),
-                Deserializer.RECIPE_INPUT_FLUID.deserialize(section.get("input-fluid")),
+                Pack.read(section, MyArrayList.class, Deserializer.ITEM_CHOICE, "input-items"),
+                Deserializer.FLUID_CHOICE.deserialize(section.get("input-fluid")),
                 Deserializer.FLUID_OR_ITEM.deserialize(section.get("output")),
                 section.getBoolean("requires-enriched-fire", false)
         );
@@ -163,7 +147,7 @@ public class PylonIntegration implements Integration {
     public static MoldingRecipe advancedMolding(NamespacedKey key, ConfigurationSection section) {
         return new MoldingRecipe(
                 key,
-                Deserializer.ITEM_STACK.deserialize(section.get("input")),
+                Deserializer.ITEM_CHOICE.deserialize(section.get("input")),
                 Deserializer.ITEM_STACK.deserialize(section.get("result")),
                 section.getInt("clicks")
         );
@@ -172,7 +156,7 @@ public class PylonIntegration implements Integration {
     public static PipeBendingRecipe advancedPipeBending(NamespacedKey key, ConfigurationSection section) {
         return new PipeBendingRecipe(
                 key,
-                Deserializer.RECIPE_INPUT_ITEM.deserialize(section.get("input")),
+                Deserializer.ITEM_CHOICE.deserialize(section.get("input")),
                 Deserializer.ITEM_STACK.deserialize(section.get("result")),
                 Deserializer.ITEM_STACK.deserialize(section.get("particle-item")),
                 section.getInt("time-ticks")
@@ -182,7 +166,7 @@ public class PylonIntegration implements Integration {
     public static PressRecipe advancedPress(NamespacedKey key, ConfigurationSection section) {
         return new PressRecipe(
                 key,
-                Deserializer.RECIPE_INPUT_ITEM.deserialize(section.get("input")),
+                Deserializer.ITEM_CHOICE.deserialize(section.get("input")),
                 section.getDouble("oil-amount")
         );
     }
@@ -199,7 +183,7 @@ public class PylonIntegration implements Integration {
     public static TableSawRecipe advancedTableSaw(NamespacedKey key, ConfigurationSection section) {
         return new TableSawRecipe(
                 key,
-                Deserializer.ITEM_STACK.deserialize(section.get("input")),
+                Deserializer.ITEM_CHOICE.deserialize(section.get("input")),
                 Deserializer.ITEM_STACK.deserialize(section.get("result")),
                 Deserializer.ITEM_STACK.deserialize(section.get("particle-item")),
                 section.getInt("time-ticks")

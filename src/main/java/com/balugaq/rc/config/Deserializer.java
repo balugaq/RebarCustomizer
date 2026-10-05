@@ -1,25 +1,10 @@
 package com.balugaq.rc.config;
 
-import com.balugaq.rc.config.pack.Author;
-import com.balugaq.rc.config.pack.Contributor;
-import com.balugaq.rc.config.pack.GitHubUpdateLink;
-import com.balugaq.rc.config.pack.PackID;
-import com.balugaq.rc.config.pack.PackVersion;
-import com.balugaq.rc.config.pack.WebsiteLink;
+import com.balugaq.rc.config.pack.*;
 import com.balugaq.rc.config.register.RegisterCondition;
 import com.balugaq.rc.config.register.RegisterConditions;
 import com.balugaq.rc.data.MyObject2ObjectOpenHashMap;
-import com.balugaq.rc.exceptions.DeserializationException;
-import com.balugaq.rc.exceptions.MissingArgumentException;
-import com.balugaq.rc.exceptions.UnknownEnumException;
-import com.balugaq.rc.exceptions.UnknownFluidException;
-import com.balugaq.rc.exceptions.UnknownFluidOrItemException;
-import com.balugaq.rc.exceptions.UnknownItemException;
-import com.balugaq.rc.exceptions.UnknownKeyedException;
-import com.balugaq.rc.exceptions.UnknownMultiblockComponentException;
-import com.balugaq.rc.exceptions.UnknownRecipeInputException;
-import com.balugaq.rc.exceptions.UnknownSaveditemException;
-import com.balugaq.rc.exceptions.UnknownSymbolException;
+import com.balugaq.rc.exceptions.*;
 import com.balugaq.rc.manager.PackManager;
 import com.balugaq.rc.object.CustomRecipeType;
 import com.balugaq.rc.util.ClassUtil;
@@ -32,20 +17,17 @@ import io.github.pylonmc.rebar.fluid.tags.FluidTemperature;
 import io.github.pylonmc.rebar.item.ItemTypeWrapper;
 import io.github.pylonmc.rebar.item.RebarItemSchema;
 import io.github.pylonmc.rebar.logistics.LogisticGroupType;
-import io.github.pylonmc.rebar.recipe.FluidOrItem;
-import io.github.pylonmc.rebar.recipe.RecipeInput;
+import io.github.pylonmc.rebar.recipe.ingredient.FluidChoice;
+import io.github.pylonmc.rebar.recipe.ingredient.FluidOrItem;
+import io.github.pylonmc.rebar.recipe.ingredient.FluidOrItemChoice;
+import io.github.pylonmc.rebar.recipe.ingredient.ItemChoice;
 import io.github.pylonmc.rebar.registry.RebarRegistry;
 import io.github.pylonmc.rebar.util.RandomizedSound;
 import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
 import lombok.SneakyThrows;
 import net.kyori.adventure.text.format.TextColor;
-import org.bukkit.Bukkit;
-import org.bukkit.Keyed;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.Registry;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
@@ -98,15 +80,15 @@ public interface Deserializer<T> {
     }
 
     Deserializer<ItemStack> ITEM_STACK = new ItemStackDeserializer();
-    Deserializer<RebarFluid> PYLON_FLUID = new RebarFluidDeserializer();
+    Deserializer<RebarFluid> REBAR_FLUID = new RebarFluidDeserializer();
     MultiblockComponentDeserializer MULTIBLOCK_COMPONENT = new MultiblockComponentDeserializer();
     Vector3iDeserializer VECTOR3I = new Vector3iDeserializer();
     Deserializer<RecipeChoice.ExactChoice> RECIPE_CHOICE = new RecipeChoiceDeserializer();
     Deserializer<TrimPattern> TRIM_PATTERN = KeyedDeserializer.of(RegistryAccess.registryAccess().getRegistry(RegistryKey.TRIM_PATTERN));
     Deserializer<BlockData> BLOCK_DATA = new BlockDataDeserializer();
-    Deserializer<RecipeInput.Item> RECIPE_INPUT_ITEM = new RecipeInputItemDeserializer();
-    Deserializer<RecipeInput.Fluid> RECIPE_INPUT_FLUID = new RecipeInputFluidDeserializer();
-    Deserializer<RecipeInput> RECIPE_INPUT = new RecipeInputDeserializer();
+    Deserializer<ItemChoice> ITEM_CHOICE = new ItemChoiceDeserializer();
+    Deserializer<FluidChoice> FLUID_CHOICE = new FluidChoiceDeserializer();
+    Deserializer<FluidOrItemChoice> FLUID_OR_ITEM_CHOICE = new FluidOrItemChoiceDeserializer();
     Deserializer<FluidOrItem> FLUID_OR_ITEM = new FluidOrItemDeserializer();
     Deserializer<MyObject2ObjectOpenHashMap<RebarFluid, Double>> FLUID_MAP = new FluidMapDeserializer();
     Deserializer<Byte> BYTE = warp(ConfigAdapter.BYTE);
@@ -309,14 +291,14 @@ public interface Deserializer<T> {
                     }
 
                     if (material != null) {
-                        return new ItemStack(material);
+                        return ItemStack.of(material);
                     }
 
                     // item: example_item
-                    // pylon item
+                    // rebar item
                     Optional<RebarItemSchema> sch = RebarRegistry.ITEMS.stream().filter(schema -> schema.getKey().getKey().equals(fixed)).findFirst();
                     if (sch.isPresent()) {
-                        return sch.get().getItemStack();
+                        return sch.get().createNewItemStack();
                     }
                 } else if (s2.startsWith("saveditem")) {
                     // item: saveditem:mypack:foo
@@ -353,7 +335,7 @@ public interface Deserializer<T> {
 
                     RebarItemSchema schema = RebarRegistry.ITEMS.get(k);
                     if (schema != null) {
-                        return schema.getItemStack();
+                        return schema.createNewItemStack();
                     }
                 }
             }
@@ -395,7 +377,7 @@ public interface Deserializer<T> {
                         // item:
                         //   material: minecraft:diamond // or heads: hash/base64/url
                         //   amount: 1-99
-                        //   compounds... (// todo)
+                        //   components... (// todo)
 
                         String s = section.getString("material");
                         if (s == null) throw new MissingArgumentException("material");
@@ -597,7 +579,7 @@ public interface Deserializer<T> {
                                 // pylon item
                                 List<RebarItemSchema> schs = RebarRegistry.ITEMS.stream().filter(schema -> schema.getKey().getKey().equals(s)).toList();
                                 if (!schs.isEmpty()) {
-                                    return new RecipeChoice.ExactChoice(schs.stream().map(RebarItemSchema::getItemStack).toList());
+                                    return new RecipeChoice.ExactChoice(schs.stream().map(RebarItemSchema::createNewItemStack).toList());
                                 }
                             }
 
@@ -635,9 +617,9 @@ public interface Deserializer<T> {
      * @author balugaq
      */
     @NullMarked
-    class RecipeInputItemDeserializer implements Deserializer<RecipeInput.Item> {
+    class ItemChoiceDeserializer implements Deserializer<ItemChoice> {
         @Override
-        public List<ConfigReader<?, RecipeInput.Item>> readers() {
+        public List<ConfigReader<?, ItemChoice>> readers() {
             return ConfigReader.list(
                     String.class, this::proxy,
                     Map.class, this::proxy,
@@ -645,8 +627,12 @@ public interface Deserializer<T> {
             );
         }
 
-        private RecipeInput.Item proxy(Object s) {
-            return new RecipeInput.Item(1, RECIPE_CHOICE.deserialize(s).getChoices().toArray(new ItemStack[0]));
+        private ItemChoice proxy(Object s) {
+            var builder = ItemChoice.builder();
+            for (var o : RECIPE_CHOICE.deserialize(s).getChoices()) {
+                builder = builder.addExact(o);
+            }
+            return builder.build();
         }
     }
 
@@ -654,27 +640,25 @@ public interface Deserializer<T> {
      * @author balugaq
      */
     @NullMarked
-    class RecipeInputFluidDeserializer implements Deserializer<RecipeInput.Fluid> {
+    class FluidChoiceDeserializer implements Deserializer<FluidChoice> {
         @Override
-        public List<ConfigReader<?, RecipeInput.Fluid>> readers() {
+        public List<ConfigReader<?, FluidChoice>> readers() {
             return ConfigReader.list(
                     Map.Entry.class, e -> {
-                        var fluid = PYLON_FLUID.deserialize(e.getKey());
+                        var fluid = REBAR_FLUID.deserialize(e.getKey());
                         double amount = Double.parseDouble(String.valueOf(e.getValue()));
-                        return new RecipeInput.Fluid(amount, fluid);
+                        return FluidChoice.of(fluid, amount);
                     },
                     Map.class, m -> {
                         if (m.size() == 1) {
-                            var fluid = PYLON_FLUID.deserialize(m.keySet().stream().findFirst().get());
-                            double amount = Double.parseDouble(String.valueOf(m.values().stream().findFirst().get()));
-                            return new RecipeInput.Fluid(amount, fluid);
-                        } else {
-                            var fluid = PYLON_FLUID.deserialize(m.get("fluid"));
-                            double amount = Double.parseDouble(String.valueOf(m.get("amount")));
-                            return new RecipeInput.Fluid(amount, fluid);
+                            return FLUID_CHOICE.deserialize(m.entrySet().iterator().next());
                         }
+                        var fluid = REBAR_FLUID.deserialize(m.get("fluid"));
+                        double amount = Double.parseDouble(String.valueOf(m.get("amount")));
+                        return FluidChoice.of(fluid, amount);
                     },
-                    ConfigurationSection.class, s -> RECIPE_INPUT_FLUID.deserialize(s.getKeys(false).stream().map(k -> Map.of(k, s.get(k))).flatMap(a -> a.entrySet().stream()).collect(Collectors.toMap(a -> a.getKey(), b -> b.getValue(), (a, b) -> a)))
+                    // todo multi-fluid
+                    ConfigurationSection.class, s -> FLUID_CHOICE.deserialize(s.getKeys(false).stream().map(k -> Map.of(k, s.get(k))).flatMap(a -> a.entrySet().stream()).collect(Collectors.toMap(a -> a.getKey(), b -> b.getValue(), (a, b) -> a)))
             );
         }
     }
@@ -689,67 +673,40 @@ public interface Deserializer<T> {
             return ConfigReader.list(
                     String.class, s -> {
                         try {
-                            var r = RECIPE_INPUT_ITEM.deserialize(s);
-                            if (r != null)
-                                return FluidOrItem.of(r.getItems().stream().findFirst().get().createItemStack());
+                            return FluidOrItem.of(ITEM_STACK.deserialize(s));
                         } catch (Exception ignored) {
                         }
 
                         try {
-                            var r2 = PYLON_FLUID.deserialize(s);
-                            if (r2 != null) return FluidOrItem.of(r2, 144);
-                        } catch (Exception ignored) {
-                        }
-
-                        try {
-                            var r3 = ITEM_STACK.deserialize(s);
-                            if (r3 != null) return FluidOrItem.of(r3);
+                            return FluidOrItem.of(REBAR_FLUID.deserialize(s), 144);
                         } catch (Exception ignored) {
                         }
 
                         throw new UnknownFluidOrItemException(s);
                     },
                     Map.class, m -> {
-                        try {
-                            var r = RECIPE_INPUT_ITEM.deserialize(m);
-                            if (r != null)
-                                return FluidOrItem.of(r.getItems().stream().findFirst().get().createItemStack());
-                        } catch (Exception ignored) {
-                        }
+                        if (m.size() == 1) {
+                            try {
+                                return FluidOrItem.of(ITEM_STACK.deserialize(m));
+                            } catch (Exception ignored) {
+                            }
 
-                        try {
-                            var r2 = RECIPE_INPUT_FLUID.deserialize(m);
-                            if (r2 != null)
-                                return FluidOrItem.of(r2.fluids().stream().findFirst().get(), r2.amountMillibuckets());
-                        } catch (Exception ignored) {
-                        }
-
-                        try {
-                            var r3 = ITEM_STACK.deserialize(m);
-                            if (r3 != null) return FluidOrItem.of(r3);
-                        } catch (Exception ignored) {
+                            try {
+                                return FluidOrItem.of(REBAR_FLUID.deserialize(m.keySet().iterator().next()), DOUBLE.deserialize(m.values().iterator().next()));
+                            } catch (Exception ignored) {
+                            }
                         }
 
                         throw new UnknownFluidOrItemException(m.toString());
                     },
                     ConfigurationSection.class, c -> {
                         try {
-                            var r = RECIPE_INPUT_ITEM.deserialize(c);
-                            if (r != null)
-                                return FluidOrItem.of(r.getItems().stream().findFirst().get().createItemStack());
+                            return FluidOrItem.of(ITEM_STACK.deserialize(c));
                         } catch (Exception ignored) {
                         }
 
                         try {
-                            var r2 = RECIPE_INPUT_FLUID.deserialize(c);
-                            if (r2 != null)
-                                return FluidOrItem.of(r2.fluids().stream().findFirst().get(), r2.amountMillibuckets());
-                        } catch (Exception ignored) {
-                        }
-
-                        try {
-                            var r3 = ITEM_STACK.deserializeOrNull(c);
-                            if (r3 != null) return FluidOrItem.of(r3);
+                            return FluidOrItem.of(REBAR_FLUID.deserialize(c.get("fluid")), DOUBLE.deserialize(c.get("amount")));
                         } catch (Exception ignored) {
                         }
 
@@ -767,7 +724,7 @@ public interface Deserializer<T> {
         public FluidMapDeserializer() {
             setGenericType(RebarFluid.class);
             setGenericType2(Double.class);
-            setDeserializer(PYLON_FLUID);
+            setDeserializer(REBAR_FLUID);
             setDeserializer2(() -> ConfigReader.list(String.class, Double::parseDouble, Double.class, s -> s, Integer.class, s -> (double)s));
             setAdvancer(t -> t);
             setAdvancer2(t -> t);
@@ -778,50 +735,38 @@ public interface Deserializer<T> {
      * @author balugaq
      */
     @NullMarked
-    class RecipeInputDeserializer implements Deserializer<RecipeInput> {
+    class FluidOrItemChoiceDeserializer implements Deserializer<FluidOrItemChoice> {
         @Override
-        public List<ConfigReader<?, RecipeInput>> readers() {
+        public List<ConfigReader<?, FluidOrItemChoice>> readers() {
             return ConfigReader.list(
                     String.class, s -> {
                         try {
-                            var r = RECIPE_INPUT_ITEM.deserialize(s);
+                            var r = ITEM_CHOICE.deserialize(s);
                             if (r != null)
                                 return r;
                         } catch (Exception ignored) {
                         }
 
                         try {
-                            var r2 = PYLON_FLUID.deserialize(s);
-                            if (r2 != null) return RecipeInput.of(r2, 144);
+                            var r2 = FLUID_CHOICE.deserialize(s);
+                            if (r2 != null) return r2;
                         } catch (Exception ignored) {
                         }
 
-                        try {
-                            var r3 = ITEM_STACK.deserialize(s);
-                            if (r3 != null) return RecipeInput.of(r3);
-                        } catch (Exception ignored) {
-                        }
-
-                        throw new UnknownRecipeInputException(s);
+                        throw new UnknownFluidOrItemChoiceException(s);
                     },
                     Map.class, m -> {
                         try {
-                            var r = RECIPE_INPUT_ITEM.deserialize(m);
+                            var r = ITEM_CHOICE.deserialize(m);
                             if (r != null)
                                 return r;
                         } catch (Exception ignored) {
                         }
 
                         try {
-                            var r2 = RECIPE_INPUT_FLUID.deserialize(m);
+                            var r2 = FLUID_CHOICE.deserialize(m);
                             if (r2 != null)
                                 return r2;
-                        } catch (Exception ignored) {
-                        }
-
-                        try {
-                            var r3 = ITEM_STACK.deserialize(m);
-                            if (r3 != null) return RecipeInput.of(r3);
                         } catch (Exception ignored) {
                         }
 
@@ -829,26 +774,20 @@ public interface Deserializer<T> {
                     },
                     ConfigurationSection.class, c -> {
                         try {
-                            var r = RECIPE_INPUT_ITEM.deserialize(c);
+                            var r = ITEM_CHOICE.deserialize(c);
                             if (r != null)
                                 return r;
                         } catch (Exception ignored) {
                         }
 
                         try {
-                            var r2 = RECIPE_INPUT_FLUID.deserialize(c);
+                            var r2 = FLUID_CHOICE.deserialize(c);
                             if (r2 != null)
                                 return r2;
                         } catch (Exception ignored) {
                         }
 
-                        try {
-                            var r3 = ITEM_STACK.deserializeOrNull(c);
-                            if (r3 != null) return RecipeInput.of(r3);
-                        } catch (Exception ignored) {
-                        }
-
-                        throw new UnknownRecipeInputException(c.toString());
+                        throw new UnknownFluidOrItemChoiceException(c.toString());
                     }
             );
         }

@@ -1,4 +1,4 @@
 # RebarCustomizer
 
-RebarCustomizer is a Pylon customizer addon, which depends on both PylonCore and PylonBase.
-It allows you to customize your own Pylon objects without coding in Java.
+RebarCustomizer is a Rebar customizer addon, which depends on both Rebar and Pylon.
+It allows you to customize your own Rebar objects without coding in Java.

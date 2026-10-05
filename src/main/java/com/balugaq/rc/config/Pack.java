@@ -2,40 +2,11 @@ package com.balugaq.rc.config;
 
 import com.balugaq.rc.GlobalVars;
 import com.balugaq.rc.RebarCustomizer;
-import com.balugaq.rc.config.pack.Author;
-import com.balugaq.rc.config.pack.Blocks;
-import com.balugaq.rc.config.pack.Contributor;
-import com.balugaq.rc.config.pack.Fluids;
-import com.balugaq.rc.config.pack.GitHubUpdateLink;
-import com.balugaq.rc.config.pack.Items;
-import com.balugaq.rc.config.pack.PackID;
-import com.balugaq.rc.config.pack.PackNamespace;
-import com.balugaq.rc.config.pack.PackVersion;
-import com.balugaq.rc.config.pack.Pages;
-import com.balugaq.rc.config.pack.RecipeTypes;
-import com.balugaq.rc.config.pack.Recipes;
-import com.balugaq.rc.config.pack.Researches;
-import com.balugaq.rc.config.pack.Saveditems;
-import com.balugaq.rc.config.pack.Scripts;
-import com.balugaq.rc.config.pack.Settings;
-import com.balugaq.rc.config.pack.WebsiteLink;
+import com.balugaq.rc.config.pack.*;
 import com.balugaq.rc.data.MyArrayList;
-import com.balugaq.rc.exceptions.InvalidDescException;
-import com.balugaq.rc.exceptions.InvalidStructureException;
-import com.balugaq.rc.exceptions.MissingArgumentException;
-import com.balugaq.rc.exceptions.MissingFileException;
-import com.balugaq.rc.exceptions.PackException;
-import com.balugaq.rc.exceptions.UnknownEnumException;
-import com.balugaq.rc.exceptions.UnknownItemException;
+import com.balugaq.rc.exceptions.*;
 import com.balugaq.rc.manager.PackManager;
-import com.balugaq.rc.object.CustomBlockBuilder;
-import com.balugaq.rc.object.CustomFluid;
-import com.balugaq.rc.object.CustomGuidePage;
-import com.balugaq.rc.object.CustomItemBuilder;
-import com.balugaq.rc.object.CustomPageButton;
-import com.balugaq.rc.object.CustomRecipeType;
-import com.balugaq.rc.object.ItemStackProvider;
-import com.balugaq.rc.object.PackAddon;
+import com.balugaq.rc.object.*;
 import com.balugaq.rc.util.Debug;
 import com.balugaq.rc.util.MinecraftVersion;
 import io.github.pylonmc.rebar.block.RebarBlock;
@@ -47,8 +18,10 @@ import io.github.pylonmc.rebar.guide.button.FluidButton;
 import io.github.pylonmc.rebar.guide.button.ItemButton;
 import io.github.pylonmc.rebar.item.RebarItem;
 import io.github.pylonmc.rebar.item.research.Research;
-import io.github.pylonmc.rebar.recipe.FluidOrItem;
-import io.github.pylonmc.rebar.recipe.RecipeInput;
+import io.github.pylonmc.rebar.recipe.ingredient.FluidChoice;
+import io.github.pylonmc.rebar.recipe.ingredient.FluidOrItem;
+import io.github.pylonmc.rebar.recipe.ingredient.FluidWithAmount;
+import io.github.pylonmc.rebar.recipe.ingredient.ItemChoice;
 import io.github.pylonmc.rebar.util.gui.GuiItems;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -66,11 +39,7 @@ import xyz.xenondevs.invui.item.Item;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 /**
  * In the disk, we have the following tree structure to define a pack:
@@ -126,8 +95,8 @@ public class Pack implements FileObject<Pack> {
                 var k = c - 'a';
                 if (k >= i.size()) return () -> Item.EMPTY;
                 var s = i.get(k);
-                if (s instanceof RecipeInput.Item item) return () -> ItemButton.of(item);
-                else if (s instanceof RecipeInput.Fluid fluid) return () -> FluidButton.of(fluid);
+                if (s instanceof ItemChoice item) return () -> ItemButton.of(item);
+                else if (s instanceof FluidChoice fluid) return () -> FluidButton.of(fluid);
             }
             if ('1' <= c && c <= '9') {
                 var o = r.getResults();
@@ -135,8 +104,8 @@ public class Pack implements FileObject<Pack> {
                 if (k >= o.size()) return () -> Item.EMPTY;
                 var s = o.get(k);
                 if (s instanceof FluidOrItem.Item item) return () -> ItemButton.of(item.item());
-                else if (s instanceof FluidOrItem.Fluid fluid)
-                    return () -> FluidButton.of(fluid.amountMillibuckets(), fluid.fluid());
+                else if (s instanceof FluidWithAmount fluid)
+                    return () -> FluidButton.of(fluid.amount(), fluid.fluid());
             }
         }
         if (c == 'B') return GuiItems::background;
@@ -295,16 +264,9 @@ public class Pack implements FileObject<Pack> {
                 MyArrayList<Contributor> contributors = readOrNull(config, MyArrayList.class, Contributor.class, "contributors");
                 MyArrayList<WebsiteLink> websiteLinks = readOrNull(config, MyArrayList.class, WebsiteLink.class, "websiteLinks");
                 GitHubUpdateLink githubUpdateLink = readOrNull(config, GitHubUpdateLink.class, "githubUpdateLink");
-                MyArrayList<Language> languages = readOrNull(config, MyArrayList.class, Language.class, "languages");
-                Set<Locale> locales = new HashSet<>();
-                if (languages != null) {
-                    locales.addAll(languages.stream().map(Language::locale).toList());
-                } else {
-                    locales.add(Locale.ENGLISH);
-                }
-                RebarCustomizer.getInstance().addSupportedLanguages(locales);
+                Language language = read(config, Language.class, "defaultLanguage");
                 Material material = Pack.readEnum(config, Material.class, "material", Deserializer.EnumDeserializer::forceUpperCase);
-                PackNamespace namespace = PackNamespace.warp(id, locales, material);
+                PackNamespace namespace = PackNamespace.warp(id, language.locale(), material);
 
                 StackTrace.record("Reading recipes");
                 Recipes recipes = null;

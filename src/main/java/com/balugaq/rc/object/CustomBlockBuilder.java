@@ -7,73 +7,19 @@ import com.balugaq.rc.config.FluidBufferBlockData;
 import com.balugaq.rc.config.GuiData;
 import com.balugaq.rc.config.LogisticBlockData;
 import com.balugaq.rc.config.preloads.PreparedBlock;
+import com.balugaq.rc.util.ReflectionUtil;
 import io.github.pylonmc.rebar.block.RebarBlock;
 import io.github.pylonmc.rebar.block.context.BlockBreakContext;
 import io.github.pylonmc.rebar.block.context.BlockCreateContext;
-import io.github.pylonmc.rebar.block.interfaces.BeaconRebarBlockHandler;
-import io.github.pylonmc.rebar.block.interfaces.BedRebarBlockHandler;
-import io.github.pylonmc.rebar.block.interfaces.BellRebarBlockHandler;
-import io.github.pylonmc.rebar.block.interfaces.BlockBreakRebarBlockHandler;
-import io.github.pylonmc.rebar.block.interfaces.BrewingStandRebarBlockHandler;
-import io.github.pylonmc.rebar.block.interfaces.CampfireRebarBlockHandler;
-import io.github.pylonmc.rebar.block.interfaces.CargoRebarBlock;
-import io.github.pylonmc.rebar.block.interfaces.CargoRebarBlockHandler;
-import io.github.pylonmc.rebar.block.interfaces.CauldronRebarBlockHandler;
-import io.github.pylonmc.rebar.block.interfaces.ComposterRebarBlockHandler;
-import io.github.pylonmc.rebar.block.interfaces.CopperRebarBlockHandler;
-import io.github.pylonmc.rebar.block.interfaces.CrafterRebarBlockHandler;
-import io.github.pylonmc.rebar.block.interfaces.CulledRebarBlock;
-import io.github.pylonmc.rebar.block.interfaces.DirectionalRebarBlock;
-import io.github.pylonmc.rebar.block.interfaces.DispenserRebarBlockHandler;
-import io.github.pylonmc.rebar.block.interfaces.EnchantingTableRebarBlockHandler;
-import io.github.pylonmc.rebar.block.interfaces.EntityChangeRebarBlockHandler;
-import io.github.pylonmc.rebar.block.interfaces.EntityCulledRebarBlock;
-import io.github.pylonmc.rebar.block.interfaces.EntityHolderRebarBlock;
-import io.github.pylonmc.rebar.block.interfaces.FallingRebarBlockHandler;
-import io.github.pylonmc.rebar.block.interfaces.FireRebarBlockHandler;
-import io.github.pylonmc.rebar.block.interfaces.FlowerPotRebarBlockHandler;
-import io.github.pylonmc.rebar.block.interfaces.FluidBufferRebarBlock;
-import io.github.pylonmc.rebar.block.interfaces.FluidRebarBlock;
-import io.github.pylonmc.rebar.block.interfaces.FluidTankRebarBlock;
-import io.github.pylonmc.rebar.block.interfaces.FurnaceRebarBlockHandler;
-import io.github.pylonmc.rebar.block.interfaces.GhostBlockHolderRebarBlock;
-import io.github.pylonmc.rebar.block.interfaces.GrowRebarBlockHandler;
-import io.github.pylonmc.rebar.block.interfaces.GuiRebarBlock;
-import io.github.pylonmc.rebar.block.interfaces.HopperRebarBlockHandler;
-import io.github.pylonmc.rebar.block.interfaces.InteractRebarBlockHandler;
-import io.github.pylonmc.rebar.block.interfaces.JumpRebarBlockHandler;
-import io.github.pylonmc.rebar.block.interfaces.LeafRebarBlockHandler;
-import io.github.pylonmc.rebar.block.interfaces.LecternRebarBlockHandler;
-import io.github.pylonmc.rebar.block.interfaces.LogisticRebarBlock;
-import io.github.pylonmc.rebar.block.interfaces.LootDispenserRebarBlockHandler;
-import io.github.pylonmc.rebar.block.interfaces.NoJobRebarBlock;
-import io.github.pylonmc.rebar.block.interfaces.NoVanillaInventoryRebarBlock;
-import io.github.pylonmc.rebar.block.interfaces.NoteRebarBlockHandler;
-import io.github.pylonmc.rebar.block.interfaces.PistonRebarBlockHandler;
-import io.github.pylonmc.rebar.block.interfaces.ProcessorRebarBlock;
-import io.github.pylonmc.rebar.block.interfaces.RecipeProcessorRebarBlock;
-import io.github.pylonmc.rebar.block.interfaces.RedstoneRebarBlockHandler;
-import io.github.pylonmc.rebar.block.interfaces.ShearRebarBlockHandler;
-import io.github.pylonmc.rebar.block.interfaces.SignRebarBlockHandler;
-import io.github.pylonmc.rebar.block.interfaces.SimpleRebarMultiblock;
-import io.github.pylonmc.rebar.block.interfaces.SneakRebarBlockHandler;
-import io.github.pylonmc.rebar.block.interfaces.SpongeRebarBlockHandler;
-import io.github.pylonmc.rebar.block.interfaces.TNTRebarBlockHandler;
-import io.github.pylonmc.rebar.block.interfaces.TargetRebarBlockHandler;
-import io.github.pylonmc.rebar.block.interfaces.TickingRebarBlock;
-import io.github.pylonmc.rebar.block.interfaces.UnloadRebarBlockHandler;
-import io.github.pylonmc.rebar.block.interfaces.VaultRebarBlockHandler;
-import io.github.pylonmc.rebar.block.interfaces.VirtualInventoryRebarBlock;
+import io.github.pylonmc.rebar.block.interfaces.*;
 import io.github.pylonmc.rebar.config.ConfigSection;
 import io.github.pylonmc.rebar.config.adapter.ConfigAdapter;
 import io.github.pylonmc.rebar.fluid.RebarFluid;
-import io.github.pylonmc.rebar.item.RebarItem;
 import io.github.pylonmc.rebar.item.builder.ItemStackBuilder;
 import io.github.pylonmc.rebar.logistics.LogisticGroupType;
-import io.github.pylonmc.rebar.recipe.FluidOrItem;
 import io.github.pylonmc.rebar.recipe.RebarRecipe;
-import io.github.pylonmc.rebar.recipe.RecipeInput;
 import io.github.pylonmc.rebar.recipe.RecipeType;
+import io.github.pylonmc.rebar.recipe.ingredient.*;
 import io.github.pylonmc.rebar.registry.RebarRegistry;
 import io.github.pylonmc.rebar.util.MachineUpdateReason;
 import io.github.pylonmc.rebar.util.RebarUtils;
@@ -86,15 +32,9 @@ import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.bytebuddy.ByteBuddy;
-import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 import net.bytebuddy.implementation.MethodDelegation;
 import net.bytebuddy.implementation.SuperMethodCall;
-import net.bytebuddy.implementation.bind.annotation.AllArguments;
-import net.bytebuddy.implementation.bind.annotation.Origin;
-import net.bytebuddy.implementation.bind.annotation.RuntimeType;
-import net.bytebuddy.implementation.bind.annotation.Super;
-import net.bytebuddy.implementation.bind.annotation.SuperCall;
-import net.bytebuddy.implementation.bind.annotation.This;
+import net.bytebuddy.implementation.bind.annotation.*;
 import net.bytebuddy.matcher.ElementMatchers;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -111,12 +51,11 @@ import xyz.xenondevs.invui.inventory.VirtualInventory;
 import xyz.xenondevs.invui.inventory.event.UpdateReason;
 import xyz.xenondevs.invui.window.Window;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
+import java.util.Set;
 
 /**
  * @author balugaq
@@ -358,8 +297,8 @@ public class CustomBlockBuilder {
                             var vo = vs.get('o');
                             vo.addItem(UpdateReason.SUPPRESSED, item.item());
                         }
-                        if (e instanceof FluidOrItem.Fluid fluid) {
-                            ((FluidBufferRebarBlock) rebar).setFluid(fluid.fluid(), Math.min(((FluidBufferRebarBlock) rebar).fluidCapacity(fluid.fluid()), ((FluidBufferRebarBlock) rebar).fluidAmount(fluid.fluid()) + fluid.amountMillibuckets()));
+                        if (e instanceof FluidWithAmount fluid) {
+                            ((FluidBufferRebarBlock) rebar).setFluid(fluid.fluid(), Math.min(((FluidBufferRebarBlock) rebar).fluidCapacity(fluid.fluid()), ((FluidBufferRebarBlock) rebar).fluidAmount(fluid.fluid()) + fluid.amount()));
                         }
                     }
                 }
@@ -479,8 +418,8 @@ public class CustomBlockBuilder {
 
             var ret = new Object2DoubleOpenHashMap<RebarFluid>();
             for (var e : recipe.getResults()) {
-                if (e instanceof FluidOrItem.Fluid fluid) {
-                    ret.addTo(fluid.fluid(), fluid.amountMillibuckets());
+                if (e instanceof FluidWithAmount fluid) {
+                    ret.addTo(fluid.fluid(), fluid.amount());
                 }
             }
 
@@ -516,7 +455,7 @@ public class CustomBlockBuilder {
                 if (r instanceof FluidOrItem.Item item) {
                     return ItemStackBuilder.of(item.item().asOne()).clearLore();
                 }
-                if (r instanceof FluidOrItem.Fluid fluid) {
+                if (r instanceof FluidWithAmount fluid) {
                     return ItemStackBuilder.of(fluid.fluid().getItem().asOne()).clearLore();
                 }
             }
@@ -533,18 +472,18 @@ public class CustomBlockBuilder {
             @Nullable VirtualInventory vi = vs.get('i');
             @Nullable VirtualInventory vo = vs.get('o');
             recipe: for (RebarRecipe recipe : recipes) {
-                for (RecipeInput e : recipe.getInputs()) {
+                for (FluidOrItemChoice e : recipe.getInputs()) {
                     switch (e) {
-                        case RecipeInput.Item item -> {
+                        case ItemChoice item -> {
                             if (logisticBlockData == null || vi == null) continue recipe;
                             if (!vi.contains(item::matches)) continue recipe;
                             if (vi.count(item::matches) < item.getAmount()) continue recipe;
                         }
-                        case RecipeInput.Fluid fluid -> {
+                        case FluidChoice fluid -> {
                             if (fluidBufferBlockData == null) continue recipe;
                             boolean enough = false;
-                            for (RebarFluid f : fluid.fluids()) {
-                                if (fluidBuffer.hasFluid(f) && fluidBuffer.fluidAmount(f) >= fluid.amountMillibuckets() && fluidBufferBlockData.inputFluids().contains(f)) {
+                            for (RebarFluid f : fluid.getFluids()) {
+                                if (fluidBuffer.hasFluid(f) && fluidBuffer.fluidAmount(f) >= fluid.getAmount() && fluidBufferBlockData.inputFluids().contains(f)) {
                                     enough = true;
                                     break;
                                 }
@@ -582,7 +521,7 @@ public class CustomBlockBuilder {
 
                 // consume items and fluids
                 for (var e : recipe.getInputs()) {
-                    if (e instanceof RecipeInput.Item item) {
+                    if (e instanceof ItemChoice item) {
                         int remainToConsume = item.getAmount();
                         for (int i = 0; i < vi.getSize(); i++) {
                             ItemStack stack = vi.getItem(i);
@@ -594,10 +533,10 @@ public class CustomBlockBuilder {
                             }
                         }
                     }
-                    if (e instanceof RecipeInput.Fluid fluid) {
-                        for (var f : fluid.fluids()) {
-                            if (fluidBuffer.hasFluid(f) && fluidBuffer.fluidAmount(f) >= fluid.amountMillibuckets() && fluidBufferBlockData.inputFluids().contains(f)) {
-                                fluidBuffer.removeFluid(f, fluid.amountMillibuckets());
+                    if (e instanceof FluidChoice fluid) {
+                        for (var f : fluid.getFluids()) {
+                            if (fluidBuffer.hasFluid(f) && fluidBuffer.fluidAmount(f) >= fluid.getAmount() && fluidBufferBlockData.inputFluids().contains(f)) {
+                                fluidBuffer.removeFluid(f, fluid.getAmount());
                             }
                         }
                     }

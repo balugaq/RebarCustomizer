@@ -29,6 +29,7 @@ package com.balugaq.rc.util;
 
 import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.objects.ObjectObjectImmutablePair;
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
@@ -137,7 +138,8 @@ public class ReflectionUtil {
         return null;
     }
 
-    public static <T> @Nullable T getValue(Object object, String fieldName, Class<T> cast) throws IllegalAccessException {
+    @SneakyThrows
+    public static <T> @Nullable T getValue(Object object, String fieldName, Class<T> cast) {
         Field field = getField(object.getClass(), fieldName);
         if (field != null) {
             field.setAccessible(true);
@@ -155,7 +157,8 @@ public class ReflectionUtil {
         return null;
     }
 
-    public static @Nullable Object getValue(Object object, String fieldName) throws IllegalAccessException {
+    @SneakyThrows
+    public static @Nullable Object getValue(Object object, String fieldName) {
         Field field = getField(object.getClass(), fieldName);
         if (field != null) {
             field.setAccessible(true);

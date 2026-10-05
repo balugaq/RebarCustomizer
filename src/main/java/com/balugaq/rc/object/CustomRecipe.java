@@ -1,9 +1,9 @@
 package com.balugaq.rc.object;
 
 import io.github.pylonmc.rebar.fluid.RebarFluid;
-import io.github.pylonmc.rebar.recipe.FluidOrItem;
 import io.github.pylonmc.rebar.recipe.RebarRecipe;
-import io.github.pylonmc.rebar.recipe.RecipeInput;
+import io.github.pylonmc.rebar.recipe.ingredient.FluidOrItem;
+import io.github.pylonmc.rebar.recipe.ingredient.FluidOrItemChoice;
 import it.unimi.dsi.fastutil.objects.Object2DoubleOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
 import lombok.Data;
@@ -28,13 +28,13 @@ import java.util.Map;
 public class CustomRecipe implements RebarRecipe {
     private final CustomRecipeType recipeType;
     private final NamespacedKey key;
-    private final List<RecipeInput> inputs;
+    private final List<FluidOrItemChoice> inputs;
     private final List<FluidOrItem> results;
     private final int timeSeconds;
     private final Map<String, Object> other;
 
     @Override
-    public List<RecipeInput> getInputs() {
+    public List<FluidOrItemChoice> getInputs() {
         return inputs;
     }
 

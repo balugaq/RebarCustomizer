@@ -5,9 +5,9 @@ import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
 plugins {
     java
     idea
-    id("com.gradleup.shadow") version "9.0.0"
-    id("net.minecrell.plugin-yml.bukkit") version "0.6.0"
-    id("xyz.jpenilla.run-paper") version "2.3.0"
+    alias(libs.plugins.shadow)
+    alias(libs.plugins.plugin.yml)
+    alias(libs.plugins.run.paper)
 }
 
 group = project.properties["group"]!!
@@ -40,31 +40,21 @@ repositories {
     }
 }
 
-val rebarVersion = project.properties["rebar.version"] as String
-val pylonVersion = project.properties["pylon.version"] as String
+val rebarVersion = libs.versions.rebar.get()
+val pylonVersion = libs.versions.pylon.get()
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT")
-    compileOnly("io.github.pylonmc:rebar:$rebarVersion")
-    compileOnly("io.github.pylonmc:pylon:$pylonVersion")
-    implementation("net.byteflux:libby-bukkit:1.3.1")
-    compileOnly("com.caoccao.javet:javet:5.0.2")
-    compileOnly("com.caoccao.javet:javet-node-linux-arm64:5.0.2")
-    compileOnly("com.caoccao.javet:javet-node-linux-x86_64:5.0.2")
-    compileOnly("com.caoccao.javet:javet-node-macos-arm64:5.0.2")
-    compileOnly("com.caoccao.javet:javet-node-macos-x86_64:5.0.2")
-    compileOnly("com.caoccao.javet:javet-node-windows-x86_64:5.0.2")
-    compileOnly("com.caoccao.javet:javet-v8-linux-arm64:5.0.2")
-    compileOnly("com.caoccao.javet:javet-v8-linux-x86_64:5.0.2")
-    compileOnly("com.caoccao.javet:javet-v8-macos-arm64:5.0.2")
-    compileOnly("com.caoccao.javet:javet-v8-macos-x86_64:5.0.2")
-    compileOnly("com.caoccao.javet:javet-v8-windows-x86_64:5.0.2")
-    compileOnly("org.apache.httpcomponents:httpclient:4.5.14")
-    compileOnly("org.projectlombok:lombok:1.18.46")
-    annotationProcessor("org.projectlombok:lombok:1.18.46")
-    testCompileOnly("org.projectlombok:lombok:1.18.46")
-    testAnnotationProcessor("org.projectlombok:lombok:1.18.46")
-    compileOnly("net.bytebuddy:byte-buddy:1.18.10")
+    compileOnly(libs.paper.api)
+    compileOnly(libs.rebar)
+    compileOnly(libs.pylon)
+    implementation(libs.libby.bukkit)
+    compileOnly(libs.bundles.javet)
+    compileOnly(libs.httpclient)
+    compileOnly(libs.lombok)
+    annotationProcessor(libs.lombok)
+    testCompileOnly(libs.lombok)
+    testAnnotationProcessor(libs.lombok)
+    compileOnly(libs.byte.buddy)
 }
 
 idea {

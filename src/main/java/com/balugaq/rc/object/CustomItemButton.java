@@ -257,7 +257,7 @@ public class CustomItemButton extends AbstractItem implements Scriptable {
             int amount = click.clickType().isShiftClick() ? type.getMaxStackSize() : 1;
             return new ItemStack(type, amount);
         } else {
-            ItemStack clonedRebar = pylonItem.getSchema().getItemStack();
+            ItemStack clonedRebar = pylonItem.getSchema().createNewItemStack();
             clonedRebar.setAmount(click.clickType().isShiftClick() ? clonedRebar.getMaxStackSize() : 1);
             return clonedRebar;
         }

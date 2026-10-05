@@ -337,15 +337,11 @@ public @Data class PackManager {
             pack.getScripts().closeAll();
         if (pack.getRecipes() != null) {
             for (var e : pack.getRecipes().getRegisteredRecipes().entrySet()) {
-                try {
-                    var recipes = ReflectionUtil.getValue(e.getKey(), "registeredRecipes", Map.class);
-                    if (recipes != null) {
-                        for (var key : e.getValue()) {
-                            recipes.remove(key);
-                        }
+                var recipes = ReflectionUtil.getValue(e.getKey(), "registeredRecipes", Map.class);
+                if (recipes != null) {
+                    for (var key : e.getValue()) {
+                        recipes.remove(key);
                     }
-                } catch (IllegalAccessException ex) {
-                    StackTrace.handle(ex);
                 }
             }
         }
@@ -380,7 +376,7 @@ public @Data class PackManager {
 
         RebarCustomizer.getPages().values().forEach(page -> {
             page.getButtons().removeIf(item -> {
-                return item instanceof FluidButton fb && fb.getCurrentFluid().getKey().getNamespace().equals(plugin.namespace());
+                return item instanceof FluidButton fb && fb.getCurrentFluid().getFirst().getKey().getNamespace().equals(plugin.namespace());
             });
         });
 

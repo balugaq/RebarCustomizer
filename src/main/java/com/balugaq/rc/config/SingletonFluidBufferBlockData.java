@@ -20,7 +20,7 @@ public record SingletonFluidBufferBlockData(RebarFluid fluid, double capacity, b
     public List<ConfigReader<?, SingletonFluidBufferBlockData>> readers() {
         return ConfigReader.list(
                 ConfigurationSection.class, section -> {
-                    RebarFluid fluid = Deserializer.PYLON_FLUID.deserialize(section.get("fluid"));
+                    RebarFluid fluid = Deserializer.REBAR_FLUID.deserialize(section.get("fluid"));
                     double capacity = section.getDouble("capacity", 0);
                     boolean input = section.getBoolean("input", false);
                     boolean output = section.getBoolean("output", false);

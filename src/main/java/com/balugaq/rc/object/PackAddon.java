@@ -14,19 +14,14 @@ import java.util.Set;
  * @author balugaq
  */
 @NullMarked
-public record PackAddon(String namespace, Set<Locale> languages, Material material) implements RebarAddon {
-    public static PackAddon generate(String id, Set<Locale> languages, Material material) {
-        return new PackAddon(id, languages, material);
+public record PackAddon(String namespace, Locale defaultLanguage, Material material) implements RebarAddon {
+    public static PackAddon generate(String id, Locale defaultLanguage, Material material) {
+        return new PackAddon(id, defaultLanguage, material);
     }
 
     @Override
     public JavaPlugin getJavaPlugin() {
         return RebarCustomizer.getInstance();
-    }
-
-    @Override
-    public Set<Locale> getLanguages() {
-        return languages;
     }
 
     @Override
@@ -46,5 +41,10 @@ public record PackAddon(String namespace, Set<Locale> languages, Material materi
     @Override
     public boolean suppressAddonNameWarning() {
         return true;
+    }
+
+    @Override
+    public Locale getDefaultLanguage() {
+        return defaultLanguage;
     }
 }
