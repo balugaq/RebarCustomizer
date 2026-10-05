@@ -1,5 +1,5 @@
 [versions]
-shadow = "9.0.0"
+shadow = "9.6.1"
 pluginYml = "0.6.0"
 runPaper = "2.3.0"
 
