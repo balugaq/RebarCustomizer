@@ -5,7 +5,7 @@ runPaper = "3.1.0"
 
 paperApi = "26.3.build.214-stable"
 rebar = "0.44.4-26.2"
-pylon = "0.42.2-26.2"
+pylon = "0.43.0-26.3"
 libby = "1.3.1"
 javet = "6.0.2"
 httpclient = "4.5.14"
